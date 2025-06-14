@@ -52,6 +52,16 @@ The `/api/login` endpoint accepts `email` and `password` fields for authenticati
    This creates the `ehr-eng2` database with `users` and `login_audit` tables.
 3. Set `DATABASE_URL` to point at the new database before starting the server.
 
+## Login Test
+
+Run this script after the server is running to verify login:
+
+```bash
+TEST_EMAIL=email@example.com TEST_PASSWORD=secret node scripts/test-login.js
+```
+
+The script posts to `http://localhost:3000/api/login` and prints the result.
+
 ## Contributing
 
 Pull requests are welcome. Please keep documentation clear and run any available linters before opening a PR.

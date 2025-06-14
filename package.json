@@ -2,7 +2,8 @@
   "name": "ehr-eng2",
   "version": "1.0.0",
   "scripts": {
-    "dev:server": "node server/index.js"
+    "dev:server": "node server/index.js",
+    "test:login": "node scripts/test-login.js"
   },
   "dependencies": {
     "express": "^4.18.2",
