@@ -42,6 +42,16 @@ The server in `server/index.js` connects to a PostgreSQL database using the `pg`
 
 The `/api/login` endpoint accepts `email` and `password` fields for authentication.
 
+## Database Setup
+
+1. Ensure PostgreSQL is installed and running.
+2. Execute the schema script:
+   ```bash
+   psql -f db/schema.sql
+   ```
+   This creates the `ehr-eng2` database with `users` and `login_audit` tables.
+3. Set `DATABASE_URL` to point at the new database before starting the server.
+
 ## Contributing
 
 Pull requests are welcome. Please keep documentation clear and run any available linters before opening a PR.

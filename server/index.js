@@ -1,5 +1,6 @@
 const express = require('express')
 const { Pool } = require('pg')
+const bcrypt = require('bcrypt')
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
@@ -14,10 +15,18 @@ app.post('/api/login', async (req, res) => {
   const { email, password } = req.body
   try {
     const result = await pool.query(
-      'SELECT id FROM users WHERE email = $1 AND password = $2',
-      [email, password]
+      'SELECT id, password_hash FROM users WHERE email = $1',
+      [email]
     )
-    if (result.rows.length > 0) {
+    if (result.rows.length === 0) {
+      await pool.query('INSERT INTO login_audit (action) VALUES ($1)', ['login_failed'])
+      return res.status(401).json({ success: false, message: 'Invalid credentials' })
+    }
+    const user = result.rows[0]
+    const valid = await bcrypt.compare(password, user.password_hash)
+    const action = valid ? 'login_success' : 'login_failed'
+    await pool.query('INSERT INTO login_audit (user_id, action) VALUES ($1, $2)', [user.id, action])
+    if (valid) {
       res.json({ success: true })
     } else {
       res.status(401).json({ success: false, message: 'Invalid credentials' })
