@@ -43,9 +43,21 @@ const emit = defineEmits(['login'])
 const email = ref('')
 const password = ref('')
 
-function handleSubmit() {
+async function handleSubmit() {
   const payload = { email: email.value, password: password.value }
-  emit('login', payload)
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    if (!res.ok) {
+      throw new Error('Login failed')
+    }
+    emit('login', payload)
+  } catch (error) {
+    console.error(error)
+  }
 }
 </script>
 

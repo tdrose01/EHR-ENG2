@@ -13,6 +13,7 @@ EHR-ENG2 provides a simple starting point for building an EHR interface with the
 - `node_modules/` – installed dependencies. Changes to this folder should not be committed.
 - `.git/` – version control files managed by Git.
 - `src/components/LoginLanding.vue` – example login landing page component.
+- `server/index.js` – minimal Express server connecting to PostgreSQL.
 
 ## Getting Started
 
@@ -29,6 +30,17 @@ EHR-ENG2 provides a simple starting point for building an EHR interface with the
    ```bash
    npm run build
    ```
+
+## Backend Server
+
+The server in `server/index.js` connects to a PostgreSQL database using the `pg` library. Set the `DATABASE_URL` environment variable and run:
+
+```bash
+  npm install
+  npm run dev:server
+```
+
+The `/api/login` endpoint accepts `email` and `password` fields for authentication.
 
 ## Contributing
 
