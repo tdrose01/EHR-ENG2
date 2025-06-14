@@ -12,6 +12,7 @@ EHR-ENG2 provides a simple starting point for building an EHR interface with the
 - `README.md` – project documentation and setup instructions.
 - `node_modules/` – installed dependencies. Changes to this folder should not be committed.
 - `.git/` – version control files managed by Git.
+- `src/components/LoginLanding.vue` – example login landing page component.
 
 ## Getting Started
 
