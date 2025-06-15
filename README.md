@@ -22,8 +22,12 @@ EHR-ENG2 provides a simple starting point for building an EHR interface with the
    ```bash
    npm install
    ```
-3. Start the development server:
+3. Start the development servers:
    ```bash
+   # Start the backend server (runs on port 3000)
+   npm run start:server
+   
+   # In a separate terminal, start the frontend server (default port 5173)
    npm run dev
    ```
 4. Build the application for production:
@@ -31,30 +35,64 @@ EHR-ENG2 provides a simple starting point for building an EHR interface with the
    npm run build
    ```
 
-## Backend Server
+## Server Configuration
 
-The server in `server/index.js` connects to a PostgreSQL database using the `pg` library.
+### Backend Server (Express)
+The server runs on port 3000 and connects to PostgreSQL using the `pg` library.
 
-### Start the server
+#### Start the backend server
 ```bash
 npm run start:server
 ```
 
-### Stop the server
+#### Stop the backend server
 ```bash
 npm run stop:server
 ```
 This uses [`kill-port`](https://www.npmjs.com/package/kill-port) to stop the server on port 3000 (cross-platform).
 
-Set the `DATABASE_URL` environment variable and run:
+### Frontend Server (Vite)
+The development server typically runs on port 5173. If this port is in use, Vite will automatically try the next available port (e.g., 5174).
 
-```bash
-  npm install
-  npm run start:server
-```
+### Environment Variables
+The backend server requires the following environment variables:
 
-The `/api/login` endpoint accepts `email` and `password` fields for authentication.
-The server will load variables from a `.env` file if the `dotenv` package is installed. If `dotenv` is missing, set the variables manually before running `npm run start:server`.
+1. Create a `.env` file in the project root:
+   ```
+   DATABASE_URL=postgres://user:password@localhost:5432/database
+   ```
+2. Install the `dotenv` package if not already installed:
+   ```bash
+   npm install dotenv
+   ```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"vite not recognized" error**
+   - Solution: Install Vite dependencies
+     ```bash
+     npm install
+     ```
+
+2. **Port already in use**
+   - For backend (port 3000):
+     ```bash
+     npm run stop:server
+     ```
+   - For frontend: Vite will automatically try the next available port
+
+3. **404 Errors**
+   - Verify the correct ports:
+     - Backend API: http://localhost:3000
+     - Frontend: http://localhost:5173 (or alternative port shown in terminal)
+   - Ensure both servers are running in separate terminals
+
+4. **Database Connection Issues**
+   - Verify PostgreSQL is running
+   - Check DATABASE_URL in .env file
+   - Ensure database user has proper permissions
 
 ## Database Setup
 
@@ -84,8 +122,7 @@ The server will load variables from a `.env` file if the `dotenv` package is ins
 ## Login Test
 
 Start the backend with `npm run dev:server` then run this script to verify
-login. The script reads
-credentials from the `.env` file:
+login. The script reads credentials from the `.env` file:
 
 ```bash
 npm run test:login
@@ -93,7 +130,6 @@ npm run test:login
 
 If `dotenv` is missing, set `TEST_EMAIL` and `TEST_PASSWORD` in the environment before running the command. Ensure PostgreSQL is running and `DATABASE_URL` points to the database created by `db/schema.sql`.
 The script posts to `http://localhost:3000/api/login` and prints the result.
-
 
 ## Contributing
 
