@@ -158,6 +158,7 @@ npm run test:patients
 - CSS uses Tailwind utility classes
 - Follows ESLint configuration
 - Phone numbers are stored as digits and formatted to `(XXX)-XXX-XXXX` in the UI
+- Dashboard header text uses `dark:text-gray-200` for better readability
 
 ### Branch Strategy
 - main: Production-ready code
