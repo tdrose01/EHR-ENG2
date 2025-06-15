@@ -34,15 +34,27 @@ EHR-ENG2 provides a simple starting point for building an EHR interface with the
 ## Backend Server
 
 The server in `server/index.js` connects to a PostgreSQL database using the `pg` library.
+
+### Start the server
+```bash
+npm run start:server
+```
+
+### Stop the server
+```bash
+npm run stop:server
+```
+This uses [`kill-port`](https://www.npmjs.com/package/kill-port) to stop the server on port 3000 (cross-platform).
+
 Set the `DATABASE_URL` environment variable and run:
 
 ```bash
   npm install
-  npm run dev:server
+  npm run start:server
 ```
 
 The `/api/login` endpoint accepts `email` and `password` fields for authentication.
-The server will load variables from a `.env` file if the `dotenv` package is installed. If `dotenv` is missing, set the variables manually before running `npm run dev:server`.
+The server will load variables from a `.env` file if the `dotenv` package is installed. If `dotenv` is missing, set the variables manually before running `npm run start:server`.
 
 ## Database Setup
 
