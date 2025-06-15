@@ -69,6 +69,11 @@ export default {
         if (data.success) {
           // Store authentication state
           localStorage.setItem('isAuthenticated', 'true')
+          localStorage.setItem('userRole', data.role)
+          localStorage.setItem('userEmail', this.email)
+          if (data.role === 'admin') {
+            localStorage.setItem('adminPassword', this.password)
+          }
           
           // Clear any existing error
           this.error = ''

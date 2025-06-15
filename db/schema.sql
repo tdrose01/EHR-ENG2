@@ -10,6 +10,7 @@ CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'user',
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
@@ -23,10 +24,19 @@ CREATE TABLE login_audit (
 );
 
 -- Example admin user for testing
-INSERT INTO users (email, password_hash)
+INSERT INTO users (email, password_hash, role)
 VALUES (
   'admin@example.com',
-  '$2b$10$jeY.en9U2c2J9gAQYZAas.yEGkAwwQ.GTsQqiQ5VLzyUASDs5MmRW'
+  '$2b$10$jeY.en9U2c2J9gAQYZAas.yEGkAwwQ.GTsQqiQ5VLzyUASDs5MmRW',
+  'admin'
+);
+
+-- Example regular user
+INSERT INTO users (email, password_hash, role)
+VALUES (
+  'user@example.com',
+  '$2b$10$lilvThtbofLoIyhAJS0O1.wAQAplhae6nrfDnM2tG1RP/yxB9CRg.',
+  'user'
 );
 
 -- Grant necessary permissions to the web user
