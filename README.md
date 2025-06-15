@@ -68,6 +68,16 @@ npm run test:login
 If `dotenv` is missing, set `TEST_EMAIL` and `TEST_PASSWORD` in the environment before running the command. Ensure PostgreSQL is running and `DATABASE_URL` points to the database created by `db/schema.sql`.
 The script posts to `http://localhost:3000/api/login` and prints the result.
 
+## Database Setup
+
+1. Ensure PostgreSQL is installed and running.
+2. Execute the schema script:
+   ```bash
+   psql -f db/schema.sql
+   ```
+   This creates the `ehr-eng2` database with `users` and `login_audit` tables.
+3. Set `DATABASE_URL` to point at the new database before starting the server.
+
 ## Contributing
 
 Pull requests are welcome. Please keep documentation clear and run any available linters before opening a PR.
