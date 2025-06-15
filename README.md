@@ -57,6 +57,10 @@ After successful login, users can access two main modules:
   - Visible only to admin users
   - Allows admins to change any user's password
 
+4. **System Status**
+  - Access via `/status` route
+  - Displays API and database availability
+
 ## 🏗️ Project Structure
 
 ```
@@ -139,6 +143,12 @@ npm run test:patients
 #### GET /api/patients/search/:query
 - Searches patients by name or insurance ID
 - Response: Array of matching patient objects
+
+### Health Endpoints
+
+#### GET /api/v1/health/status
+  - Returns `{ api: "online", database: "online" }` when services are healthy
+  - Responds with `503` and `database: "offline"` if the database is down
 
 ### Admin Endpoints
 

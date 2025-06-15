@@ -161,11 +161,24 @@ app.get('/api/admin/users', async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized' })
     }
 
-    const users = await pool.query('SELECT id, email FROM users ORDER BY email')
-    res.json(users.rows)
+  const users = await pool.query('SELECT id, email FROM users ORDER BY email')
+  res.json(users.rows)
   } catch (err) {
     console.error('User list error:', err)
     res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
+// Health status endpoint
+app.get('/api/v1/health/status', async (req, res) => {
+  const status = { api: 'online', database: 'online' }
+  try {
+    await pool.query('SELECT 1')
+    res.json(status)
+  } catch (err) {
+    console.error('Database health check failed:', err)
+    status.database = 'offline'
+    res.status(503).json(status)
   }
 })
 
@@ -184,4 +197,5 @@ app.listen(PORT, () => {
   console.log('- PUT    /api/patients/:id');
   console.log('- DELETE /api/patients/:id');
   console.log('- GET    /api/patients/search/:query');
+  console.log('- GET    /api/v1/health/status');
 })
