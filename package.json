@@ -17,6 +17,7 @@
     "pg": "^8.10.0"
   },
   "devDependencies": {
-    "kill-port": "^2.0.1"
+    "kill-port": "^2.0.1",
+    "vite": "^6.3.5"
   }
 }
