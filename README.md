@@ -33,7 +33,8 @@ EHR-ENG2 provides a simple starting point for building an EHR interface with the
 
 ## Backend Server
 
-The server in `server/index.js` connects to a PostgreSQL database using the `pg` library. Set the `DATABASE_URL` environment variable and run:
+The server in `server/index.js` connects to a PostgreSQL database using the `pg` library.
+Set the `DATABASE_URL` environment variable and run:
 
 ```bash
   npm install
@@ -45,15 +46,28 @@ The server will load variables from a `.env` file if the `dotenv` package is ins
 
 ## Database Setup
 
-1. Ensure PostgreSQL is installed and running.
+1. Install PostgreSQL (on Ubuntu/Debian):
+   ```bash
+   sudo apt-get update
+   sudo apt-get install postgresql
+   ```
+   Start the database service with `sudo service postgresql start`.
 2. Execute the schema script:
    ```bash
-   psql -f db/schema.sql
+   sudo -u postgres psql -f db/schema.sql
    ```
-   This creates the `ehr-eng2` database with `users` and `login_audit` tables.
-   It also inserts a sample `admin@example.com` user with password `secret`.
-3. Copy `.env.example` to `.env` and edit the values as needed.
-4. Set `DATABASE_URL` to point at the new database before starting the server.
+   This creates the `ehr-eng2` database and example tables.
+3. Create a dedicated user and grant privileges:
+   ```bash
+   sudo -u postgres psql -c "create user web with password 'webpass';"
+   sudo -u postgres psql -c "grant all privileges on database \"ehr-eng2\" to web;"
+   sudo -u postgres psql ehr-eng2 -c "grant all privileges on all tables in schema public to web;"
+   sudo -u postgres psql ehr-eng2 -c "grant all privileges on all sequences in schema public to web;"
+   ```
+4. Copy `.env.example` to `.env` and update `DATABASE_URL` using that new user, e.g.:
+   ```
+   DATABASE_URL=postgres://web:webpass@localhost:5432/ehr-eng2
+   ```
 
 ## Login Test
 
@@ -68,15 +82,6 @@ npm run test:login
 If `dotenv` is missing, set `TEST_EMAIL` and `TEST_PASSWORD` in the environment before running the command. Ensure PostgreSQL is running and `DATABASE_URL` points to the database created by `db/schema.sql`.
 The script posts to `http://localhost:3000/api/login` and prints the result.
 
-## Database Setup
-
-1. Ensure PostgreSQL is installed and running.
-2. Execute the schema script:
-   ```bash
-   psql -f db/schema.sql
-   ```
-   This creates the `ehr-eng2` database with `users` and `login_audit` tables.
-3. Set `DATABASE_URL` to point at the new database before starting the server.
 
 ## Contributing
 
