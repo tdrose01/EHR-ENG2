@@ -14,6 +14,8 @@ npm run dev
 
 # Create a production build
 npm run build
+# Lint the code
+npm run lint
 ```
 
 ## 🔑 Login Credentials
@@ -24,6 +26,7 @@ npm run build
 ## 📱 Module Navigation
 
 After successful login, users can access two main modules:
+  Use the Back button in the header to return to the previous page.
 
 1. **EH Module (Electronic Health)**
    - Access via `/eh-module` route

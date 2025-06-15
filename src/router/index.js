@@ -45,7 +45,7 @@ const router = createRouter({
 // Navigation guard to check authentication
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
-  
+
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/')
   } else if (to.path === '/' && isAuthenticated) {
@@ -55,4 +55,4 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-export default router 
+export default router
