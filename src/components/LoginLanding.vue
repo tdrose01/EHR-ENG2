@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
     <form
-      class="bg-white p-6 rounded shadow w-full max-w-sm"
+      class="bg-white dark:bg-gray-700 p-6 rounded shadow w-full max-w-sm"
       @submit.prevent="handleSubmit"
     >
       <h1 class="text-2xl font-bold mb-4 text-center">Login</h1>
       <div class="mb-4">
-        <label class="block text-gray-700 mb-2" for="email">Email</label>
+        <label class="block text-gray-700 dark:text-gray-300 mb-2" for="email">Email</label>
         <input
           id="email"
           v-model="email"
@@ -16,7 +16,7 @@
         />
       </div>
       <div class="mb-6">
-        <label class="block text-gray-700 mb-2" for="password">Password</label>
+        <label class="block text-gray-700 dark:text-gray-300 mb-2" for="password">Password</label>
         <input
           id="password"
           v-model="password"
