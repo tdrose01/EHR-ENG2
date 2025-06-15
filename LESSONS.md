@@ -119,6 +119,7 @@
    - **Implementation**: In-dashboard table with add, view and edit modals
    - **Benefit**: Streamlined workflow without page navigation
    - **Learning**: Modals keep context while editing data
+  - **Best Practice**: Phone numbers auto-format to `(XXX)-XXX-XXXX` while only digits are stored
 
 ## 🔒 Security Implementation
 
