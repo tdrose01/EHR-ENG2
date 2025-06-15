@@ -1,86 +1,20 @@
-# Electronic Health Record (EHR) System
+# EHR-ENG2 (Electronic Health Records System)
 
-A modern, HIPAA-compliant Electronic Health Record system built with Vue.js and Node.js, following industry best practices and security standards.
+## 🚀 Quick Start
 
-## 🚀 Features
+```bash
+# Install dependencies
+npm install
 
-- **Secure Authentication System**
-  - JWT-based authentication
-  - Password hashing with bcrypt
-  - Session management
-  - Audit logging for login attempts
+# Start the backend server
+$env:DATABASE_URL="postgres://web:password123@localhost:5432/ehr-eng2"; node server/index.js
 
-- **Modular Architecture**
-  - EH Module (Electronic Health Records Management)
-  - RH Module (Resource & Hospital Management)
-  - Clear separation of concerns
-  - Component-based design
+# Start the frontend development server
+npm run dev
+```
 
-## 🛠️ Technology Stack
+## 🔑 Login Credentials
 
-### Frontend
-- Vue.js 3 with Composition API
-- Vue Router for navigation
-- Tailwind CSS for styling
-- Modern, responsive UI components
-- Accessibility-compliant design (WCAG 2.1 AA)
-
-### Backend
-- Node.js with Express
-- PostgreSQL database
-- bcrypt for password hashing
-- CORS enabled for secure communication
-- Environment-based configuration
-
-## 📋 Prerequisites
-
-- Node.js (v14 or higher)
-- PostgreSQL (v13 or higher)
-- npm or yarn package manager
-
-## 🔧 Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/EHR-ENG2.git
-   cd EHR-ENG2
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   Create a `.env` file in the root directory with:
-   ```env
-   DATABASE_URL=postgresql://web:webpass@localhost:5432/ehr-eng2
-   PORT=3000
-   ```
-
-4. **Set up the database**
-   ```bash
-   # Connect to PostgreSQL and run the schema
-   psql -U postgres -f db/schema.sql
-   ```
-
-## 🚀 Running the Application
-
-1. **Start the backend server**
-   ```bash
-   npm run start:server
-   ```
-   The server will run on http://localhost:3000
-
-2. **Start the frontend development server**
-   ```bash
-   npm run dev
-   ```
-   The application will be available at http://localhost:5173
-
-## 🔐 Authentication
-
-Default test credentials:
 - Email: admin@example.com
 - Password: password123
 
@@ -89,14 +23,37 @@ Default test credentials:
 After successful login, users can access two main modules:
 
 1. **EH Module (Electronic Health)**
-   - Access via `/eh` route
+   - Access via `/eh-module` route
    - Manages electronic health records
+   - Features:
+     - Patient Management
+     - Medical Records
+     - Appointment Scheduling
    - Blue-themed interface
 
 2. **RH Module (Resource & Hospital)**
-   - Access via `/rh` route
+   - Access via `/rh-module` route
    - Manages hospital resources
+   - Features (Coming Soon):
+     - Staff Management
+     - Equipment Tracking
+     - Facility Management
    - Green-themed interface
+
+## 🏗️ Project Structure
+
+```
+ehr-eng2/
+├── server/              # Backend server code
+│   ├── routes/         # API route handlers
+│   ├── db.js           # Database configuration
+│   └── index.js        # Server entry point
+├── src/                # Frontend source code
+│   ├── components/     # Vue components
+│   └── router/         # Vue router configuration
+├── db/                 # Database migrations and schemas
+└── public/            # Static assets
+```
 
 ## 🔒 Security Features
 
@@ -125,6 +82,34 @@ npm run test:e2e
 #### POST /api/login
 - Request body: `{ email: string, password: string }`
 - Response: `{ success: boolean, message?: string }`
+
+### Patient Management Endpoints
+
+#### GET /api/patients
+- Returns list of all active patients
+- Response: Array of patient objects
+
+#### GET /api/patients/:id
+- Returns single patient by ID
+- Response: Patient object
+
+#### POST /api/patients
+- Creates new patient record
+- Request body: Patient object
+- Response: Created patient object
+
+#### PUT /api/patients/:id
+- Updates existing patient record
+- Request body: Updated patient object
+- Response: Updated patient object
+
+#### DELETE /api/patients/:id
+- Soft deletes patient record
+- Response: Success message
+
+#### GET /api/patients/search/:query
+- Searches patients by name or insurance ID
+- Response: Array of matching patient objects
 
 ## 🛠️ Development
 
