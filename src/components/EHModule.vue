@@ -15,6 +15,12 @@
                 Patient Management
               </router-link>
               <router-link
+                to="/status"
+                class="border-blue-500 text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                System Status
+              </router-link>
+              <router-link
                 v-if="isAdmin"
                 to="/settings"
                 class="border-blue-500 text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
