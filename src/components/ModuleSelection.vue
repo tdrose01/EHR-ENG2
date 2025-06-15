@@ -44,7 +44,7 @@ export default {
       this.$emit('module-selected', module);
       
       // Navigate to the appropriate module route
-      this.$router.push(`/${module.toLowerCase()}`);
+      this.$router.push(`/${module.toLowerCase()}-module`);
     }
   }
 }

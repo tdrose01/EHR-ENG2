@@ -8,26 +8,35 @@ const express = require('express')
 const { Pool } = require('pg')
 const bcrypt = require('bcrypt')
 const cors = require('cors')
+const pool = require('./db')
 
 if (!process.env.DATABASE_URL) {
   console.error('DATABASE_URL is not set')
   process.exit(1)
 }
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-})
-
 const app = express()
 const PORT = process.env.PORT || 3000
 
-// Enable CORS for the frontend
+// Import routes
+const patientRoutes = require('./routes/patients')
+
+// Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'http://localhost:5174',
   credentials: true
 }))
 
 app.use(express.json())
+
+// Logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
+
+// Use routes
+app.use('/api/patients', patientRoutes)
 
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body
@@ -80,6 +89,19 @@ app.post('/api/login', async (req, res) => {
   }
 })
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ error: 'Internal server error', details: err.message });
+});
+
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`)
+  console.log(`Server is running on port ${PORT}`);
+  console.log('Available routes:');
+  console.log('- GET    /api/patients');
+  console.log('- GET    /api/patients/:id');
+  console.log('- POST   /api/patients');
+  console.log('- PUT    /api/patients/:id');
+  console.log('- DELETE /api/patients/:id');
+  console.log('- GET    /api/patients/search/:query');
 })

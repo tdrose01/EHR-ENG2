@@ -3,6 +3,7 @@ import Login from '../components/Login.vue'
 import ModuleSelection from '../components/ModuleSelection.vue'
 import EHModule from '../components/EHModule.vue'
 import RHModule from '../components/RHModule.vue'
+import PatientManagement from '../components/PatientManagement.vue'
 
 const routes = [
   {
@@ -17,15 +18,21 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/eh',
+    path: '/eh-module',
     name: 'EHModule',
     component: EHModule,
     meta: { requiresAuth: true }
   },
   {
-    path: '/rh',
+    path: '/rh-module',
     name: 'RHModule',
     component: RHModule,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/patients',
+    name: 'PatientManagement',
+    component: PatientManagement,
     meta: { requiresAuth: true }
   }
 ]

@@ -1,0 +1,97 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+Great question — and you're thinking in the right direction. When using **PostgreSQL** (or any robust RDBMS), best practice depends on **scalability, security, maintainability**, and **separation of concerns**. Here’s a breakdown of **best practices** for calling queries:
+
+---
+
+### ✅ **Best Practice: Use Backend APIs or Stored Procedures – Not Frontend-Embedded Queries**
+
+#### 🔒 **1. Never embed SQL directly in the frontend**
+- **Why not?**
+  - Huge security risk (SQL injection).
+  - Exposes database logic and structure.
+  - Harder to maintain, test, and scale.
+
+---
+
+### 🧠 **2. Preferred Options**
+
+#### 🛠️ A. **Use Stored Procedures / Functions in PostgreSQL**
+- Store your business logic in the database using `CREATE FUNCTION` or `CREATE PROCEDURE`.
+- Frontend (or backend API) only calls them with parameters.
+
+```sql
+CREATE FUNCTION get_patient_immunization_schedule(patient_id INT)
+RETURNS TABLE(vaccine TEXT, dose_number INT, due_date DATE)
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT v.name, d.dose_number, d.due_date
+  FROM immunizations d
+  JOIN vaccines v ON v.id = d.vaccine_id
+  WHERE d.patient_id = patient_id;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+Then your backend (or app) just does:
+```sql
+SELECT * FROM get_patient_immunization_schedule(123);
+```
+
+✅ **Pros:**
+- Faster execution (precompiled).
+- Centralized logic.
+- Easier to audit/change without touching frontend code.
+
+---
+
+#### 🧱 B. **Use a Backend Layer (API Server) to Call Queries**
+- Use something like Node.js, .NET, Python (Flask/FastAPI), etc.
+- Backend handles:
+  - Query building
+  - Validation
+  - Security
+  - Logging
+
+Frontend → API → PostgreSQL (via stored proc or raw query)
+
+✅ **Pros:**
+- Keeps frontend clean.
+- Backend can enforce rules, logging, rate-limiting.
+- Easier to update queries without redeploying frontend.
+
+---
+
+### 👎 **Avoid:**
+
+#### ❌ Direct SQL from frontend (e.g., through JS or GraphQL resolvers directly on the DB):
+- Exposes database internals
+- Performance issues
+- Harder to version/track logic
+- Massive security hole
+
+---
+
+### 🧩 When to use **Stored Procedures vs. Backend Queries**
+
+| Situation                        | Use Stored Procedure | Use Backend Code |
+|----------------------------------|----------------------|------------------|
+| Reusable business logic          | ✅                   | 🔄               |
+| Complex joins & calculations     | ✅                   | 🔄               |
+| Simple one-time query            | 🔄                   | ✅               |
+| Needs version control/auditing   | ✅                   | ✅               |
+| Needs portability across DBs     | ❌                   | ✅               |
+
+---
+
+### 📝 TL;DR
+
+**✅ Best Practice:**
+> Write **stored procedures or functions** in PostgreSQL for core logic, and **call them from your backend API**. Only send/receive clean data to/from the frontend.
+
+

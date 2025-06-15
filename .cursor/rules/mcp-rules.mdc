@@ -1,0 +1,41 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Here’s a project prompt you can use that ensures MCP servers are always utilized for testing after a code fix or new feature, without the need for code:
+
+---
+
+**Project Prompt: Use MCP Servers for Testing**
+
+**Purpose:**
+All testing, including automation and troubleshooting, must be conducted using the MCP servers to ensure consistency, diagnostics, and efficient troubleshooting during feature development or code fixes.
+
+**Instructions:**
+
+1. **MCP Server Requirement:**  
+   All testing for new features or after a code fix should be executed on the MCP servers. This ensures that the testing environment matches the production conditions and allows for better issue tracking and resolution.
+
+2. **Testing Procedures:**
+   - **Post-Code Fix/Feature Testing:** Once a code fix or new feature has been implemented, initiate testing against the MCP server environment as the primary test bed.
+   - **Automation Tasks:** Ensure that all browser automation tasks (e.g., Playwright, Selenium, etc.) are configured to use the MCP server URL or proxy settings, as applicable, for accessing resources during tests.
+   - **Monitor for Issues:** If any issues arise during testing (e.g., network failures, resource access problems), report them to the MCP system for further investigation and resolution.
+
+3. **Testing Goals:**
+   - Validate the functionality of new features or bug fixes within the MCP server environment.
+   - Ensure the integration points and communications are accurate and working as expected between components.
+   - Conduct thorough troubleshooting and gather logs from the MCP server to identify any discrepancies or issues for further analysis.
+
+4. **Automation and Logging:**
+   - Ensure that automation tools like Playwright or any testing scripts are set up to interact with the MCP server at all times.
+   - Log all results and errors to the MCP server’s logging system for centralized analysis.
+
+5. **Documentation:**
+   - Document the results of testing, including successes, failures, and any issues encountered, so that they can be reviewed and addressed if necessary.
+   - Keep the documentation aligned with the MCP server’s standards and format.
+
+**Reminder:**
+Always ensure that your test environment points to the MCP servers for consistency and reliability when troubleshooting or validating code fixes and new features.
+
+-
