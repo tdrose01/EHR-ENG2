@@ -11,6 +11,9 @@ $env:DATABASE_URL="postgres://web:password123@localhost:5432/ehr-eng2"; node ser
 
 # Start the frontend development server
 npm run dev
+
+# Create a production build
+npm run build
 ```
 
 ## 🔑 Login Credentials
@@ -27,6 +30,7 @@ After successful login, users can access two main modules:
    - Manages electronic health records
    - Features:
      - Patient Management
+     - Patient dashboard with add, view and edit actions
      - Medical Records
      - Appointment Scheduling
    - Blue-themed interface

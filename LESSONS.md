@@ -115,6 +115,11 @@
    - **Benefit**: Mobile-friendly interface with minimal custom CSS
    - **Learning**: Utility-first CSS improves development speed
 
+3. **Patient Management Dashboard**
+   - **Implementation**: In-dashboard table with add, view and edit modals
+   - **Benefit**: Streamlined workflow without page navigation
+   - **Learning**: Modals keep context while editing data
+
 ## 🔒 Security Implementation
 
 ### Authentication Flow
