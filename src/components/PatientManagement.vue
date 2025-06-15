@@ -222,7 +222,7 @@ export default {
     },
     async fetchPatients() {
       try {
-        const response = await fetch('http://localhost:3000/api/patients')
+        const response = await fetch('/api/patients')
         const data = await response.json()
         this.patients = data
       } catch (error) {
@@ -234,7 +234,7 @@ export default {
       this.searchTimeout = setTimeout(async () => {
         if (this.searchQuery.trim()) {
           try {
-            const response = await fetch(`http://localhost:3000/api/patients/search/${this.searchQuery}`)
+            const response = await fetch(`/api/patients/search/${this.searchQuery}`)
             const data = await response.json()
             this.patients = data
           } catch (error) {
@@ -262,8 +262,8 @@ export default {
     async savePatient() {
       try {
         const url = this.editingPatient
-          ? `http://localhost:3000/api/patients/${this.editingPatient.id}`
-          : 'http://localhost:3000/api/patients'
+          ? `/api/patients/${this.editingPatient.id}`
+          : '/api/patients'
         
         const response = await fetch(url, {
           method: this.editingPatient ? 'PUT' : 'POST',
@@ -289,7 +289,7 @@ export default {
     },
     async deletePatientRecord() {
       try {
-        const response = await fetch(`http://localhost:3000/api/patients/${this.deletePatient.id}`, {
+        const response = await fetch(`/api/patients/${this.deletePatient.id}`, {
           method: 'DELETE'
         })
 

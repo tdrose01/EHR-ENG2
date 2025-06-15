@@ -75,6 +75,18 @@ npm run test
 npm run test:e2e
 ```
 
+### API Test Scripts
+
+Use the provided scripts to verify API endpoints during development:
+
+```bash
+# Test login endpoint
+npm run test:login
+
+# Test patient list endpoint
+npm run test:patients
+```
+
 ## 📝 API Documentation
 
 ### Authentication Endpoints
