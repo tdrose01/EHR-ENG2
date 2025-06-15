@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-100 flex items-center justify-center">
-    <div class="max-w-2xl w-full mx-4">
+    <div v-if="!selectedModule" class="max-w-2xl w-full mx-4">
       <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Select Module</h1>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- EH Module Card -->
@@ -32,20 +32,25 @@
         </div>
       </div>
     </div>
+    <PatientDashboard v-else />
   </div>
 </template>
 
 <script>
+import PatientDashboard from './PatientDashboard.vue'
+
 export default {
   name: 'ModuleSelection',
+  components: { PatientDashboard },
+  data() {
+    return {
+      selectedModule: null
+    }
+  },
   methods: {
     selectModule(module) {
-      // Emit the selected module to the parent component
-      this.$emit('module-selected', module);
-      
-      // Navigate to the appropriate module route
-      this.$router.push(`/${module.toLowerCase()}-module`);
+      this.selectedModule = module
     }
   }
 }
-</script> 
+</script>
