@@ -1,12 +1,10 @@
 <template>
-  <LoginLanding @login="onLogin" />
+  <router-view></router-view>
 </template>
 
-<script setup>
-import LoginLanding from './components/LoginLanding.vue'
-
-function onLogin(payload) {
-  console.log('Logged in with', payload)
+<script>
+export default {
+  name: 'App'
 }
 </script>
 
