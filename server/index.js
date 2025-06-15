@@ -1,6 +1,19 @@
+try {
+  require('dotenv').config()
+} catch {
+  console.warn('dotenv not installed; skipping .env loading')
+}
+
 const express = require('express')
 const { Pool } = require('pg')
 const bcrypt = require('bcrypt')
+
+
+if (!process.env.DATABASE_URL) {
+  console.error('DATABASE_URL is not set')
+  process.exit(1)
+}
+
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL

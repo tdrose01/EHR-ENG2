@@ -21,3 +21,13 @@ CREATE TABLE login_audit (
   action TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
+
+
+-- Example admin user for testing
+INSERT INTO users (email, password_hash)
+VALUES (
+  'admin@example.com',
+  '$2b$10$jeY.en9U2c2J9gAQYZAas.yEGkAwwQ.GTsQqiQ5VLzyUASDs5MmRW'
+);
+=======
+

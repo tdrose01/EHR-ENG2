@@ -41,6 +41,32 @@ The server in `server/index.js` connects to a PostgreSQL database using the `pg`
 ```
 
 The `/api/login` endpoint accepts `email` and `password` fields for authentication.
+The server will load variables from a `.env` file if the `dotenv` package is installed. If `dotenv` is missing, set the variables manually before running `npm run dev:server`.
+
+## Database Setup
+
+1. Ensure PostgreSQL is installed and running.
+2. Execute the schema script:
+   ```bash
+   psql -f db/schema.sql
+   ```
+   This creates the `ehr-eng2` database with `users` and `login_audit` tables.
+   It also inserts a sample `admin@example.com` user with password `secret`.
+3. Copy `.env.example` to `.env` and edit the values as needed.
+4. Set `DATABASE_URL` to point at the new database before starting the server.
+
+## Login Test
+
+Start the backend with `npm run dev:server` then run this script to verify
+login. The script reads
+credentials from the `.env` file:
+
+```bash
+npm run test:login
+```
+
+If `dotenv` is missing, set `TEST_EMAIL` and `TEST_PASSWORD` in the environment before running the command. Ensure PostgreSQL is running and `DATABASE_URL` points to the database created by `db/schema.sql`.
+The script posts to `http://localhost:3000/api/login` and prints the result.
 
 ## Database Setup
 
