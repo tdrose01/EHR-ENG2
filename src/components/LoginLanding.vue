@@ -51,12 +51,14 @@ async function handleSubmit() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
-    if (!res.ok) {
-      throw new Error('Login failed')
+    const data = await res.json().catch(() => null)
+    if (!res.ok || !data?.success) {
+      const message = data?.message || `Login failed with status ${res.status}`
+      throw new Error(message)
     }
     emit('login', payload)
   } catch (error) {
-    console.error(error)
+    console.error('Login error:', error)
   }
 }
 </script>
