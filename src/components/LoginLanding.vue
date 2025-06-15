@@ -31,6 +31,7 @@
       >
         Log In
       </button>
+      <p v-if="errorMessage" class="mt-4 text-red-600 text-center">{{ errorMessage }}</p>
     </form>
   </div>
 </template>
@@ -42,6 +43,7 @@ const emit = defineEmits(['login'])
 
 const email = ref('')
 const password = ref('')
+const errorMessage = ref('')
 
 async function handleSubmit() {
   const payload = { email: email.value, password: password.value }
@@ -59,6 +61,7 @@ async function handleSubmit() {
     emit('login', payload)
   } catch (error) {
     console.error('Login error:', error)
+    errorMessage.value = error.message
   }
 }
 </script>
