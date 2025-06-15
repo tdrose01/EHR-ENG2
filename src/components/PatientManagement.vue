@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div class="container mx-auto px-4 py-8 text-gray-900 dark:text-gray-100">
     <!-- Search and Add New Patient -->
     <div class="flex justify-between items-center mb-6">
       <div class="flex-1 max-w-md">
@@ -20,36 +20,36 @@
     </div>
 
     <!-- Patients List -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="bg-white dark:bg-gray-700 rounded-lg shadow overflow-hidden">
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+        <thead class="bg-gray-50 dark:bg-gray-600">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Insurance</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Gender</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">DOB</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Contact</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Insurance</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="patient in patients" :key="patient.id" :class="{ 'bg-gray-50': !patient.is_active }">
+        <tbody class="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
+          <tr v-for="patient in patients" :key="patient.id" :class="{ 'bg-gray-50 dark:bg-gray-600': !patient.is_active }">
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900">{{ patient.first_name }} {{ patient.last_name }}</div>
+              <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ patient.first_name }} {{ patient.last_name }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{{ patient.gender }}</div>
+              <div class="text-sm text-gray-900 dark:text-gray-100">{{ patient.gender }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{{ formatDate(patient.date_of_birth) }}</div>
+              <div class="text-sm text-gray-900 dark:text-gray-100">{{ formatDate(patient.date_of_birth) }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{{ patient.phone_number }}</div>
+              <div class="text-sm text-gray-900 dark:text-gray-100">{{ patient.phone_number }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">
+              <div class="text-sm text-gray-900 dark:text-gray-100">
                 {{ patient.insurance_provider }}
-                <span class="text-gray-500">({{ patient.insurance_id }})</span>
+                <span class="text-gray-500 dark:text-gray-300">({{ patient.insurance_id }})</span>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -72,15 +72,15 @@
     </div>
 
     <!-- Add/Edit Patient Modal -->
-    <div v-if="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div v-if="showModal" class="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-75 overflow-y-auto h-full w-full">
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-700">
         <div class="mt-3">
-          <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+          <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">
             {{ editingPatient ? 'Edit Patient' : 'Add New Patient' }}
           </h3>
           <form @submit.prevent="savePatient">
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">First Name</label>
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">First Name</label>
               <input
                 type="text"
                 v-model="patientForm.first_name"
@@ -89,7 +89,7 @@
               />
             </div>
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Last Name</label>
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Last Name</label>
               <input
                 type="text"
                 v-model="patientForm.last_name"
@@ -98,7 +98,7 @@
               />
             </div>
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Gender</label>
               <select
                 v-model="patientForm.gender"
                 required
@@ -110,7 +110,7 @@
               </select>
             </div>
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Date of Birth</label>
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Date of Birth</label>
               <input
                 type="date"
                 v-model="patientForm.date_of_birth"
@@ -119,7 +119,7 @@
               />
             </div>
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Phone Number</label>
               <input
                 type="tel"
                 v-model="patientForm.phone_number"
@@ -128,7 +128,7 @@
               />
             </div>
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Insurance Provider</label>
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Insurance Provider</label>
               <input
                 type="text"
                 v-model="patientForm.insurance_provider"
@@ -137,7 +137,7 @@
               />
             </div>
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Insurance ID</label>
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Insurance ID</label>
               <input
                 type="text"
                 v-model="patientForm.insurance_id"
@@ -149,7 +149,7 @@
               <button
                 type="button"
                 @click="closeModal"
-                class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 mr-2"
+                class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 mr-2"
               >
                 Cancel
               </button>
@@ -166,17 +166,17 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Confirm Delete</h3>
-        <p class="text-sm text-gray-500">
+    <div v-if="showDeleteModal" class="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-75 overflow-y-auto h-full w-full">
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-700">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">Confirm Delete</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-300">
           Are you sure you want to delete {{ deletePatient?.first_name }} {{ deletePatient?.last_name }}?
           This action cannot be undone.
         </p>
         <div class="flex justify-end mt-6">
           <button
             @click="showDeleteModal = false"
-            class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 mr-2"
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 mr-2"
           >
             Cancel
           </button>

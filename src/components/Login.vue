@@ -1,11 +1,11 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex items-center justify-center">
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-gray-100">
     <div class="max-w-md w-full mx-4">
-      <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Login</h1>
-      <div class="bg-white rounded-lg shadow-lg p-6">
+      <h1 class="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">Login</h1>
+      <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6">
         <form @submit.prevent="handleLogin" class="space-y-6">
           <div>
-            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
             <input
               type="email"
               id="email"
@@ -16,7 +16,7 @@
           </div>
           
           <div>
-            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
             <input
               type="password"
               id="password"
