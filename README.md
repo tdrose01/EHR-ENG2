@@ -97,6 +97,8 @@ The backend server requires the following environment variables:
    - Verify PostgreSQL is running
    - Check DATABASE_URL in .env file
    - Ensure database user has proper permissions
+5. **Build fails with missing optional dependencies**
+   - Run `npm install` again to fetch optional binaries
 
 ## Database Setup
 

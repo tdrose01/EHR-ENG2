@@ -31,6 +31,7 @@
       >
         Log In
       </button>
+      <p v-if="errorMessage" class="mt-4 text-red-600 text-center">{{ errorMessage }}</p>
     </form>
   </div>
 </template>
@@ -42,6 +43,7 @@ const emit = defineEmits(['login'])
 
 const email = ref('')
 const password = ref('')
+const errorMessage = ref('')
 
 async function handleSubmit() {
   const payload = { email: email.value, password: password.value }
@@ -51,12 +53,15 @@ async function handleSubmit() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
-    if (!res.ok) {
-      throw new Error('Login failed')
+    const data = await res.json().catch(() => null)
+    if (!res.ok || !data?.success) {
+      const message = data?.message || `Login failed with status ${res.status}`
+      throw new Error(message)
     }
     emit('login', payload)
   } catch (error) {
-    console.error(error)
+    console.error('Login error:', error)
+    errorMessage.value = error.message
   }
 }
 </script>
