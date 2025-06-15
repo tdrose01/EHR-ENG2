@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-    <div v-if="!selectedModule" class="max-w-2xl w-full mx-4">
+    <div class="max-w-2xl w-full mx-4">
       <h1 class="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">Select Module</h1>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- EH Module Card -->
-        <div 
-          @click="selectModule('EH')"
+        <div
+          @click="goToModule('EH')"
           class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
         >
           <h2 class="text-2xl font-semibold text-blue-600 mb-3">EH Module</h2>
@@ -18,8 +18,8 @@
         </div>
 
         <!-- RH Module Card -->
-        <div 
-          @click="selectModule('RH')"
+        <div
+          @click="goToModule('RH')"
           class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
         >
           <h2 class="text-2xl font-semibold text-green-600 mb-3">RH Module</h2>
@@ -32,24 +32,16 @@
         </div>
       </div>
     </div>
-    <PatientDashboard v-else />
   </div>
 </template>
 
 <script>
-import PatientDashboard from './PatientDashboard.vue'
-
 export default {
   name: 'ModuleSelection',
-  components: { PatientDashboard },
-  data() {
-    return {
-      selectedModule: null
-    }
-  },
   methods: {
-    selectModule(module) {
-      this.selectedModule = module
+    goToModule(module) {
+      const path = module === 'EH' ? '/eh-module' : '/rh-module'
+      this.$router.push(path)
     }
   }
 }
