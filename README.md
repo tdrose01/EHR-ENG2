@@ -6,8 +6,12 @@
 # Install dependencies
 npm install
 
+# Copy environment configuration
+cp .env.example .env
+# Update DATABASE_URL with your Postgres credentials
+
 # Start the backend server
-$env:DATABASE_URL="postgres://web:password123@localhost:5432/ehr-eng2"; node server/index.js
+node server/index.js
 
 # Start the frontend development server
 npm run dev

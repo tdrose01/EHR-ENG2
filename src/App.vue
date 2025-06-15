@@ -1,5 +1,4 @@
 <template>
-
   <div>
     <header class="p-4">
       <button
@@ -10,12 +9,13 @@
       </button>
     </header>
 
-  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-    <div class="p-4 text-right">
-      <ThemeSwitcher />
-    </div>
+    <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <div class="p-4 text-right">
+        <ThemeSwitcher />
+      </div>
 
-    <router-view></router-view>
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -27,14 +27,15 @@ const router = useRouter()
 
 function goBack() {
   router.back()
-=======
+}
+</script>
+
 <script>
 import ThemeSwitcher from './components/ThemeSwitcher.vue'
 
 export default {
   name: 'App',
   components: { ThemeSwitcher }
-
 }
 </script>
 

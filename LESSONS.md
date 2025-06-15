@@ -15,9 +15,10 @@
    ```
 
 2. **Environment Variables**
-   - **Challenge**: Secure credential management
-   - **Solution**: Implemented .env file with DATABASE_URL
-   - **Learning**: Never commit sensitive credentials, use environment variables
+  - **Challenge**: Secure credential management
+  - **Solution**: Implemented .env file with DATABASE_URL
+  - **Learning**: Never commit sensitive credentials, use environment variables
+  - **Tip**: Copy `.env.example` to `.env` and update credentials locally
 
 ## 🌐 CORS & API Security
 
