@@ -52,6 +52,11 @@ After successful login, users can access two main modules:
      - Facility Management
    - Green-themed interface
 
+3. **Settings**
+  - Access via `/settings` route
+  - Visible only to admin users
+  - Allows admins to change any user's password
+
 ## 🏗️ Project Structure
 
 ```
@@ -105,7 +110,7 @@ npm run test:patients
 
 #### POST /api/login
 - Request body: `{ email: string, password: string }`
-- Response: `{ success: boolean, message?: string }`
+- Response: `{ success: boolean, role?: string, userId?: number, message?: string }`
 
 ### Patient Management Endpoints
 
@@ -134,6 +139,16 @@ npm run test:patients
 #### GET /api/patients/search/:query
 - Searches patients by name or insurance ID
 - Response: Array of matching patient objects
+
+### Admin Endpoints
+
+#### GET /api/admin/users
+  - Query parameters: `adminEmail`, `adminPassword`
+  - Response: Array of `{ id, email }`
+
+#### PUT /api/admin/users/:id/password
+  - Request body: `{ adminEmail: string, adminPassword: string, newPassword: string }`
+  - Response: `{ success: boolean }`
 
 ## 🛠️ Development
 

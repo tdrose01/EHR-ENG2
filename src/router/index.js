@@ -4,6 +4,7 @@ import ModuleSelection from '../components/ModuleSelection.vue'
 import EHModule from '../components/EHModule.vue'
 import RHModule from '../components/RHModule.vue'
 import PatientManagement from '../components/PatientManagement.vue'
+import Settings from '../components/Settings.vue'
 
 const routes = [
   {
@@ -33,6 +34,12 @@ const routes = [
     path: '/patients',
     name: 'PatientManagement',
     component: PatientManagement,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
     meta: { requiresAuth: true }
   }
 ]
