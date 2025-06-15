@@ -32,10 +32,11 @@ After successful login, users can access two main modules:
    - Access via `/eh-module` route
    - Manages electronic health records
    - Features:
-     - Patient Management
-     - Patient dashboard with add, view and edit actions
-     - Medical Records
-     - Appointment Scheduling
+    - Patient Management
+    - Patient dashboard with add, view and edit actions
+    - Automatic phone number formatting in forms
+    - Medical Records
+    - Appointment Scheduling
    - Blue-themed interface
 
 2. **RH Module (Resource & Hospital)**
@@ -137,6 +138,7 @@ npm run test:patients
 - JavaScript follows camelCase convention
 - CSS uses Tailwind utility classes
 - Follows ESLint configuration
+- Phone numbers are stored as digits and formatted to `(XXX)-XXX-XXXX` in the UI
 
 ### Branch Strategy
 - main: Production-ready code

@@ -99,7 +99,7 @@
               <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Phone Number</label>
               <input
                 type="tel"
-                v-model="patientForm.phone_number"
+                v-model="formattedPhoneNumber"
                 required
                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -175,6 +175,22 @@ export default {
       editingPatient: null,
       viewPatientData: {},
       patientForm: this.getEmptyForm()
+    }
+  },
+  computed: {
+    formattedPhoneNumber: {
+      get() {
+        const digits = this.patientForm.phone_number
+        if (!digits) return ''
+        const cleaned = digits.replace(/\D/g, '').slice(0, 10)
+        const len = cleaned.length
+        if (len <= 3) return `(${cleaned}`
+        if (len <= 6) return `(${cleaned.slice(0, 3)})-${cleaned.slice(3)}`
+        return `(${cleaned.slice(0, 3)})-${cleaned.slice(3, 6)}-${cleaned.slice(6)}`
+      },
+      set(value) {
+        this.patientForm.phone_number = value.replace(/\D/g, '').slice(0, 10)
+      }
     }
   },
   methods: {
