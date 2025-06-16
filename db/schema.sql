@@ -57,6 +57,13 @@ CREATE TABLE IF NOT EXISTS patients (
     gender VARCHAR(50),
     marital_status marital_status_enum,
     blood_type blood_type_enum,
+    rh_factor VARCHAR,
+    duty_status VARCHAR,
+    pid VARCHAR UNIQUE,
+    paygrade VARCHAR,
+    ethnicity VARCHAR,
+    religion VARCHAR,
+    dod_id BIGINT UNIQUE,
     date_of_birth DATE NOT NULL,
     phone_number VARCHAR(20),
     is_active BOOLEAN DEFAULT true,
@@ -92,12 +99,19 @@ INSERT INTO patients (
   gender,
   marital_status,
   blood_type,
+  rh_factor,
+  duty_status,
+  pid,
+  paygrade,
+  ethnicity,
+  religion,
+  dod_id,
   date_of_birth,
   phone_number,
   is_active
 )
 VALUES
-  ('John', 'Doe', 'Male', 'Married', 'O+', '1980-01-15', '555-0123', true),
-  ('Jane', 'Smith', 'Female', 'Single', 'A+', '1992-05-22', '555-0124', true)
+  ('John', 'Doe', 'Male', 'Married', 'O+', 'Positive', 'Active', 'JD123', 'E3', 'Caucasian', 'None', 123456789, '1980-01-15', '555-0123', true),
+  ('Jane', 'Smith', 'Female', 'Single', 'A+', 'Negative', 'Reserve', 'JS456', 'O2', 'Asian', 'Christian', 987654321, '1992-05-22', '555-0124', true)
 ON CONFLICT DO NOTHING;
 

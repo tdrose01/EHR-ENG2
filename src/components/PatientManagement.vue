@@ -71,101 +71,11 @@
           <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">
             {{ editingPatient ? 'Edit Patient' : 'Add New Patient' }}
           </h3>
-          <form @submit.prevent="savePatient">
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">First Name</label>
-              <input
-                type="text"
-                v-model="patientForm.first_name"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Last Name</label>
-              <input
-                type="text"
-                v-model="patientForm.last_name"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Gender</label>
-              <select
-                v-model="patientForm.gender"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Marital Status</label>
-              <select
-                v-model="patientForm.marital_status"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              >
-                <option value="Single">Single</option>
-                <option value="Married">Married</option>
-                <option value="Divorced">Divorced</option>
-                <option value="Widowed">Widowed</option>
-              </select>
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Blood Type</label>
-              <select
-                v-model="patientForm.blood_type"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              >
-                <option value="A+">A+</option>
-                <option value="A-">A-</option>
-                <option value="B+">B+</option>
-                <option value="B-">B-</option>
-                <option value="AB+">AB+</option>
-                <option value="AB-">AB-</option>
-                <option value="O+">O+</option>
-                <option value="O-">O-</option>
-              </select>
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Date of Birth</label>
-              <input
-                type="date"
-                v-model="patientForm.date_of_birth"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Phone Number</label>
-              <input
-                type="tel"
-                v-model="formattedPhoneNumber"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-            </div>
-            <div class="flex justify-end mt-6">
-              <button
-                type="button"
-                @click="closeModal"
-                class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 mr-2"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                {{ editingPatient ? 'Update' : 'Add' }}
-              </button>
-            </div>
-          </form>
+          <AddPatientForm
+            :patient="editingPatient"
+            @saved="handleFormSaved"
+            @cancel="closeModal"
+          />
         </div>
       </div>
     </div>
@@ -198,8 +108,11 @@
 </template>
 
 <script>
+import AddPatientForm from './AddPatientForm.vue'
+
 export default {
   name: 'PatientManagement',
+  components: { AddPatientForm },
   data() {
     return {
       patients: [],
@@ -236,6 +149,13 @@ export default {
         gender: '',
         marital_status: '',
         blood_type: '',
+        rh_factor: '',
+        duty_status: '',
+        pid: '',
+        paygrade: '',
+        ethnicity: '',
+        religion: '',
+        dod_id: null,
         date_of_birth: '',
         phone_number: '',
         is_active: true
@@ -280,30 +200,6 @@ export default {
       this.patientForm.date_of_birth = new Date(patient.date_of_birth).toISOString().split('T')[0]
       this.showModal = true
     },
-    async savePatient() {
-      try {
-        const url = this.editingPatient
-          ? `/api/patients/${this.editingPatient.id}`
-          : '/api/patients'
-        
-        const response = await fetch(url, {
-          method: this.editingPatient ? 'PUT' : 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(this.patientForm)
-        })
-
-        if (response.ok) {
-          this.closeModal()
-          this.fetchPatients()
-        } else {
-          console.error('Error saving patient:', await response.text())
-        }
-      } catch (error) {
-        console.error('Error saving patient:', error)
-      }
-    },
     confirmDelete(patient) {
       this.deletePatient = patient
       this.showDeleteModal = true
@@ -328,6 +224,10 @@ export default {
       this.showModal = false
       this.editingPatient = null
       this.patientForm = this.getEmptyPatientForm()
+    },
+    handleFormSaved() {
+      this.closeModal()
+      this.fetchPatients()
     }
   },
   mounted() {
