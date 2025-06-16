@@ -87,6 +87,36 @@
               </select>
             </div>
             <div class="mb-4">
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Marital Status</label>
+              <select
+                v-model="patientForm.marital_status"
+                required
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Widowed">Widowed</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Blood Type</label>
+              <select
+                v-model="patientForm.blood_type"
+                required
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+            </div>
+            <div class="mb-4">
               <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Date of Birth</label>
               <input
                 type="date"
@@ -148,6 +178,8 @@
         <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">Patient Details</h3>
         <p class="text-sm mb-1"><span class="font-semibold">Name:</span> {{ viewPatientData.first_name }} {{ viewPatientData.last_name }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Gender:</span> {{ viewPatientData.gender }}</p>
+        <p class="text-sm mb-1"><span class="font-semibold">Marital Status:</span> {{ viewPatientData.marital_status }}</p>
+        <p class="text-sm mb-1"><span class="font-semibold">Blood Type:</span> {{ viewPatientData.blood_type }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">DOB:</span> {{ formatDate(viewPatientData.date_of_birth) }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Phone:</span> {{ viewPatientData.phone_number }}</p>
         <p class="text-sm"><span class="font-semibold">Insurance:</span> {{ viewPatientData.insurance_provider }} ({{ viewPatientData.insurance_id }})</p>
@@ -199,6 +231,8 @@ export default {
         first_name: '',
         last_name: '',
         gender: '',
+        marital_status: '',
+        blood_type: '',
         date_of_birth: '',
         phone_number: '',
         insurance_provider: '',

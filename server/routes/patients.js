@@ -42,6 +42,8 @@ router.post('/', async (req, res) => {
       first_name,
       last_name,
       gender,
+      marital_status,
+      blood_type,
       date_of_birth,
       phone_number,
       insurance_provider,
@@ -51,11 +53,11 @@ router.post('/', async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO patients (
-        first_name, last_name, gender, date_of_birth,
+        first_name, last_name, gender, marital_status, blood_type, date_of_birth,
         phone_number, insurance_provider, insurance_id, is_active
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-      [first_name, last_name, gender, date_of_birth, phone_number, 
-       insurance_provider, insurance_id, is_active ?? true]
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+      [first_name, last_name, gender, marital_status, blood_type, date_of_birth,
+       phone_number, insurance_provider, insurance_id, is_active ?? true]
     );
 
     res.status(201).json(result.rows[0]);
@@ -73,6 +75,8 @@ router.put('/:id', async (req, res) => {
       first_name,
       last_name,
       gender,
+      marital_status,
+      blood_type,
       date_of_birth,
       phone_number,
       insurance_provider,
@@ -85,14 +89,16 @@ router.put('/:id', async (req, res) => {
         first_name = $1,
         last_name = $2,
         gender = $3,
-        date_of_birth = $4,
-        phone_number = $5,
-        insurance_provider = $6,
-        insurance_id = $7,
-        is_active = $8
-      WHERE id = $9 RETURNING *`,
-      [first_name, last_name, gender, date_of_birth, phone_number,
-       insurance_provider, insurance_id, is_active, id]
+        marital_status = $4,
+        blood_type = $5,
+        date_of_birth = $6,
+        phone_number = $7,
+        insurance_provider = $8,
+        insurance_id = $9,
+        is_active = $10
+      WHERE id = $11 RETURNING *`,
+      [first_name, last_name, gender, marital_status, blood_type, date_of_birth,
+       phone_number, insurance_provider, insurance_id, is_active, id]
     );
 
     if (result.rows.length === 0) {
