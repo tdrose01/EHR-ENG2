@@ -34,10 +34,10 @@ export default {
       try {
         const res = await fetch('/api/v1/health/status')
         const data = await res.json()
-        if (!res.ok) throw new Error()
         status.value = data
       } catch (err) {
         error.value = 'Failed to load system status'
+        console.error('Health status error:', err)
       } finally {
         loading.value = false
       }

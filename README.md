@@ -59,7 +59,7 @@ After successful login, users can access two main modules:
 
 4. **System Status**
   - Access via `/status` route
-  - Displays API and database availability
+  - Displays API and database availability even when the database is offline
 
 ## 🏗️ Project Structure
 
@@ -79,7 +79,7 @@ ehr-eng2/
 ## 🔒 Security Features
 
 - CORS protection
-- Password hashing with bcrypt
+ - Password hashing with bcryptjs
 - SQL injection prevention
 - XSS protection
 - CSRF protection
@@ -148,7 +148,7 @@ npm run test:patients
 
 #### GET /api/v1/health/status
   - Returns `{ api: "online", database: "online" }` when services are healthy
-  - Responds with `503` and `database: "offline"` if the database is down
+  - Returns `{ api: "online", database: "offline" }` with status `503` if the database is down
 
 ### Admin Endpoints
 

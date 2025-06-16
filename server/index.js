@@ -6,7 +6,7 @@ try {
 
 const express = require('express')
 const { Pool } = require('pg')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const cors = require('cors')
 const pool = require('./db')
 
