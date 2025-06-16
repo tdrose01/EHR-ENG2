@@ -59,9 +59,10 @@ router.post('/', async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO patients (
-        first_name, last_name, gender, blood_type, rh_factor,
-        duty_status, pid, paygrade, branch_of_service, ethnicity, religion,
-        dod_id, date_of_birth, phone_number, is_active
+        first_name, last_name, gender, marital_status, blood_type, rh_factor,
+        duty_status, pid, paygrade, branch_of_service, ethnicity, religion, dod_id, date_of_birth,
+        phone_number, is_active
+
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
       ) RETURNING *`,

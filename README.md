@@ -38,7 +38,7 @@ After successful login, users can access two main modules:
    - Manages electronic health records
    - Features:
      - Patient Management
-     - Patient dashboard with add, view and edit actions
+    - Patient dashboard displays a DoD Id column with add, view and edit actions
      - Complete patient information including:
        - Personal details (name, gender)
        - Medical information (blood type, RH factor)
@@ -84,7 +84,7 @@ ehr-eng2/
 │   ├── components/     # Vue components
 │   └── router/         # Vue router configuration
 ├── db/                 # Database migrations and schemas
-│   └── patients table with duty status, PID, paygrade, branch of service, ethnicity, religion, RH factor and DoD ID fields
+│   └── patients table with duty status, PID, paygrade, branch_of_service, ethnicity, religion, RH factor and DoD ID fields
 ├── scripts/           # Server management scripts
 └── public/            # Static assets
 ```
