@@ -38,7 +38,7 @@ After successful login, users can access two main modules:
    - Manages electronic health records
    - Features:
      - Patient Management
-     - Patient dashboard with add, view and edit actions
+    - Patient dashboard displays a DoD Id column with add, view and edit actions
      - Complete patient information including:
        - Personal details (name, gender)
        - Medical information (blood type, RH factor)
