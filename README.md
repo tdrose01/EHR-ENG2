@@ -84,7 +84,7 @@ ehr-eng2/
 │   ├── components/     # Vue components
 │   └── router/         # Vue router configuration
 ├── db/                 # Database migrations and schemas
-│   └── patients table with duty status, PID, paygrade, branch of service, ethnicity, religion, RH factor and DoD ID fields
+│   └── patients table with duty status, PID, paygrade, branch_of_service, ethnicity, religion, RH factor and DoD ID fields
 ├── scripts/           # Server management scripts
 └── public/            # Static assets
 ```

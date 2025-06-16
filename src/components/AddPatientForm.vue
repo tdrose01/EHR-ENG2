@@ -69,14 +69,15 @@
     </div>
     <div>
       <label class="block text-sm font-bold mb-1">Branch of Service</label>
-      <select v-model="form.branch_of_service" data-test="branch-select" class="w-full px-3 py-2 border rounded">
-        <option value="">None</option>
+      <select v-model="form.branch_of_service" class="w-full px-3 py-2 border rounded">
+        <option value="">Select</option>
         <option value="Army">Army</option>
-        <option value="Marine Corps">Marine Corps</option>
         <option value="Navy">Navy</option>
         <option value="Air Force">Air Force</option>
-        <option value="Space Force">Space Force</option>
+        <option value="Marines">Marines</option>
         <option value="Coast Guard">Coast Guard</option>
+        <option value="Space Force">Space Force</option>
+        lue="Coast Guard">Coast Guard</option>
       </select>
     </div>
     <div>

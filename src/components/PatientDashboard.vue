@@ -16,6 +16,8 @@
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Name</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Gender</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Paygrade</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Branch</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">DOB</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Phone</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Actions</th>
@@ -25,6 +27,8 @@
           <tr v-for="patient in patients" :key="patient.id">
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.first_name }} {{ patient.last_name }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.gender }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ patient.paygrade }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ patient.branch_of_service }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(patient.date_of_birth) }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.phone_number }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -98,6 +102,33 @@
               </select>
             </div>
             <div class="mb-4">
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Paygrade</label>
+              <select
+                v-model="patientForm.paygrade"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              >
+                <option value="E1">E1</option>
+                <option value="E2">E2</option>
+                <option value="E3">E3</option>
+                <option value="O1">O1</option>
+                <option value="O2">O2</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Branch of Service</label>
+              <select
+                v-model="patientForm.branch_of_service"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              >
+                <option value="Army">Army</option>
+                <option value="Navy">Navy</option>
+                <option value="Air Force">Air Force</option>
+                <option value="Marines">Marines</option>
+                <option value="Coast Guard">Coast Guard</option>
+                <option value="Space Force">Space Force</option>
+              </select>
+            </div>
+            <div class="mb-4">
               <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Blood Type</label>
               <select
                 v-model="patientForm.blood_type"
@@ -158,6 +189,8 @@
         <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">Patient Details</h3>
         <p class="text-sm mb-1"><span class="font-semibold">Name:</span> {{ viewPatientData.first_name }} {{ viewPatientData.last_name }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Gender:</span> {{ viewPatientData.gender }}</p>
+        <p class="text-sm mb-1"><span class="font-semibold">Paygrade:</span> {{ viewPatientData.paygrade }}</p>
+        <p class="text-sm mb-1"><span class="font-semibold">Branch:</span> {{ viewPatientData.branch_of_service }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Marital Status:</span> {{ viewPatientData.marital_status }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Blood Type:</span> {{ viewPatientData.blood_type }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">DOB:</span> {{ formatDate(viewPatientData.date_of_birth) }}</p>
@@ -212,6 +245,8 @@ export default {
         gender: '',
         marital_status: '',
         blood_type: '',
+        paygrade: '',
+        branch_of_service: '',
         date_of_birth: '',
         phone_number: ''
       }
