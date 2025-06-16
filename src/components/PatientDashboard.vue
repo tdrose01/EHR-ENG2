@@ -18,7 +18,6 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Gender</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">DOB</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Phone</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Insurance</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
@@ -28,7 +27,6 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.gender }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(patient.date_of_birth) }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.phone_number }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ patient.insurance_provider }} ({{ patient.insurance_id }})</td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button
                 @click="viewPatient(patient)"
@@ -134,24 +132,6 @@
                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
             </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Insurance Provider</label>
-              <input
-                type="text"
-                v-model="patientForm.insurance_provider"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Insurance ID</label>
-              <input
-                type="text"
-                v-model="patientForm.insurance_id"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-            </div>
             <div class="flex justify-end mt-6">
               <button
                 type="button"
@@ -182,8 +162,7 @@
         <p class="text-sm mb-1"><span class="font-semibold">Blood Type:</span> {{ viewPatientData.blood_type }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">DOB:</span> {{ formatDate(viewPatientData.date_of_birth) }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Phone:</span> {{ viewPatientData.phone_number }}</p>
-        <p class="text-sm"><span class="font-semibold">Insurance:</span> {{ viewPatientData.insurance_provider }} ({{ viewPatientData.insurance_id }})</p>
-        <div class="flex justify-end mt-6">
+          <div class="flex justify-end mt-6">
           <button
             @click="closeViewModal"
             class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -234,9 +213,7 @@ export default {
         marital_status: '',
         blood_type: '',
         date_of_birth: '',
-        phone_number: '',
-        insurance_provider: '',
-        insurance_id: ''
+        phone_number: ''
       }
     },
     formatDate(date) {

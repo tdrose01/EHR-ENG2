@@ -46,18 +46,16 @@ router.post('/', async (req, res) => {
       blood_type,
       date_of_birth,
       phone_number,
-      insurance_provider,
-      insurance_id,
       is_active
     } = req.body;
 
     const result = await pool.query(
       `INSERT INTO patients (
         first_name, last_name, gender, marital_status, blood_type, date_of_birth,
-        phone_number, insurance_provider, insurance_id, is_active
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+        phone_number, is_active
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
       [first_name, last_name, gender, marital_status, blood_type, date_of_birth,
-       phone_number, insurance_provider, insurance_id, is_active ?? true]
+       phone_number, is_active ?? true]
     );
 
     res.status(201).json(result.rows[0]);
@@ -79,8 +77,6 @@ router.put('/:id', async (req, res) => {
       blood_type,
       date_of_birth,
       phone_number,
-      insurance_provider,
-      insurance_id,
       is_active
     } = req.body;
 
@@ -93,12 +89,10 @@ router.put('/:id', async (req, res) => {
         blood_type = $5,
         date_of_birth = $6,
         phone_number = $7,
-        insurance_provider = $8,
-        insurance_id = $9,
-        is_active = $10
-      WHERE id = $11 RETURNING *`,
+        is_active = $8
+      WHERE id = $9 RETURNING *`,
       [first_name, last_name, gender, marital_status, blood_type, date_of_birth,
-       phone_number, insurance_provider, insurance_id, is_active, id]
+       phone_number, is_active, id]
     );
 
     if (result.rows.length === 0) {
@@ -137,10 +131,9 @@ router.get('/search/:query', async (req, res) => {
   try {
     const { query } = req.params;
     const result = await pool.query(
-      `SELECT * FROM patients 
-       WHERE (LOWER(first_name) LIKE LOWER($1) 
-       OR LOWER(last_name) LIKE LOWER($1)
-       OR LOWER(insurance_id) LIKE LOWER($1))
+      `SELECT * FROM patients
+       WHERE (LOWER(first_name) LIKE LOWER($1)
+       OR LOWER(last_name) LIKE LOWER($1))
        AND is_active = true
        ORDER BY last_name, first_name`,
       [`%${query}%`]
