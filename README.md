@@ -43,7 +43,8 @@ After successful login, users can access two main modules:
        - Personal details (name, gender)
        - Medical information (blood type)
        - Demographics (marital status)
-       - Contact information (phone)
+      - Contact information (phone)
+      - Additional details (FMPC, Rank)
      - Automatic phone number formatting in forms
      - Dark mode support with proper contrast
      - Medical Records
@@ -101,6 +102,7 @@ ehr-eng2/
     - Marital Status (Single, Married, Divorced, Widowed)
     - Blood Type (A+, A-, B+, B-, AB+, AB-, O+, O-)
   - Automatic phone number formatting
+  - Optional FMPC and Rank fields
 
 ## 🔒 Security Features
 

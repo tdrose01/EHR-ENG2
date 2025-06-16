@@ -115,6 +115,22 @@
               </select>
             </div>
             <div class="mb-4">
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">FMPC</label>
+              <input
+                type="text"
+                v-model="patientForm.fmpc"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Rank</label>
+              <input
+                type="text"
+                v-model="patientForm.rank"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              />
+            </div>
+            <div class="mb-4">
               <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Date of Birth</label>
               <input
                 type="date"
@@ -212,6 +228,8 @@ export default {
         gender: '',
         marital_status: '',
         blood_type: '',
+        fmpc: '',
+        rank: '',
         date_of_birth: '',
         phone_number: ''
       }
@@ -237,6 +255,8 @@ export default {
       this.patientForm = { ...patient }
       this.patientForm.date_of_birth =
         new Date(patient.date_of_birth).toISOString().split('T')[0]
+      this.patientForm.fmpc = patient.fmpc || ''
+      this.patientForm.rank = patient.rank || ''
       this.showModal = true
     },
     async savePatient() {
