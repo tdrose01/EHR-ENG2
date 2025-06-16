@@ -188,14 +188,18 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error', details: err.message });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log('Available routes:');
-  console.log('- GET    /api/patients');
-  console.log('- GET    /api/patients/:id');
-  console.log('- POST   /api/patients');
-  console.log('- PUT    /api/patients/:id');
-  console.log('- DELETE /api/patients/:id');
-  console.log('- GET    /api/patients/search/:query');
-  console.log('- GET    /api/v1/health/status');
-})
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`)
+    console.log('Available routes:')
+    console.log('- GET    /api/patients')
+    console.log('- GET    /api/patients/:id')
+    console.log('- POST   /api/patients')
+    console.log('- PUT    /api/patients/:id')
+    console.log('- DELETE /api/patients/:id')
+    console.log('- GET    /api/patients/search/:query')
+    console.log('- GET    /api/v1/health/status')
+  })
+}
+
+module.exports = app
