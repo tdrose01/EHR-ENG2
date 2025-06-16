@@ -103,7 +103,7 @@ ehr-eng2/
     - Blood Type (A+, A-, B+, B-, AB+, AB-, O+, O-)
     - Duty Status (Active, Reserve, Retired)
     - Paygrade (E1, E2, E3, O1, O2)
-    - Branch of Service (Army, Navy, Air Force, Marines, Coast Guard, Space Force)
+    - Branch of Service (None, Army, Marine Corps, Navy, Air Force, Space Force, Coast Guard)
     - RH Factor (Positive, Negative)
   - Additional fields for PID, DoD ID, Ethnicity and Religion
   - Automatic phone number formatting
@@ -162,7 +162,7 @@ npm run test:patients
 - Creates new patient record
 - Request body: Patient object
 - Fields include first and last name, gender, marital status, blood type, RH factor,
-  duty status, PID, paygrade, branch_of_service, ethnicity, religion, DoD ID, date of birth and phone number
+  duty status, PID, paygrade, branch of service, ethnicity, religion, DoD ID, date of birth and phone number
 - Response: Created patient object
 
 #### PUT /api/patients/:id

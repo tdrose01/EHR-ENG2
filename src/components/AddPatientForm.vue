@@ -77,6 +77,7 @@
         <option value="Marines">Marines</option>
         <option value="Coast Guard">Coast Guard</option>
         <option value="Space Force">Space Force</option>
+        lue="Coast Guard">Coast Guard</option>
       </select>
     </div>
     <div>
