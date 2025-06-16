@@ -59,8 +59,6 @@ CREATE TABLE IF NOT EXISTS patients (
     blood_type blood_type_enum,
     date_of_birth DATE NOT NULL,
     phone_number VARCHAR(20),
-    insurance_provider VARCHAR(100),
-    insurance_id VARCHAR(50),
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -68,7 +66,6 @@ CREATE TABLE IF NOT EXISTS patients (
 
 -- Add index for common queries
 CREATE INDEX IF NOT EXISTS idx_patients_name ON patients(last_name, first_name);
-CREATE INDEX IF NOT EXISTS idx_patients_insurance ON patients(insurance_provider, insurance_id);
 
 -- Add trigger to update the updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -97,12 +94,10 @@ INSERT INTO patients (
   blood_type,
   date_of_birth,
   phone_number,
-  insurance_provider,
-  insurance_id,
   is_active
 )
 VALUES
-  ('John', 'Doe', 'Male', 'Married', 'O+', '1980-01-15', '555-0123', 'Blue Cross', 'BC123456', true),
-  ('Jane', 'Smith', 'Female', 'Single', 'A+', '1992-05-22', '555-0124', 'Aetna', 'AE789012', true)
+  ('John', 'Doe', 'Male', 'Married', 'O+', '1980-01-15', '555-0123', true),
+  ('Jane', 'Smith', 'Female', 'Single', 'A+', '1992-05-22', '555-0124', true)
 ON CONFLICT DO NOTHING;
 

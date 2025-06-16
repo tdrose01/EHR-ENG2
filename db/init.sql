@@ -22,8 +22,6 @@ CREATE TABLE IF NOT EXISTS patients (
     gender VARCHAR(50),
     date_of_birth DATE,
     phone_number VARCHAR(20),
-    insurance_provider VARCHAR(100),
-    insurance_id VARCHAR(100),
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

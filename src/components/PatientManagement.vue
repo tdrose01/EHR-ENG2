@@ -28,7 +28,6 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Gender</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">DOB</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Contact</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Insurance</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
@@ -46,13 +45,7 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm text-gray-900 dark:text-gray-100">{{ patient.phone_number }}</div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900 dark:text-gray-100">
-                {{ patient.insurance_provider }}
-                <span class="text-gray-500 dark:text-gray-300">({{ patient.insurance_id }})</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button
                 @click="editPatient(patient)"
                 class="text-blue-600 hover:text-blue-900 mr-4"
@@ -157,24 +150,6 @@
                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
             </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Insurance Provider</label>
-              <input
-                type="text"
-                v-model="patientForm.insurance_provider"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Insurance ID</label>
-              <input
-                type="text"
-                v-model="patientForm.insurance_id"
-                required
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              />
-            </div>
             <div class="flex justify-end mt-6">
               <button
                 type="button"
@@ -263,8 +238,6 @@ export default {
         blood_type: '',
         date_of_birth: '',
         phone_number: '',
-        insurance_provider: '',
-        insurance_id: '',
         is_active: true
       }
     },

@@ -44,7 +44,6 @@ After successful login, users can access two main modules:
        - Medical information (blood type)
        - Demographics (marital status)
        - Contact information (phone)
-       - Insurance details
      - Automatic phone number formatting in forms
      - Dark mode support with proper contrast
      - Medical Records
@@ -156,7 +155,7 @@ npm run test:patients
 #### POST /api/patients
 - Creates new patient record
 - Request body: Patient object
-- Fields include first and last name, gender, marital status, blood type, date of birth and insurance info
+- Fields include first and last name, gender, marital status, blood type, and date of birth
 - Response: Created patient object
 
 #### PUT /api/patients/:id
@@ -170,7 +169,7 @@ npm run test:patients
 - Response: Success message
 
 #### GET /api/patients/search/:query
-- Searches patients by name or insurance ID
+- Searches patients by name
 - Response: Array of matching patient objects
 
 ### Health Endpoints
