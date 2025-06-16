@@ -3,9 +3,9 @@
 ## 🔒 Authentication & Security
 
 ### Password Hashing Challenges
-1. **bcrypt Implementation**
+1. **bcryptjs Implementation**
    - **Challenge**: Initial bcrypt password comparison failures
-   - **Solution**: Implemented robust password comparison with fallback verification
+   - **Solution**: Switched to bcryptjs for easier deployment and added fallback verification
    - **Learning**: Always verify bcrypt hash generation and comparison in isolation
    ```javascript
    // Improved password verification
