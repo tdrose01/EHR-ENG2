@@ -44,6 +44,13 @@ router.post('/', async (req, res) => {
       gender,
       marital_status,
       blood_type,
+      rh_factor,
+      duty_status,
+      pid,
+      paygrade,
+      ethnicity,
+      religion,
+      dod_id,
       date_of_birth,
       phone_number,
       is_active
@@ -51,11 +58,29 @@ router.post('/', async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO patients (
-        first_name, last_name, gender, marital_status, blood_type, date_of_birth,
+        first_name, last_name, gender, marital_status, blood_type, rh_factor,
+        duty_status, pid, paygrade, ethnicity, religion, dod_id, date_of_birth,
         phone_number, is_active
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-      [first_name, last_name, gender, marital_status, blood_type, date_of_birth,
-       phone_number, is_active ?? true]
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
+      ) RETURNING *`,
+      [
+        first_name,
+        last_name,
+        gender,
+        marital_status,
+        blood_type,
+        rh_factor,
+        duty_status,
+        pid,
+        paygrade,
+        ethnicity,
+        religion,
+        dod_id,
+        date_of_birth,
+        phone_number,
+        is_active ?? true
+      ]
     );
 
     res.status(201).json(result.rows[0]);
@@ -75,6 +100,13 @@ router.put('/:id', async (req, res) => {
       gender,
       marital_status,
       blood_type,
+      rh_factor,
+      duty_status,
+      pid,
+      paygrade,
+      ethnicity,
+      religion,
+      dod_id,
       date_of_birth,
       phone_number,
       is_active
@@ -87,12 +119,35 @@ router.put('/:id', async (req, res) => {
         gender = $3,
         marital_status = $4,
         blood_type = $5,
-        date_of_birth = $6,
-        phone_number = $7,
-        is_active = $8
-      WHERE id = $9 RETURNING *`,
-      [first_name, last_name, gender, marital_status, blood_type, date_of_birth,
-       phone_number, is_active, id]
+        rh_factor = $6,
+        duty_status = $7,
+        pid = $8,
+        paygrade = $9,
+        ethnicity = $10,
+        religion = $11,
+        dod_id = $12,
+        date_of_birth = $13,
+        phone_number = $14,
+        is_active = $15
+      WHERE id = $16 RETURNING *`,
+      [
+        first_name,
+        last_name,
+        gender,
+        marital_status,
+        blood_type,
+        rh_factor,
+        duty_status,
+        pid,
+        paygrade,
+        ethnicity,
+        religion,
+        dod_id,
+        date_of_birth,
+        phone_number,
+        is_active,
+        id
+      ]
     );
 
     if (result.rows.length === 0) {

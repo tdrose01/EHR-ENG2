@@ -81,6 +81,7 @@ ehr-eng2/
 │   ├── components/     # Vue components
 │   └── router/         # Vue router configuration
 ├── db/                 # Database migrations and schemas
+│   └── patients table with duty status, PID, paygrade, ethnicity, religion, RH factor and DoD ID fields
 ├── scripts/           # Server management scripts
 └── public/            # Static assets
 ```
@@ -100,6 +101,10 @@ ehr-eng2/
     - Gender (Male, Female, Other)
     - Marital Status (Single, Married, Divorced, Widowed)
     - Blood Type (A+, A-, B+, B-, AB+, AB-, O+, O-)
+    - Duty Status (Active, Reserve, Retired)
+    - Paygrade (E1, E2, E3, O1, O2)
+    - RH Factor (Positive, Negative)
+  - Additional fields for PID, DoD ID, Ethnicity and Religion
   - Automatic phone number formatting
 
 ## 🔒 Security Features
@@ -155,13 +160,13 @@ npm run test:patients
 #### POST /api/patients
 - Creates new patient record
 - Request body: Patient object
-- Fields include first and last name, gender, marital status, blood type, and date of birth
+- Fields include first and last name, gender, marital status, blood type, RH factor,
+  duty status, PID, paygrade, ethnicity, religion, DoD ID, date of birth and phone number
 - Response: Created patient object
 
 #### PUT /api/patients/:id
 - Updates existing patient record
-- Request body: Updated patient object
-- Same fields as patient creation
+- Request body: Updated patient object with the same fields as patient creation
 - Response: Updated patient object
 
 #### DELETE /api/patients/:id
