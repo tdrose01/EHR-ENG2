@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const { updatePatient } = require('../models/patientModel');
 
 // Get all patients
 router.get('/', async (req, res) => {
@@ -94,77 +95,22 @@ router.post('/', async (req, res) => {
 
 // Update patient
 router.put('/:id', async (req, res) => {
+  const { id } = req.params
   try {
-    const { id } = req.params;
-    const {
-      first_name,
-      last_name,
-      gender,
-      marital_status,
-      blood_type,
-      rh_factor,
-      duty_status,
-      pid,
-      paygrade,
-      branch_of_service,
-      ethnicity,
-      religion,
-      dod_id,
-      date_of_birth,
-      phone_number,
-      is_active
-    } = req.body;
-
-    const result = await pool.query(
-      `UPDATE patients SET
-        first_name = $1,
-        last_name = $2,
-        gender = $3,
-        marital_status = $4,
-        blood_type = $5,
-        rh_factor = $6,
-        duty_status = $7,
-        pid = $8,
-        paygrade = $9,
-        branch_of_service = $10,
-        ethnicity = $11,
-        religion = $12,
-        dod_id = $13,
-        date_of_birth = $14,
-        phone_number = $15,
-        is_active = $16
-      WHERE id = $17 RETURNING *`,
-      [
-        first_name,
-        last_name,
-        gender,
-        marital_status,
-        blood_type,
-        rh_factor,
-        duty_status,
-        pid,
-        paygrade,
-        branch_of_service,
-        ethnicity,
-        religion,
-        dod_id,
-        date_of_birth,
-        phone_number,
-        is_active,
-        id
-      ]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Patient not found' });
+    const updated = await updatePatient(id, req.body)
+    if (!updated) {
+      return res.status(404).json({ error: 'Patient not found' })
     }
-
-    res.json(result.rows[0]);
+    res.json(updated)
   } catch (err) {
-    console.error('Error updating patient:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error updating patient:', err)
+    if (err.code === '23505') {
+      res.status(400).json({ error: 'Duplicate PID or DoD ID' })
+    } else {
+      res.status(500).json({ error: 'Failed to update patient' })
+    }
   }
-});
+})
 
 // Delete patient (soft delete by setting is_active to false)
 router.delete('/:id', async (req, res) => {

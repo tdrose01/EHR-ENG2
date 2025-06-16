@@ -75,6 +75,7 @@ After successful login, users can access two main modules:
 ehr-eng2/
 ├── server/              # Backend server code
 │   ├── routes/         # API route handlers
+│   ├── models/         # Database access logic
 │   ├── db.js           # Database configuration
 │   └── index.js        # Server entry point
 ├── src/                # Frontend source code
@@ -169,6 +170,7 @@ npm run test:patients
 - Updates existing patient record
 - Request body: Updated patient object with the same fields as patient creation
 - Response: Updated patient object
+- Returns `400` if PID or DoD ID already exists
 
 #### DELETE /api/patients/:id
 - Soft deletes patient record
