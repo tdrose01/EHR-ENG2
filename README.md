@@ -38,6 +38,7 @@ After successful login, users can access two main modules:
    - Features:
     - Patient Management
     - Patient dashboard with add, view and edit actions
+    - Marital status and blood type fields for patients
     - Automatic phone number formatting in forms
     - Medical Records
     - Appointment Scheduling
@@ -129,11 +130,13 @@ npm run test:patients
 #### POST /api/patients
 - Creates new patient record
 - Request body: Patient object
+- Fields include first and last name, gender, marital status, blood type, date of birth and insurance info
 - Response: Created patient object
 
 #### PUT /api/patients/:id
 - Updates existing patient record
 - Request body: Updated patient object
+- Same fields as patient creation
 - Response: Updated patient object
 
 #### DELETE /api/patients/:id

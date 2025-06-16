@@ -45,12 +45,18 @@ GRANT ALL PRIVILEGES ON DATABASE "ehr-eng2" TO web;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO web;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO web;
 
+-- Enumerated types for patients
+CREATE TYPE marital_status_enum AS ENUM ('Single', 'Married', 'Divorced', 'Widowed');
+CREATE TYPE blood_type_enum AS ENUM ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-');
+
 -- Create patients table
 CREATE TABLE IF NOT EXISTS patients (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     gender VARCHAR(50),
+    marital_status marital_status_enum,
+    blood_type blood_type_enum,
     date_of_birth DATE NOT NULL,
     phone_number VARCHAR(20),
     insurance_provider VARCHAR(100),
@@ -83,9 +89,20 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON patients TO web;
 GRANT USAGE, SELECT ON SEQUENCE patients_id_seq TO web;
 
 -- Sample data (optional, comment out if not needed)
-INSERT INTO patients (first_name, last_name, gender, date_of_birth, phone_number, insurance_provider, insurance_id, is_active)
-VALUES 
-    ('John', 'Doe', 'Male', '1980-01-15', '555-0123', 'Blue Cross', 'BC123456', true),
-    ('Jane', 'Smith', 'Female', '1992-05-22', '555-0124', 'Aetna', 'AE789012', true)
+INSERT INTO patients (
+  first_name,
+  last_name,
+  gender,
+  marital_status,
+  blood_type,
+  date_of_birth,
+  phone_number,
+  insurance_provider,
+  insurance_id,
+  is_active
+)
+VALUES
+  ('John', 'Doe', 'Male', 'Married', 'O+', '1980-01-15', '555-0123', 'Blue Cross', 'BC123456', true),
+  ('Jane', 'Smith', 'Female', 'Single', 'A+', '1992-05-22', '555-0124', 'Aetna', 'AE789012', true)
 ON CONFLICT DO NOTHING;
 
