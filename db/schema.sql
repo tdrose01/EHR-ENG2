@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS patients (
     duty_status VARCHAR,
     pid VARCHAR UNIQUE,
     paygrade VARCHAR,
+    branch_of_service VARCHAR,
     ethnicity VARCHAR,
     religion VARCHAR,
     dod_id BIGINT UNIQUE,
@@ -103,6 +104,7 @@ INSERT INTO patients (
   duty_status,
   pid,
   paygrade,
+  branch_of_service,
   ethnicity,
   religion,
   dod_id,
@@ -111,7 +113,7 @@ INSERT INTO patients (
   is_active
 )
 VALUES
-  ('John', 'Doe', 'Male', 'Married', 'O+', 'Positive', 'Active', 'JD123', 'E3', 'Caucasian', 'None', 123456789, '1980-01-15', '555-0123', true),
-  ('Jane', 'Smith', 'Female', 'Single', 'A+', 'Negative', 'Reserve', 'JS456', 'O2', 'Asian', 'Christian', 987654321, '1992-05-22', '555-0124', true)
+  ('John', 'Doe', 'Male', 'Married', 'O+', 'Positive', 'Active', 'JD123', 'E3', 'Army', 'Caucasian', 'None', 123456789, '1980-01-15', '555-0123', true),
+  ('Jane', 'Smith', 'Female', 'Single', 'A+', 'Negative', 'Reserve', 'JS456', 'O2', 'Navy', 'Asian', 'Christian', 987654321, '1992-05-22', '555-0124', true)
 ON CONFLICT DO NOTHING;
 
