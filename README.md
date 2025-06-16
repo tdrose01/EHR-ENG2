@@ -10,14 +10,15 @@ npm install
 cp .env.example .env
 # Update DATABASE_URL with your Postgres credentials
 
-# Start the backend server
-node server/index.js
+# Start both frontend and backend servers
+npm run start
 
-# Start the frontend development server
-npm run dev
+# Stop both servers
+npm run stop
 
 # Create a production build
 npm run build
+
 # Lint the code
 npm run lint
 ```
@@ -36,12 +37,18 @@ After successful login, users can access two main modules:
    - Access via `/eh-module` route
    - Manages electronic health records
    - Features:
-    - Patient Management
-    - Patient dashboard with add, view and edit actions
-    - Marital status and blood type fields for patients
-    - Automatic phone number formatting in forms
-    - Medical Records
-    - Appointment Scheduling
+     - Patient Management
+     - Patient dashboard with add, view and edit actions
+     - Complete patient information including:
+       - Personal details (name, gender)
+       - Medical information (blood type)
+       - Demographics (marital status)
+       - Contact information (phone)
+       - Insurance details
+     - Automatic phone number formatting in forms
+     - Dark mode support with proper contrast
+     - Medical Records
+     - Appointment Scheduling
    - Blue-themed interface
 
 2. **RH Module (Resource & Hospital)**
@@ -60,7 +67,8 @@ After successful login, users can access two main modules:
 
 4. **System Status**
   - Access via `/status` route
-  - Displays API and database availability even when the database is offline
+  - Displays API and database availability
+  - Real-time service health monitoring
 
 ## 🏗️ Project Structure
 
@@ -74,13 +82,31 @@ ehr-eng2/
 │   ├── components/     # Vue components
 │   └── router/         # Vue router configuration
 ├── db/                 # Database migrations and schemas
+├── scripts/           # Server management scripts
 └── public/            # Static assets
 ```
+
+## 🎨 UI/UX Features
+
+- **Dark Mode Support**
+  - Proper contrast in both light and dark modes
+  - Readable text colors for all form fields
+  - Consistent styling across components
+  - Accessible color combinations
+
+- **Form Improvements**
+  - Enhanced input field visibility
+  - Structured patient information collection
+  - Comprehensive dropdown options for:
+    - Gender (Male, Female, Other)
+    - Marital Status (Single, Married, Divorced, Widowed)
+    - Blood Type (A+, A-, B+, B-, AB+, AB-, O+, O-)
+  - Automatic phone number formatting
 
 ## 🔒 Security Features
 
 - CORS protection
- - Password hashing with bcryptjs
+- Password hashing with bcryptjs
 - SQL injection prevention
 - XSS protection
 - CSRF protection
