@@ -1,0 +1,35 @@
+-- Create users table
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'user'
+);
+
+-- Create login_audit table
+CREATE TABLE IF NOT EXISTS login_audit (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    action VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create patients table
+CREATE TABLE IF NOT EXISTS patients (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    gender VARCHAR(50),
+    date_of_birth DATE,
+    phone_number VARCHAR(20),
+    insurance_provider VARCHAR(100),
+    insurance_id VARCHAR(100),
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert default admin user if not exists
+INSERT INTO users (email, password_hash, role)
+SELECT 'admin@example.com', '$2a$10$zPzBqiVZwH1jJQX1H6mOY.kF8LyU1K89Y.j.ZjIqGKZYd.JnSbGqK', 'admin'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@example.com'); 

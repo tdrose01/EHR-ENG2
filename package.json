@@ -9,7 +9,9 @@
     "start:server": "node server/index.js",
     "stop:server": "npx kill-port 3000",
     "test:login": "node scripts/test-login.js",
-    "test:patients": "node scripts/test-patients.js"
+    "test:patients": "node scripts/test-patients.js",
+    "start": "node scripts/manage-servers.js start",
+    "stop": "node scripts/manage-servers.js stop"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
