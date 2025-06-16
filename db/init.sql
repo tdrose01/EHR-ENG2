@@ -14,21 +14,23 @@ CREATE TABLE IF NOT EXISTS login_audit (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Drop existing patients table if exists
+DROP TABLE IF EXISTS patients;
+
 -- Create patients table
-CREATE TABLE IF NOT EXISTS patients (
+CREATE TABLE patients (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     gender VARCHAR(50),
-    marital_status VARCHAR(50),
-    blood_type VARCHAR(10),
-    rh_factor VARCHAR,
-    duty_status VARCHAR,
-    pid VARCHAR UNIQUE,
-    paygrade VARCHAR,
-    branch_of_service VARCHAR(255),
-    ethnicity VARCHAR,
-    religion VARCHAR,
+    blood_type VARCHAR(5),
+    rh_factor VARCHAR(10),
+    duty_status VARCHAR(50),
+    pid VARCHAR(50) UNIQUE,
+    paygrade VARCHAR(5),
+    branch_of_service VARCHAR(50),
+    ethnicity VARCHAR(50),
+    religion VARCHAR(50),
     dod_id BIGINT UNIQUE,
     date_of_birth DATE,
     phone_number VARCHAR(20),

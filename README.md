@@ -41,8 +41,10 @@ After successful login, users can access two main modules:
      - Patient dashboard with add, view and edit actions
      - Complete patient information including:
        - Personal details (name, gender)
-       - Medical information (blood type)
-       - Demographics (marital status)
+       - Medical information (blood type, RH factor)
+       - Military information (duty status, paygrade, branch of service)
+       - Demographics (ethnicity, religion)
+       - Military IDs (PID, DoD ID)
        - Contact information (phone)
      - Automatic phone number formatting in forms
      - Dark mode support with proper contrast
@@ -100,13 +102,16 @@ ehr-eng2/
   - Structured patient information collection
   - Comprehensive dropdown options for:
     - Gender (Male, Female, Other)
-    - Marital Status (Single, Married, Divorced, Widowed)
-    - Blood Type (A+, A-, B+, B-, AB+, AB-, O+, O-)
-    - Duty Status (Active, Reserve, Retired)
-    - Paygrade (E1, E2, E3, O1, O2)
-    - Branch of Service (None, Army, Marine Corps, Navy, Air Force, Space Force, Coast Guard)
+    - Blood Type (A, B, AB, O)
     - RH Factor (Positive, Negative)
-  - Additional fields for PID, DoD ID, Ethnicity and Religion
+    - Duty Status (Active, Reserve, Retired)
+    - Paygrade (E1-E8, O1-O4)
+    - Branch of Service (Army, Marine Corps, Navy, Air Force, Space Force, Coast Guard)
+    - Ethnicity (Caucasian, African American, Hispanic, Asian, Pacific Islander, Native American, Mixed)
+    - Religion (Christian, Catholic, Protestant, Buddhist, Hindu, Jewish, Muslim, Sikh, Orthodox, None)
+  - Military-specific fields:
+    - PID (Personnel ID)
+    - DoD ID (Department of Defense ID)
   - Automatic phone number formatting
 
 ## 🔒 Security Features
@@ -162,8 +167,22 @@ npm run test:patients
 #### POST /api/patients
 - Creates new patient record
 - Request body: Patient object
-- Fields include first and last name, gender, marital status, blood type, RH factor,
-  duty status, PID, paygrade, branch of service, ethnicity, religion, DoD ID, date of birth and phone number
+- Fields include:
+  - first_name (string, required)
+  - last_name (string, required)
+  - gender (string)
+  - blood_type (string: A, B, AB, O)
+  - rh_factor (string: Positive, Negative)
+  - duty_status (string: Active, Reserve, Retired)
+  - pid (string, unique)
+  - paygrade (string: E1-E8, O1-O4)
+  - branch_of_service (string)
+  - ethnicity (string)
+  - religion (string)
+  - dod_id (bigint, unique)
+  - date_of_birth (date)
+  - phone_number (string)
+  - is_active (boolean, default: true)
 - Response: Created patient object
 
 #### PUT /api/patients/:id
