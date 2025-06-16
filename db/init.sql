@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS patients (
     duty_status VARCHAR,
     pid VARCHAR UNIQUE,
     paygrade VARCHAR,
+    branch_of_service VARCHAR(255),
     ethnicity VARCHAR,
     religion VARCHAR,
     dod_id BIGINT UNIQUE,

@@ -48,6 +48,7 @@ router.post('/', async (req, res) => {
       duty_status,
       pid,
       paygrade,
+      branch_of_service,
       ethnicity,
       religion,
       dod_id,
@@ -59,10 +60,10 @@ router.post('/', async (req, res) => {
     const result = await pool.query(
       `INSERT INTO patients (
         first_name, last_name, gender, marital_status, blood_type, rh_factor,
-        duty_status, pid, paygrade, ethnicity, religion, dod_id, date_of_birth,
-        phone_number, is_active
+        duty_status, pid, paygrade, branch_of_service, ethnicity, religion,
+        dod_id, date_of_birth, phone_number, is_active
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
       ) RETURNING *`,
       [
         first_name,
@@ -74,6 +75,7 @@ router.post('/', async (req, res) => {
         duty_status,
         pid,
         paygrade,
+        branch_of_service,
         ethnicity,
         religion,
         dod_id,
@@ -104,6 +106,7 @@ router.put('/:id', async (req, res) => {
       duty_status,
       pid,
       paygrade,
+      branch_of_service,
       ethnicity,
       religion,
       dod_id,
@@ -123,13 +126,14 @@ router.put('/:id', async (req, res) => {
         duty_status = $7,
         pid = $8,
         paygrade = $9,
-        ethnicity = $10,
-        religion = $11,
-        dod_id = $12,
-        date_of_birth = $13,
-        phone_number = $14,
-        is_active = $15
-      WHERE id = $16 RETURNING *`,
+        branch_of_service = $10,
+        ethnicity = $11,
+        religion = $12,
+        dod_id = $13,
+        date_of_birth = $14,
+        phone_number = $15,
+        is_active = $16
+      WHERE id = $17 RETURNING *`,
       [
         first_name,
         last_name,
@@ -140,6 +144,7 @@ router.put('/:id', async (req, res) => {
         duty_status,
         pid,
         paygrade,
+        branch_of_service,
         ethnicity,
         religion,
         dod_id,

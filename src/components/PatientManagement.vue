@@ -153,6 +153,7 @@ export default {
         duty_status: '',
         pid: '',
         paygrade: '',
+        branch_of_service: '',
         ethnicity: '',
         religion: '',
         dod_id: null,
