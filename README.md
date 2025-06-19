@@ -106,7 +106,7 @@ ehr-eng2/
     - RH Factor (Positive, Negative)
     - Duty Status (Active, Reserve, Retired)
     - Paygrade (E1-E8, O1-O4)
-    - Branch of Service (Army, Marine Corps, Navy, Air Force, Space Force, Coast Guard)
+    - Branch of Service (Army, Navy, Air Force, Marines, Coast Guard, Space Force)
     - Ethnicity (Caucasian, African American, Hispanic, Asian, Pacific Islander, Native American, Mixed)
     - Religion (Christian, Catholic, Protestant, Buddhist, Hindu, Jewish, Muslim, Sikh, Orthodox, None)
   - Military-specific fields:
