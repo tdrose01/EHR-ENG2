@@ -45,8 +45,8 @@ After successful login, users can access two main modules:
        - Military information (duty status, paygrade, branch of service)
        - Demographics (ethnicity, religion)
        - Military IDs (PID, DoD ID)
-       - Contact information (phone)
-     - Automatic phone number formatting in forms
+  - Contact information (phone formatted as `(XXX)-XXX-XXXX`)
+  - Automatic phone number formatting in forms and displays
      - Dark mode support with proper contrast
      - Medical Records
      - Appointment Scheduling
@@ -222,7 +222,7 @@ npm run test:patients
 - JavaScript follows camelCase convention
 - CSS uses Tailwind utility classes
 - Follows ESLint configuration
-- Phone numbers are stored as digits and formatted to `(XXX)-XXX-XXXX` in the UI
+- Phone numbers are stored as digits and formatted to `(XXX)-XXX-XXXX` in forms and patient details
 - Dashboard header text uses `dark:text-gray-200` for better readability
 - Input fields in the Add Patient form now use `text-gray-800` and
   `dark:text-gray-100` to improve readability

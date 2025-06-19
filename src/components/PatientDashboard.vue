@@ -30,7 +30,7 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.paygrade }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.branch_of_service }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(patient.date_of_birth) }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ patient.phone_number }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ displayPhone(patient.phone_number) }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button
                 @click="viewPatient(patient)"
@@ -194,7 +194,7 @@
         <p class="text-sm mb-1"><span class="font-semibold">Marital Status:</span> {{ viewPatientData.marital_status }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Blood Type:</span> {{ viewPatientData.blood_type }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">DOB:</span> {{ formatDate(viewPatientData.date_of_birth) }}</p>
-        <p class="text-sm mb-1"><span class="font-semibold">Phone:</span> {{ viewPatientData.phone_number }}</p>
+        <p class="text-sm mb-1"><span class="font-semibold">Phone:</span> {{ displayPhone(viewPatientData.phone_number) }}</p>
           <div class="flex justify-end mt-6">
           <button
             @click="closeViewModal"
@@ -209,6 +209,7 @@
 </template>
 
 <script>
+import { formatPhoneNumber } from '../utils/formatters'
 export default {
   name: 'PatientDashboard',
   data() {
@@ -253,6 +254,9 @@ export default {
     },
     formatDate(date) {
       return new Date(date).toLocaleDateString()
+    },
+    displayPhone(number) {
+      return formatPhoneNumber(number)
     },
     async fetchPatients() {
       try {
