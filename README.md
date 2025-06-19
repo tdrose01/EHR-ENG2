@@ -48,6 +48,7 @@ After successful login, users can access two main modules:
        - Military IDs (PID, DoD ID)
   - Contact information (phone formatted as `(XXX)-XXX-XXXX`)
   - Automatic phone number formatting in forms and displays
+    - The `formatPhoneNumber` utility ensures numbers appear as `(XXX)-XXX-XXXX`.
      - Dark mode support with proper contrast
      - Medical Records
      - Appointment Scheduling
