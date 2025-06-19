@@ -20,12 +20,13 @@
       <p class="mb-2"><span class="font-bold">DoD ID:</span> {{ patient.dod_id }}</p>
       <p class="mb-2"><span class="font-bold">PID:</span> {{ patient.pid }}</p>
       <p class="mb-2"><span class="font-bold">Date of Birth:</span> {{ formatDate(patient.date_of_birth) }}</p>
-      <p class="mb-2"><span class="font-bold">Phone:</span> {{ patient.phone_number }}</p>
+      <p class="mb-2"><span class="font-bold">Phone:</span> {{ displayPhone(patient.phone_number) }}</p>
     </div>
   </div>
 </template>
 
 <script>
+import { formatPhoneNumber } from '../utils/formatters'
 export default {
   name: 'PatientView',
   data() {
@@ -49,6 +50,9 @@ export default {
   methods: {
     formatDate(date) {
       return new Date(date).toLocaleDateString()
+    },
+    displayPhone(number) {
+      return formatPhoneNumber(number)
     }
   }
 }

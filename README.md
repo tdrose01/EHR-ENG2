@@ -49,6 +49,8 @@ After successful login, users can access two main modules:
   - Contact information (phone formatted as `(XXX)-XXX-XXXX`)
   - Automatic phone number formatting in forms and displays
      - Dark mode support with proper contrast and background
+    - The `formatPhoneNumber` utility ensures numbers appear as `(XXX)-XXX-XXXX`.
+     - Dark mode support with proper contrast
      - Medical Records
      - Appointment Scheduling
    - Blue-themed interface
