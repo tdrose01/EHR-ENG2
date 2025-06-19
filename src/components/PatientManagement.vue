@@ -47,6 +47,12 @@
             </td>
           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button
+                @click="viewPatient(patient)"
+                class="text-green-600 hover:text-green-900 mr-4"
+              >
+                View
+              </button>
+              <button
                 @click="editPatient(patient)"
                 class="text-blue-600 hover:text-blue-900 mr-4"
               >
@@ -200,6 +206,9 @@ export default {
       this.patientForm = { ...patient }
       this.patientForm.date_of_birth = new Date(patient.date_of_birth).toISOString().split('T')[0]
       this.showModal = true
+    },
+    viewPatient(patient) {
+      this.$router.push(`/patients/view/${patient.id}`)
     },
     confirmDelete(patient) {
       this.deletePatient = patient
