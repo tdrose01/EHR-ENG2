@@ -65,7 +65,7 @@ After successful login, users can access two main modules:
   - Green-themed interface
 
 3. **Exposure Dashboard**
-  - Access via `/exposure` route
+  - Access via `/eh/exposure-dashboard` route
   - Tracks environmental hazards and sample testing
   - Purple-themed interface
 4. **Settings**
