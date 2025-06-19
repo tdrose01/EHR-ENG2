@@ -56,20 +56,24 @@ After successful login, users can access two main modules:
    - Blue-themed interface
 
 2. **RH Module (Resource & Hospital)**
-   - Access via `/rh-module` route
-   - Manages hospital resources
-   - Features (Coming Soon):
-     - Staff Management
-     - Equipment Tracking
-     - Facility Management
-   - Green-themed interface
+ - Access via `/rh-module` route
+  - Manages hospital resources
+  - Features (Coming Soon):
+    - Staff Management
+    - Equipment Tracking
+    - Facility Management
+  - Green-themed interface
 
-3. **Settings**
+3. **Exposure Dashboard**
+  - Access via `/exposure` route
+  - Tracks environmental hazards and sample testing
+  - Purple-themed interface
+4. **Settings**
   - Access via `/settings` route
   - Visible only to admin users
   - Allows admins to change any user's password
 
-4. **System Status**
+5. **System Status**
   - Access via `/status` route
   - Displays API and database availability
   - Real-time service health monitoring
