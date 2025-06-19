@@ -48,7 +48,7 @@ After successful login, users can access two main modules:
        - Military IDs (PID, DoD ID)
   - Contact information (phone formatted as `(XXX)-XXX-XXXX`)
   - Automatic phone number formatting in forms and displays
-     - Dark mode support with proper contrast
+     - Dark mode support with proper contrast and background
      - Medical Records
      - Appointment Scheduling
    - Blue-themed interface
@@ -97,6 +97,7 @@ ehr-eng2/
   - Readable text colors for all form fields
   - Consistent styling across components
   - Accessible color combinations
+  - Top-level background switches to dark colors
 
 - **Form Improvements**
   - Enhanced input field visibility

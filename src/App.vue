@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="min-h-screen bg-white dark:bg-gray-900">
     <header class="p-4">
       <button
         @click="goBack"
@@ -9,7 +9,7 @@
       </button>
     </header>
 
-    <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div class="text-gray-900 dark:text-gray-100">
       <div class="p-4 text-right">
         <ThemeSwitcher />
       </div>
