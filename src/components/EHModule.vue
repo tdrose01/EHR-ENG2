@@ -52,11 +52,34 @@
       <main>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div class="px-4 py-8 sm:px-0">
-            <div class="border-4 border-dashed border-gray-200 dark:border-gray-600 rounded-lg h-96 p-4">
-              <p class="text-gray-600 dark:text-gray-300">
-                This is the main content area for the Electronic Health Module.
-                Click on Patient Management to access the patient records.
-              </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Patient Management Card -->
+              <div
+                @click="navigateTo('/patients')"
+                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
+              >
+                <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-400 mb-3">Patient Management</h2>
+                <p class="text-gray-600 dark:text-gray-300">Access and manage patient records.</p>
+                <div class="mt-4 flex justify-end">
+                  <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                    Go to Patients
+                  </button>
+                </div>
+              </div>
+
+              <!-- Exposure Dashboard Card -->
+              <div
+                @click="navigateTo('/eh/exposure-dashboard')"
+                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
+              >
+                <h2 class="text-2xl font-semibold text-purple-600 dark:text-purple-400 mb-3">Exposure Dashboard</h2>
+                <p class="text-gray-600 dark:text-gray-300">Track environmental exposure data.</p>
+                <div class="mt-4 flex justify-end">
+                  <button class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors">
+                    Open Dashboard
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -80,6 +103,9 @@ export default {
       localStorage.removeItem('userEmail')
       localStorage.removeItem('adminPassword')
       this.$router.push('/')
+    },
+    navigateTo(path) {
+      this.$router.push(path)
     }
   }
 }
