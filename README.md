@@ -88,12 +88,19 @@ ehr-eng2/
 │   ├── db.js           # Database configuration
 │   └── index.js        # Server entry point
 ├── src/                # Frontend source code
-│   ├── components/     # Vue components
-│   └── router/         # Vue router configuration
+│   ├── components/     # General Vue components
+│   ├── modules/        # Module-specific components
+│   │   └── eh/         # EH (Electronic Health) module
+│   │       └── components/ # Components for EH module
+│   │           └── dashboard/ # Exposure Dashboard components
+│   ├── router/         # Vue router configuration
+│   ├── assets/         # Static assets like images and fonts
+│   ├── views/          # Top-level views/pages
+│   └── main.js         # Main Vue application entry point
 ├── db/                 # Database migrations and schemas
 │   └── patients table with duty status, PID, paygrade, branch_of_service, ethnicity, religion, RH factor and DoD ID fields
 ├── scripts/           # Server management scripts
-└── public/            # Static assets
+└── public/            # Static assets (served by Vite)
 ```
 
 ## 🎨 UI/UX Features
