@@ -57,7 +57,7 @@ export default {
       let path = ''
       if (module === 'EH') path = '/eh-module'
       else if (module === 'RH') path = '/rh-module'
-      else path = '/exposure'
+      else path = '/eh/exposure-dashboard'
       this.$router.push(path)
     }
   }
