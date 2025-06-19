@@ -43,7 +43,7 @@
               <div class="text-sm text-gray-900 dark:text-gray-100">{{ formatDate(patient.date_of_birth) }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900 dark:text-gray-100">{{ patient.phone_number }}</div>
+              <div class="text-sm text-gray-900 dark:text-gray-100">{{ displayPhone(patient.phone_number) }}</div>
             </td>
           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <button
@@ -115,6 +115,7 @@
 
 <script>
 import AddPatientForm from './AddPatientForm.vue'
+import { formatPhoneNumber } from '../utils/formatters'
 
 export default {
   name: 'PatientManagement',
@@ -195,6 +196,9 @@ export default {
     },
     formatDate(dateString) {
       return new Date(dateString).toLocaleDateString()
+    },
+    displayPhone(number) {
+      return formatPhoneNumber(number)
     },
     openAddPatientModal() {
       this.editingPatient = null
