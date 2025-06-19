@@ -6,6 +6,7 @@ import RHModule from '../components/RHModule.vue'
 import PatientManagement from '../components/PatientManagement.vue'
 import Settings from '../components/Settings.vue'
 import SystemStatus from '../views/SystemStatus.vue'
+import PatientView from '../views/PatientView.vue'
 
 const routes = [
   {
@@ -35,6 +36,12 @@ const routes = [
     path: '/patients',
     name: 'PatientManagement',
     component: PatientManagement,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/patients/view/:id',
+    name: 'PatientView',
+    component: PatientView,
     meta: { requiresAuth: true }
   },
   {

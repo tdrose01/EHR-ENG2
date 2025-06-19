@@ -37,10 +37,11 @@ After successful login, users can access two main modules:
    - Access via `/eh-module` route
    - Manages electronic health records
    - Features:
-     - Patient Management
+    - Patient Management
     - Patient dashboard displays a DoD Id column with add, view and edit actions
-     - Complete patient information including:
-       - Personal details (name, gender)
+    - View buttons open the patient detail page at `/patients/view/:id`
+    - Complete patient information including:
+      - Personal details (name, gender)
        - Medical information (blood type, RH factor)
        - Military information (duty status, paygrade, branch of service)
        - Demographics (ethnicity, religion)
