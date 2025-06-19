@@ -225,7 +225,7 @@ npm run test:patients
 - Phone numbers are stored as digits and formatted to `(XXX)-XXX-XXXX` in the UI
 - Dashboard header text uses `dark:text-gray-200` for better readability
 - Input fields in the Add Patient form now use `text-gray-800` and
-   `dark:text-gray-200` to improve readability
+  `dark:text-gray-100` to improve readability
 
 ### Branch Strategy
 - main: Production-ready code
