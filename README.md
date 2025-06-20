@@ -113,7 +113,8 @@ ehr-eng2/
   - Top-level background switches to dark colors
 
 - **Form Improvements**
-  - Enhanced input field visibility
+- Enhanced input field visibility
+  - Fixed dark mode contrast for the add patient form inputs
   - Structured patient information collection
   - Comprehensive dropdown options for:
     - Gender (Male, Female, Other)
