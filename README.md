@@ -143,8 +143,8 @@ ehr-eng2/
 ## 🧪 Testing
 
 ```bash
-# Run unit tests
-npm run test
+# Run vitest unit tests
+npm run test:unit
 
 # Run e2e tests
 npm run test:e2e

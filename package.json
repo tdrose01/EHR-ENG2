@@ -11,6 +11,7 @@
     "test:login": "node scripts/test-login.js",
     "test:patients": "node scripts/test-patients.js",
     "test": "jest",
+    "test:unit": "vitest",
     "start": "node scripts/manage-servers.js start",
     "stop": "node scripts/manage-servers.js stop"
   },
@@ -36,6 +37,7 @@
     "supertest": "^6.3.3",
     "tailwindcss": "^3.4.3",
     "vite": "^6.3.5",
+    "vitest": "^3.2.4",
     "vue-eslint-parser": "^10.1.3",
     "vue-jest": "^5.0.0-alpha.10"
   }
