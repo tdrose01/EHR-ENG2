@@ -10,7 +10,10 @@
       </button>
     </div>
 
-    <div class="bg-white dark:bg-gray-700 shadow rounded-lg overflow-hidden">
+    <div v-if="loading" data-test="loading">Loading...</div>
+    <div v-else-if="error" data-test="error" class="text-red-500">{{ error }}</div>
+    <div v-else-if="patients.length === 0" data-test="empty">No patients found</div>
+    <div v-else class="bg-white dark:bg-gray-700 shadow rounded-lg overflow-hidden">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50 dark:bg-gray-600">
           <tr>
@@ -215,6 +218,8 @@ export default {
   data() {
     return {
       patients: [],
+      loading: false,
+      error: null,
       showModal: false,
       showViewModal: false,
       editingPatient: null,
@@ -258,12 +263,17 @@ export default {
     displayPhone(number) {
       return formatPhoneNumber(number)
     },
-    async fetchPatients() {
+  async fetchPatients() {
+      this.loading = true
+      this.error = null
       try {
         const res = await fetch('/api/patients')
         this.patients = await res.json()
       } catch (err) {
         console.error('Error fetching patients:', err)
+        this.error = 'Failed to load patients'
+      } finally {
+        this.loading = false
       }
     },
     openAddModal() {
