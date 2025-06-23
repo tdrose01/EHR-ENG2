@@ -34,26 +34,27 @@ After successful login, users can access two main modules:
   Use the Back button in the header to return to the previous page.
 
 1. **EH Module (Electronic Health)**
-   - Access via `/eh-module` route
-   - Manages electronic health records
-   - Features:
+  - Access via `/eh-module` route
+  - Manages electronic health records
+  - Features:
     - Patient Management
     - Patient dashboard displays a DoD Id column with add, view and edit actions
+    - Header shows your email and last login time
     - View buttons open the patient detail page at `/patients/view/:id`
     - Complete patient information including:
       - Personal details (name, gender)
-       - Medical information (blood type, RH factor)
-       - Military information (duty status, paygrade, branch of service)
-       - Demographics (ethnicity, religion)
-       - Military IDs (PID, DoD ID)
+      - Medical information (blood type, RH factor)
+      - Military information (duty status, paygrade, branch of service)
+      - Demographics (ethnicity, religion)
+      - Military IDs (PID, DoD ID)
   - Contact information (phone formatted as `(XXX)-XXX-XXXX`)
   - Automatic phone number formatting in forms and displays
-     - Dark mode support with proper contrast and background
+    - Dark mode support with proper contrast and background
     - The `formatPhoneNumber` utility ensures numbers appear as `(XXX)-XXX-XXXX`.
-     - Dark mode support with proper contrast
-     - Medical Records
-     - Appointment Scheduling
-   - Blue-themed interface
+    - Dark mode support with proper contrast
+    - Medical Records
+    - Appointment Scheduling
+  - Blue-themed interface
 
 2. **RH Module (Resource & Hospital)**
  - Access via `/rh-module` route
@@ -167,8 +168,9 @@ npm run test:patients
 ### Authentication Endpoints
 
 #### POST /api/login
-- Request body: `{ email: string, password: string }`
-- Response: `{ success: boolean, role?: string, userId?: number, lastLoginAt?: string, message?: string }`
+  - Request body: `{ email: string, password: string }`
+  - Response: `{ success: boolean, role?: string, userId?: number, lastLoginAt?: string, message?: string }`
+    - `lastLoginAt` is the timestamp of the user's previous login (or `null` if first login)
 
 ### Patient Management Endpoints
 

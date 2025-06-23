@@ -79,11 +79,16 @@ app.post('/api/login', async (req, res) => {
         )
         console.log('Updated password hash for user')
       }
-      const updated = await pool.query(
-        'UPDATE users SET last_login_at = NOW() WHERE id = $1 RETURNING last_login_at',
+      const prevRes = await pool.query(
+        'SELECT last_login_at FROM users WHERE id = $1',
         [user.id]
       )
-      res.json({ success: true, role: user.role, userId: user.id, lastLoginAt: updated.rows[0].last_login_at })
+      const previous = prevRes.rows[0]?.last_login_at || null
+      await pool.query(
+        'UPDATE users SET last_login_at = NOW() WHERE id = $1',
+        [user.id]
+      )
+      res.json({ success: true, role: user.role, userId: user.id, lastLoginAt: previous })
     } else {
       res.status(401).json({ success: false, message: 'Invalid credentials' })
     }
