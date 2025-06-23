@@ -4,10 +4,10 @@
       <div class="flex justify-between items-baseline mb-4">
         <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">Select Module</h1>
         <div class="text-right">
-          <span class="font-medium">{{ userEmail }}</span>
+          <span class="font-medium text-gray-800 dark:text-gray-100">{{ userEmail }}</span>
           <span
             v-if="lastLogin"
-            class="block text-xs text-gray-500 dark:text-gray-400"
+            class="block text-xs text-gray-600 dark:text-gray-300 mt-1"
             >Last login: {{ lastLogin }}</span
           >
         </div>
