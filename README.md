@@ -99,6 +99,7 @@ ehr-eng2/
 │   │   └── eh/         # EH (Electronic Health) module
 │   │       └── components/ # Components for EH module
 │   │           └── dashboard/ # Exposure Dashboard components
+│   │           └── components/ # Components for EH module
 │   ├── router/         # Vue router configuration
 │   ├── assets/         # Static assets like images and fonts
 │   ├── views/          # Top-level views/pages
@@ -137,107 +138,6 @@ ehr-eng2/
   - Automatic phone number formatting
   - Last login timestamp shown after authentication
 
-## �� Security Features
-
-- CORS protection
-- Password hashing with bcryptjs
-- SQL injection prevention
-- XSS protection
-- CSRF protection
-- Secure session management
-- Audit logging
-
-## 🧪 Testing
-
-```bash
-# Run vitest unit tests
-npm run test:unit
-
-# Run e2e tests
-npm run test:e2e
-```
-
-### API Test Scripts
-
-Use the provided scripts to verify API endpoints during development:
-
-```bash
-# Test login endpoint
-npm run test:login
-
-# Test patient list endpoint
-npm run test:patients
-```
-
-## 📝 API Documentation
-
-### Authentication Endpoints
-
-#### POST /api/login
-- Request body: `{ email: string, password: string }`
-- Response: `{ success: boolean, role?: string, userId?: number, lastLoginAt?: string, message?: string }`
-
-### Patient Management Endpoints
-
-#### GET /api/patients
-- Returns list of all active patients
-- Response: Array of patient objects
-
-#### GET /api/patients/:id
-- Returns single patient by ID
-- Response: Patient object
-
-#### POST /api/patients
-- Creates new patient record
-- Request body: Patient object
-- Fields include:
-  - first_name (string, required)
-  - last_name (string, required)
-  - gender (string)
-  - blood_type (string: A, B, AB, O)
-  - rh_factor (string: Positive, Negative)
-  - duty_status (string: Active, Reserve, Retired)
-  - pid (string, unique)
-  - paygrade (string: E1-E8, O1-O4)
-  - branch_of_service (string)
-  - ethnicity (string)
-  - religion (string)
-  - dod_id (bigint, unique)
-  - date_of_birth (date)
-  - phone_number (string)
-  - is_active (boolean, default: true)
-- Response: Created patient object
-
-#### PUT /api/patients/:id
-- Updates existing patient record
-- Request body: Updated patient object with the same fields as patient creation
-- Response: Updated patient object
-- Returns `400` if PID or DoD ID already exists
-
-#### DELETE /api/patients/:id
-- Soft deletes patient record
-- Response: Success message
-
-#### GET /api/patients/search/:query
-- Searches patients by name
-- Response: Array of matching patient objects
-
-### Health Endpoints
-
-#### GET /api/v1/health/status
-  - Returns `{ api: "online", database: "online" }` when services are healthy
-  - Returns `{ api: "online", database: "offline" }` with status `503` if the database is down
-
-### Admin Endpoints
-
-#### GET /api/admin/users
-  - Query parameters: `adminEmail`, `adminPassword`
-  - Response: Array of `{ id, email, last_login_at }`
-
-#### PUT /api/admin/users/:id/password
-  - Request body: `{ adminEmail: string, adminPassword: string, newPassword: string }`
-  - Response: `{ success: boolean }`
-
 ## 🛠️ Development
 
 ### Code Style
@@ -270,3 +170,28 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🤝 Support
 
 For support, email support@example.com or join our Slack channel.
+
+## Last Login Timestamp Logic
+
+- The backend updates the `last_login_at` column in the `users` table on every successful login.
+- The backend returns the previous value of `last_login_at` as `lastLoginAt` in the login API response.
+- The frontend displays this value as the user's last login time. If `lastLoginAt` is `null`, it shows "First login".
+
+### Troubleshooting Last Login Timestamp
+
+If the last login timestamp is not displaying:
+1. **Check the Database Schema:**
+   - Ensure the `last_login_at` column exists in the `users` table and is of type `timestamp with time zone`.
+   - Confirm you are connected to the correct database (see `server/db.js`).
+2. **Check Backend Logs:**
+   - Look for messages like `last_login_at column missing, skipping update`. This means the backend cannot see the column.
+   - Add debug logs to print the value fetched from the database.
+3. **Restart the Backend:**
+   - After making schema changes, always restart the backend server.
+4. **Check API Response:**
+   - Use browser DevTools to inspect the `/api/login` response and verify the `lastLoginAt` field.
+
+### Common Pitfalls
+- Backend and manual SQL client must connect to the same database instance.
+- Schema changes must be applied to the correct database.
+- The backend uses camelCase (`lastLoginAt`) in JSON, but the database uses snake_case (`last_login_at`).
