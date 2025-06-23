@@ -17,13 +17,19 @@
           
           <div>
             <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-            <input
-              type="password"
-              id="password"
-              v-model="password"
-              required
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
+            <div class="relative">
+              <input
+                :type="showPassword ? 'text' : 'password'"
+                id="password"
+                v-model="password"
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 pr-10"
+              />
+              <button type="button" @click="showPassword = !showPassword" tabindex="-1" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 focus:outline-none">
+                <span v-if="showPassword">🙈</span>
+                <span v-else>👁️</span>
+              </button>
+            </div>
           </div>
 
           <div v-if="error" class="text-red-600 text-sm">{{ error }}</div>
@@ -47,7 +53,8 @@ export default {
     return {
       email: '',
       password: '',
-      error: ''
+      error: '',
+      showPassword: false
     }
   },
   methods: {
@@ -67,9 +74,8 @@ export default {
         let data
         try {
           data = await response.json()
-        } catch (err) {
-          console.error('Invalid login response:', err)
-          this.error = 'Invalid server response'
+        } catch (e) {
+          this.error = 'Unexpected server response. Please try again later.'
           return
         }
 
@@ -84,10 +90,8 @@ export default {
           if (data.role === 'admin') {
             localStorage.setItem('adminPassword', this.password)
           }
-          
           // Clear any existing error
           this.error = ''
-          
           // Redirect to module selection
           this.$router.push('/select-module')
         } else {

@@ -32,6 +32,8 @@ npm run lint
 - Email: admin@example.com
 - Password: password123
 
+**New:** The login form now includes a password visibility toggle. Click the eye (👁️) icon in the password field to show or hide your password as you type. This improves usability and helps prevent typos during login.
+
 ## 📱 Module Navigation
 
 After successful login, users can access two main modules:
@@ -135,7 +137,7 @@ ehr-eng2/
   - Automatic phone number formatting
   - Last login timestamp shown after authentication
 
-## 🔒 Security Features
+## �� Security Features
 
 - CORS protection
 - Password hashing with bcryptjs
