@@ -79,7 +79,11 @@ app.post('/api/login', async (req, res) => {
         )
         console.log('Updated password hash for user')
       }
-      res.json({ success: true, role: user.role, userId: user.id })
+      const updated = await pool.query(
+        'UPDATE users SET last_login_at = NOW() WHERE id = $1 RETURNING last_login_at',
+        [user.id]
+      )
+      res.json({ success: true, role: user.role, userId: user.id, lastLoginAt: updated.rows[0].last_login_at })
     } else {
       res.status(401).json({ success: false, message: 'Invalid credentials' })
     }
@@ -161,7 +165,7 @@ app.get('/api/admin/users', async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized' })
     }
 
-  const users = await pool.query('SELECT id, email FROM users ORDER BY email')
+  const users = await pool.query('SELECT id, email, last_login_at FROM users ORDER BY email')
   res.json(users.rows)
   } catch (err) {
     console.error('User list error:', err)
