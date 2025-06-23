@@ -79,11 +79,21 @@ app.post('/api/login', async (req, res) => {
         )
         console.log('Updated password hash for user')
       }
-      const updated = await pool.query(
-        'UPDATE users SET last_login_at = NOW() WHERE id = $1 RETURNING last_login_at',
-        [user.id]
-      )
-      res.json({ success: true, role: user.role, userId: user.id, lastLoginAt: updated.rows[0].last_login_at })
+      let lastLoginAt = null
+      try {
+        const updated = await pool.query(
+          'UPDATE users SET last_login_at = NOW() WHERE id = $1 RETURNING last_login_at',
+          [user.id]
+        )
+        lastLoginAt = updated.rows[0]?.last_login_at || null
+      } catch (err) {
+        if (err.code === '42703') {
+          console.warn('last_login_at column missing, skipping update')
+        } else {
+          throw err
+        }
+      }
+      res.json({ success: true, role: user.role, userId: user.id, lastLoginAt })
     } else {
       res.status(401).json({ success: false, message: 'Invalid credentials' })
     }
