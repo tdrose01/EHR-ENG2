@@ -168,7 +168,7 @@ npm run test:patients
 
 #### POST /api/login
 - Request body: `{ email: string, password: string }`
-- Response: `{ success: boolean, role?: string, userId?: number, message?: string }`
+- Response: `{ success: boolean, role?: string, userId?: number, lastLoginAt?: string, message?: string }`
 
 ### Patient Management Endpoints
 
@@ -225,7 +225,7 @@ npm run test:patients
 
 #### GET /api/admin/users
   - Query parameters: `adminEmail`, `adminPassword`
-  - Response: Array of `{ id, email }`
+  - Response: Array of `{ id, email, last_login_at }`
 
 #### PUT /api/admin/users/:id/password
   - Request body: `{ adminEmail: string, adminPassword: string, newPassword: string }`

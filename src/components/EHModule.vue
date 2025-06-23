@@ -30,6 +30,10 @@
             </div>
           </div>
           <div class="flex items-center">
+            <div class="hidden sm:flex flex-col items-end mr-4">
+              <span class="font-medium">{{ userEmail }}</span>
+              <span v-if="lastLogin" class="text-xs text-gray-500 dark:text-gray-400">Last login: {{ lastLogin }}</span>
+            </div>
             <button
               @click="logout"
               class="ml-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -94,6 +98,15 @@ export default {
   computed: {
     isAdmin() {
       return localStorage.getItem('userRole') === 'admin'
+    },
+    userEmail() {
+      return localStorage.getItem('userEmail') || ''
+    },
+    lastLogin() {
+      const ts = localStorage.getItem('lastLoginAt')
+      if (!ts) return ''
+      const date = new Date(ts)
+      return date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
     }
   },
   methods: {
@@ -101,6 +114,7 @@ export default {
       localStorage.removeItem('isAuthenticated')
       localStorage.removeItem('userRole')
       localStorage.removeItem('userEmail')
+      localStorage.removeItem('lastLoginAt')
       localStorage.removeItem('adminPassword')
       this.$router.push('/')
     },
