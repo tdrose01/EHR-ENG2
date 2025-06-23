@@ -64,7 +64,14 @@ export default {
           })
         })
 
-        const data = await response.json()
+        let data
+        try {
+          data = await response.json()
+        } catch (err) {
+          console.error('Invalid login response:', err)
+          this.error = 'Invalid server response'
+          return
+        }
 
         if (data.success) {
           // Store authentication state
