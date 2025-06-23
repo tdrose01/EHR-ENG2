@@ -1,7 +1,17 @@
 <template>
   <div class="min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
     <div class="max-w-2xl w-full mx-4">
-      <h1 class="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">Select Module</h1>
+      <div class="flex justify-between items-baseline mb-4">
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">Select Module</h1>
+        <div class="text-right">
+          <span class="font-medium">{{ userEmail }}</span>
+          <span
+            v-if="lastLogin"
+            class="block text-xs text-gray-500 dark:text-gray-400"
+            >Last login: {{ lastLogin }}</span
+          >
+        </div>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- EH Module Card -->
         <div
@@ -52,6 +62,17 @@
 <script>
 export default {
   name: 'ModuleSelection',
+  computed: {
+    userEmail() {
+      return localStorage.getItem('userEmail') || ''
+    },
+    lastLogin() {
+      const ts = localStorage.getItem('lastLoginAt')
+      if (!ts) return ''
+      const date = new Date(ts)
+      return date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+    }
+  },
   methods: {
     goToModule(module) {
       let path = ''

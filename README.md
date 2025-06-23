@@ -126,9 +126,10 @@ ehr-eng2/
     - Ethnicity (Caucasian, African American, Hispanic, Asian, Pacific Islander, Native American, Mixed)
     - Religion (Christian, Catholic, Protestant, Buddhist, Hindu, Jewish, Muslim, Sikh, Orthodox, None)
   - Military-specific fields:
-    - PID (Personnel ID)
-    - DoD ID (Department of Defense ID)
+  - PID (Personnel ID)
+  - DoD ID (Department of Defense ID)
   - Automatic phone number formatting
+  - Last login timestamp shown after authentication
 
 ## 🔒 Security Features
 
