@@ -81,11 +81,17 @@ app.post('/api/login', async (req, res) => {
       }
       let lastLoginAt = null
       try {
-        const updated = await pool.query(
-          'UPDATE users SET last_login_at = NOW() WHERE id = $1 RETURNING last_login_at',
+        // fetch previous timestamp before updating
+        const prev = await pool.query(
+          'SELECT last_login_at FROM users WHERE id = $1',
           [user.id]
         )
-        lastLoginAt = updated.rows[0]?.last_login_at || null
+        lastLoginAt = prev.rows[0]?.last_login_at || null
+
+        await pool.query(
+          'UPDATE users SET last_login_at = NOW() WHERE id = $1',
+          [user.id]
+        )
       } catch (err) {
         if (err.code === '42703') {
           console.warn('last_login_at column missing, skipping update')
