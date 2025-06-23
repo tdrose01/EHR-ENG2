@@ -173,9 +173,9 @@ For support, email support@example.com or join our Slack channel.
 
 ## Last Login Timestamp Logic
 
-- The backend updates the `last_login_at` column in the `users` table on every successful login.
-- The backend returns the previous value of `last_login_at` as `lastLoginAt` in the login API response.
-- The frontend displays this value as the user's last login time. If `lastLoginAt` is `null`, it shows "First login".
+  - The backend updates the `last_login_at` column in the `users` table on every successful login.
+  - The server first queries the existing value, then updates the column. That previous timestamp is returned as `lastLoginAt` in the login API response.
+  - The frontend displays this value as the user's last login time. If `lastLoginAt` is `null`, it shows "First login".
 
 ### Troubleshooting Last Login Timestamp
 
