@@ -9,6 +9,10 @@ npm install
 # Copy environment configuration
 cp .env.example .env
 # Update DATABASE_URL with your Postgres credentials
+  # Initialize the database
+  psql -f db/init.sql
+  # Apply migrations
+  psql -f db/migrations/004_add_last_login_at.sql
 
 # Start both frontend and backend servers
 npm run start
