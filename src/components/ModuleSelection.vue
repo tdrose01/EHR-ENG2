@@ -12,7 +12,7 @@
           >
         </div>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- EH Module Card -->
         <div
           @click="goToModule('EH')"
@@ -41,19 +41,6 @@
           </div>
         </div>
 
-        <!-- Exposure Dashboard Card -->
-        <div
-          @click="goToModule('EX')"
-          class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
-        >
-          <h2 class="text-2xl font-semibold text-purple-600 mb-3">Exposure Dashboard</h2>
-          <p class="text-gray-600 dark:text-gray-300">Environmental Exposure Tracking</p>
-          <div class="mt-4 flex justify-end">
-            <button class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors">
-              Select Exposure
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -74,12 +61,12 @@ export default {
     }
   },
   methods: {
-    goToModule(module) {
-      let path = ''
-      if (module === 'EH') path = '/eh-module'
-      else if (module === 'RH') path = '/rh-module'
-      else path = '/eh/exposure-dashboard'
-      this.$router.push(path)
+      goToModule(module) {
+        let path = ""
+        if (module === "EH") path = "/eh-module"
+        else if (module === "RH") path = "/rh-module"
+        this.$router.push(path)
+      }
     }
   }
 }

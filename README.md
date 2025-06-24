@@ -70,16 +70,12 @@ After successful login, users can access two main modules:
     - Facility Management
   - Green-themed interface
 
-3. **Exposure Dashboard**
-  - Access via `/eh/exposure-dashboard` route
-  - Tracks environmental hazards and sample testing
-  - Purple-themed interface
-4. **Settings**
+3. **Settings**
   - Access via `/settings` route
   - Visible only to admin users
   - Allows admins to change any user's password
 
-5. **System Status**
+4. **System Status**
   - Access via `/status` route
   - Displays API and database availability
   - Real-time service health monitoring
@@ -93,19 +89,15 @@ ehr-eng2/
 │   ├── models/         # Database access logic
 │   ├── db.js           # Database configuration
 │   └── index.js        # Server entry point
+├── db/                 # Database migrations and schemas
+│   └── patients table with duty status, PID, paygrade, branch_of_service, ethnicity, religion, RH factor and DoD ID fields
 ├── src/                # Frontend source code
-│   ├── components/     # General Vue components
-│   ├── modules/        # Module-specific components
-│   │   └── eh/         # EH (Electronic Health) module
-│   │       └── components/ # Components for EH module
-│   │           └── dashboard/ # Exposure Dashboard components
-│   │           └── components/ # Components for EH module
+│   ├── components/     # Vue components
+│   ├── composables/    # Reusable logic
 │   ├── router/         # Vue router configuration
 │   ├── assets/         # Static assets like images and fonts
 │   ├── views/          # Top-level views/pages
 │   └── main.js         # Main Vue application entry point
-├── db/                 # Database migrations and schemas
-│   └── patients table with duty status, PID, paygrade, branch_of_service, ethnicity, religion, RH factor and DoD ID fields
 ├── scripts/           # Server management scripts
 └── public/            # Static assets (served by Vite)
 ```
