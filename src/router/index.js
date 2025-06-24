@@ -7,7 +7,6 @@ import PatientManagement from '../components/PatientManagement.vue'
 import Settings from '../components/Settings.vue'
 import SystemStatus from '../views/SystemStatus.vue'
 import PatientView from '../views/PatientView.vue'
-import ExposureDashboard from '../modules/eh/components/dashboard/ExposureDashboard.vue'
 
 const routes = [
   {
@@ -43,12 +42,6 @@ const routes = [
     path: '/patients/view/:id',
     name: 'PatientView',
     component: PatientView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/eh/exposure-dashboard',
-    name: 'ExposureDashboard',
-    component: ExposureDashboard,
     meta: { requiresAuth: true }
   },
   {

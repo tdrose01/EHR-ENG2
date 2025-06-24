@@ -56,7 +56,7 @@
       <main>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div class="px-4 py-8 sm:px-0">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
               <!-- Patient Management Card -->
               <div
                 @click="navigateTo('/patients')"
@@ -71,19 +71,6 @@
                 </div>
               </div>
 
-              <!-- Exposure Dashboard Card -->
-              <div
-                @click="navigateTo('/eh/exposure-dashboard')"
-                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
-              >
-                <h2 class="text-2xl font-semibold text-purple-600 dark:text-purple-400 mb-3">Exposure Dashboard</h2>
-                <p class="text-gray-600 dark:text-gray-300">Track environmental exposure data.</p>
-                <div class="mt-4 flex justify-end">
-                  <button class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors">
-                    Open Dashboard
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
