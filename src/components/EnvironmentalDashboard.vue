@@ -1,5 +1,11 @@
 <template>
-  <div class="bg-gray-700 rounded-lg shadow-lg p-8 mb-8">
+  <div v-if="loading" class="flex items-center justify-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-400 border-t-transparent"></div>
+  </div>
+  <div v-else-if="error" class="bg-red-100 text-red-700 p-4 rounded-lg text-center">
+    <p>Failed to load data: {{ error }}</p>
+  </div>
+  <div v-else class="bg-gray-700 rounded-lg shadow-lg p-8 mb-8">
     <h2 class="text-3xl font-bold text-blue-400 mb-2">Environmental Dashboard</h2>
     <p class="text-lg text-gray-200 mb-6">Monitor and analyze environmental data and trends.</p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

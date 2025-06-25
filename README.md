@@ -232,6 +232,7 @@ If the last login timestamp is not displaying:
 - The dashboard fetches and displays the latest data in cards.
 - Status is color-coded (green for Good/Safe, yellow for Moderate, red for others).
 - Last updated time is shown.
+- A spinner appears while data loads and an error message is shown if the fetch fails.
 - Chart integration is ready (see below).
 
 ### Chart Integration
@@ -277,6 +278,7 @@ If the last login timestamp is not displaying:
 ### Frontend Usage
 - The Navy Environmental Health Tracker dashboard fetches and displays data from these endpoints in real time.
 - Data is color-coded and organized into cards and tables for easy review.
+- A spinner appears while data loads and an error message is shown if the fetch fails.
 
 ### Troubleshooting
 - If the dashboard is empty, ensure you have run both the migration and the seed script above.
