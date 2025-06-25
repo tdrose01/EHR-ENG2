@@ -82,20 +82,32 @@ app.post('/api/login', async (req, res) => {
         console.log('Updated password hash for user')
       }
       try {
-        // Update last_login_at to now
-        await pool.query(
-          'UPDATE users SET last_login_at = NOW() WHERE id = $1',
-          [user.id]
-        );
-        // Fetch the updated last_login_at value
-        const updated = await pool.query(
+        // Fetch the current last_login_at
+        const prev = await pool.query(
           'SELECT last_login_at FROM users WHERE id = $1',
           [user.id]
         );
-        const lastLoginAt = updated.rows[0]?.last_login_at || new Date().toISOString();
-        res.json({ success: true, role: user.role, userId: user.id, lastLoginAt });
+        const previousLogin = prev.rows[0]?.last_login_at || null;
+
+        // Update last_login to previous last_login_at, and last_login_at to NOW()
+        await pool.query(
+          'UPDATE users SET last_login = last_login_at, last_login_at = NOW() WHERE id = $1',
+          [user.id]
+        );
+
+        res.json({
+          success: true,
+          role: user.role,
+          userId: user.id,
+          lastLogin: previousLogin
+        });
       } catch (err) {
-        res.json({ success: true, role: user.role, userId: user.id, lastLoginAt: new Date().toISOString() });
+        res.json({
+          success: true,
+          role: user.role,
+          userId: user.id,
+          lastLogin: null
+        });
       }
     } else {
       res.status(401).json({ success: false, message: 'Invalid credentials' })

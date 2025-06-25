@@ -169,9 +169,12 @@ For support, email support@example.com or join our Slack channel.
 ## Last Login Timestamp Logic
 
   - The backend updates both the `last_login_at` and `last_login` columns in the `users` table on every successful login.
-  - The server first queries the existing values, then updates the columns. The previous timestamp is returned as `lastLoginAt` in the login API response and persisted as `lastLogin` for profile requests.
+  - On login, the backend sets `last_login` to the previous value of `last_login_at`, then updates `last_login_at` to the current timestamp.
+  - The previous value (now in `last_login`) is returned as `lastLogin` in the login API response and persisted as `lastLogin` for profile requests.
   - The frontend displays this value as the user's last login time in the header card. If no timestamp is present, it shows "First login".
   - Use `GET /api/users/:id` to fetch a user's profile with the `lastLogin` timestamp.
+
+> **Note:** This logic is now fixed in the backend as of 2025-06-25.
 
 ### Troubleshooting Last Login Timestamp
 
