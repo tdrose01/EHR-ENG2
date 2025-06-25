@@ -7,6 +7,7 @@ import PatientManagement from '../components/PatientManagement.vue'
 import Settings from '../components/Settings.vue'
 import SystemStatus from '../views/SystemStatus.vue'
 import PatientView from '../views/PatientView.vue'
+import EnvironmentalDashboard from '../components/EnvironmentalDashboard.vue'
 
 const routes = [
   {
@@ -54,6 +55,12 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: Settings,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/environmental-dashboard',
+    name: 'EnvironmentalDashboard',
+    component: EnvironmentalDashboard,
     meta: { requiresAuth: true }
   }
 ]

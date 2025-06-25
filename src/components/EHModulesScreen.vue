@@ -52,7 +52,7 @@
       <main>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div class="px-4 py-8 sm:px-0">
-            <div class="grid grid-cols-1 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Patient Management Card -->
               <div
                 @click="navigateTo('/patients')"
@@ -66,8 +66,20 @@
                   </button>
                 </div>
               </div>
+              <!-- Environmental Dashboard Card -->
+              <div
+                @click="navigateTo('/environmental-dashboard')"
+                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
+              >
+                <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-400 mb-3">Environmental Dashboard</h2>
+                <p class="text-gray-600 dark:text-gray-300">Monitor and analyze environmental data and trends.</p>
+                <div class="mt-4 flex justify-end">
+                  <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                    Go to Dashboard
+                  </button>
+                </div>
+              </div>
             </div>
-            <EnvironmentalDashboard />
           </div>
         </div>
       </main>
