@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../components/Login.vue'
 import ModuleSelection from '../components/ModuleSelection.vue'
-import EHModule from '../components/EHModule.vue'
+import EHModulesScreen from '../components/EHModulesScreen.vue'
 import RHModule from '../components/RHModule.vue'
 import PatientManagement from '../components/PatientManagement.vue'
 import Settings from '../components/Settings.vue'
@@ -22,8 +22,8 @@ const routes = [
   },
   {
     path: '/eh-module',
-    name: 'EHModule',
-    component: EHModule,
+    name: 'EHModulesScreen',
+    component: EHModulesScreen,
     meta: { requiresAuth: true }
   },
   {
