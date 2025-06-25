@@ -21,6 +21,7 @@ const PORT = process.env.PORT || 3000
 // Import routes
 const patientRoutes = require('./routes/patients')
 const environmentRoutes = require('./routes/environments')
+const navyRoutes = require('./routes/navy')
 
 // Middleware
 app.use(cors({
@@ -39,6 +40,7 @@ app.use((req, res, next) => {
 // Use routes
 app.use('/api/patients', patientRoutes)
 app.use('/api/environments', environmentRoutes)
+app.use('/api/navy', navyRoutes)
 
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body

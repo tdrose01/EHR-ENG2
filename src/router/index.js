@@ -9,6 +9,7 @@ import SystemStatus from '../views/SystemStatus.vue'
 import PatientView from '../views/PatientView.vue'
 import EnvironmentalDashboard from '../components/EnvironmentalDashboard.vue'
 import LandingDashboard from '../views/LandingDashboard.vue'
+import NavyDashboard from '../views/NavyDashboard.vue'
 
 const routes = [
   {
@@ -68,6 +69,11 @@ const routes = [
     path: '/',
     name: 'LandingDashboard',
     component: LandingDashboard
+  },
+  {
+    path: '/navy-dashboard',
+    name: 'NavyDashboard',
+    component: NavyDashboard
   }
 ]
 
