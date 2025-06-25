@@ -5,10 +5,6 @@
         <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">Select Module</h1>
         <div class="text-right">
           <span class="font-medium text-gray-800 dark:text-gray-100">{{ userEmail }}</span>
-          <span
-            v-if="lastLogin"
-            class="block text-xs text-gray-600 dark:text-gray-300 mt-1"
-          >Last login: {{ lastLogin }}</span>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

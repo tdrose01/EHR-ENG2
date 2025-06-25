@@ -9,7 +9,7 @@
       </button>
       <div class="flex flex-col items-end">
         <span v-if="userEmail" class="text-base font-medium text-gray-800 dark:text-gray-100">{{ userEmail }}</span>
-        <span v-if="lastLoginDisplay" class="text-xs text-gray-600 dark:text-gray-300 mt-1">{{ lastLoginDisplay }}</span>
+        <LastLoginCard />
       </div>
     </header>
 
@@ -27,6 +27,7 @@
 <script setup>
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { ref, computed, onMounted, watch } from 'vue'
+import LastLoginCard from './components/LastLoginCard.vue'
 
 const router = useRouter()
 const route = useRoute()

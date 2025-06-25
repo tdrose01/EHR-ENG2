@@ -81,29 +81,22 @@ app.post('/api/login', async (req, res) => {
         )
         console.log('Updated password hash for user')
       }
-      let lastLoginAt = null
-      let lastLogin = null
       try {
-        // fetch previous timestamp before updating
-        const prev = await pool.query(
-          'SELECT last_login_at, last_login FROM users WHERE id = $1',
-          [user.id]
-        )
-        lastLoginAt = prev.rows[0]?.last_login_at || null
-        lastLogin = prev.rows[0]?.last_login || null
-
+        // Update last_login_at to now
         await pool.query(
-          'UPDATE users SET last_login_at = NOW(), last_login = NOW() WHERE id = $1',
+          'UPDATE users SET last_login_at = NOW() WHERE id = $1',
           [user.id]
-        )
+        );
+        // Fetch the updated last_login_at value
+        const updated = await pool.query(
+          'SELECT last_login_at FROM users WHERE id = $1',
+          [user.id]
+        );
+        const lastLoginAt = updated.rows[0]?.last_login_at || new Date().toISOString();
+        res.json({ success: true, role: user.role, userId: user.id, lastLoginAt });
       } catch (err) {
-        if (err.code === '42703') {
-          console.warn('last_login_at column missing, skipping update')
-        } else {
-          throw err
-        }
+        res.json({ success: true, role: user.role, userId: user.id, lastLoginAt: new Date().toISOString() });
       }
-      res.json({ success: true, role: user.role, userId: user.id, lastLoginAt, lastLogin })
     } else {
       res.status(401).json({ success: false, message: 'Invalid credentials' })
     }

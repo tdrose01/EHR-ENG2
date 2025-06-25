@@ -131,7 +131,7 @@ ehr-eng2/
   - PID (Personnel ID)
   - DoD ID (Department of Defense ID)
   - Automatic phone number formatting
-  - Last login timestamp shown after authentication
+  - Last login timestamp is now only shown in the header card after authentication
 
 ## 🛠️ Development
 
@@ -170,7 +170,7 @@ For support, email support@example.com or join our Slack channel.
 
   - The backend updates both the `last_login_at` and `last_login` columns in the `users` table on every successful login.
   - The server first queries the existing values, then updates the columns. The previous timestamp is returned as `lastLoginAt` in the login API response and persisted as `lastLogin` for profile requests.
-  - The frontend displays this value as the user's last login time. If no timestamp is present, it shows "First login".
+  - The frontend displays this value as the user's last login time in the header card. If no timestamp is present, it shows "First login".
   - Use `GET /api/users/:id` to fetch a user's profile with the `lastLogin` timestamp.
 
 ### Troubleshooting Last Login Timestamp
@@ -242,3 +242,9 @@ If the last login timestamp is not displaying:
   - Ensure the backend route `/api/environmental/latest` is registered and the server is restarted.
   - Make sure the migration was run and there is at least one row in `environmental_data`.
   - Check the browser console and network tab for errors.
+
+## UI/UX Update (2025-06-25)
+
+- The "Last login" information is now only displayed in the header card at the top of the app.
+- The user email is no longer shown next to the logout button in the EH Module screen.
+- All duplicate or footer displays of "Last login" have been removed for a cleaner interface.
