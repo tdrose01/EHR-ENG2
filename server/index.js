@@ -20,6 +20,7 @@ const PORT = process.env.PORT || 3000
 
 // Import routes
 const patientRoutes = require('./routes/patients')
+const environmentRoutes = require('./routes/environments')
 
 // Middleware
 app.use(cors({
@@ -37,6 +38,7 @@ app.use((req, res, next) => {
 
 // Use routes
 app.use('/api/patients', patientRoutes)
+app.use('/api/environments', environmentRoutes)
 
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body
@@ -218,6 +220,8 @@ if (require.main === module) {
     console.log('- PUT    /api/patients/:id')
     console.log('- DELETE /api/patients/:id')
     console.log('- GET    /api/patients/search/:query')
+    console.log('- GET    /api/environments')
+    console.log('- GET    /api/environments/:id')
     console.log('- GET    /api/v1/health/status')
   })
 }

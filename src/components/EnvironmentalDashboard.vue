@@ -1,5 +1,13 @@
 <template>
   <div class="mt-8 space-y-8">
+    <!-- Environment Status Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <EnvironmentStatusCard
+        v-for="env in environments"
+        :key="env.id"
+        :environment="env"
+      />
+    </section>
     <!-- Metrics -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
       <div class="bg-white dark:bg-gray-700 p-4 rounded shadow">
@@ -138,10 +146,13 @@
 </template>
 
 <script>
+import EnvironmentStatusCard from './EnvironmentStatusCard.vue'
 export default {
   name: 'EnvironmentalDashboard',
+  components: { EnvironmentStatusCard },
   data() {
     return {
+      environments: [],
       metrics: {
         locations: 3,
         personnel: 12,
@@ -165,6 +176,21 @@ export default {
         { id: 'S-002', date: '2024-04-05', type: 'Soil', location: 'Forward Site', result: '2 ppm' }
       ]
     }
+  },
+  methods: {
+    async fetchEnvironments() {
+      try {
+        const res = await fetch('/api/environments')
+        if (res.ok) {
+          this.environments = await res.json()
+        }
+      } catch (err) {
+        console.error('Failed to load environments', err)
+      }
+    }
+  },
+  mounted() {
+    this.fetchEnvironments()
   }
 }
 </script>
