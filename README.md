@@ -192,3 +192,53 @@ If the last login timestamp is not displaying:
 - Schema changes must be applied to the correct database.
 - The backend uses camelCase (`lastLoginAt`) in JSON, but the database uses snake_case (`last_login_at`).
 - Improperly closed HTML tags can cause Vite build errors like `[vue/compiler-sfc] Unexpected token`. Ensure component templates are well-formed.
+
+## Environmental Dashboard
+
+### Features
+- Displays air and water quality in user-friendly cards with color-coded status.
+- Fetches real-time data from the backend `/api/environmental/latest` endpoint.
+- Data is stored in the `environmental_data` table in PostgreSQL.
+- Ready for chart integration (see below).
+
+### Database Setup
+1. **Run the migration:**
+   ```sh
+   psql -U postgres -d ehr_eng2 -f db/migrations/005_create_environmental_data.sql
+   ```
+2. **Insert sample data:**
+   ```sql
+   INSERT INTO environmental_data (pm25, pm10, o3, lead, arsenic, status_air, status_water)
+   VALUES (15, 22, 0.04, 0.001, 0.0002, 'Good', 'Safe');
+   ```
+
+### Backend API
+- **Route:** `GET /api/environmental/latest`
+- **Returns:**
+  ```json
+  {
+    "airQuality": { "pm25": 15, "pm10": 22, "o3": 0.04, "status": "Good" },
+    "waterQuality": { "lead": 0.001, "arsenic": 0.0002, "status": "Safe" },
+    "lastUpdated": "2025-06-25T14:07:56.401Z"
+  }
+  ```
+- Returns 404 if no data is present.
+
+### Frontend Usage
+- The dashboard fetches and displays the latest data in cards.
+- Status is color-coded (green for Good/Safe, yellow for Moderate, red for others).
+- Last updated time is shown.
+- Chart integration is ready (see below).
+
+### Chart Integration
+- To add charts, install Chart.js and vue-chartjs:
+  ```sh
+  npm install chart.js vue-chartjs
+  ```
+- Import and use in `EnvironmentalDashboard.vue` as needed.
+
+### Troubleshooting
+- If the dashboard says "Failed to fetch environmental data":
+  - Ensure the backend route `/api/environmental/latest` is registered and the server is restarted.
+  - Make sure the migration was run and there is at least one row in `environmental_data`.
+  - Check the browser console and network tab for errors.

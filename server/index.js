@@ -232,6 +232,38 @@ app.get('/api/v1/health/status', async (req, res) => {
   }
 })
 
+// Environmental Dashboard API
+app.get('/api/environmental/latest', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT pm25, pm10, o3, lead, arsenic, status_air, status_water, recorded_at
+       FROM environmental_data
+       ORDER BY recorded_at DESC
+       LIMIT 1`
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No data found' });
+    }
+    const row = result.rows[0];
+    res.json({
+      airQuality: {
+        pm25: row.pm25,
+        pm10: row.pm10,
+        o3: row.o3,
+        status: row.status_air
+      },
+      waterQuality: {
+        lead: row.lead,
+        arsenic: row.arsenic,
+        status: row.status_water
+      },
+      lastUpdated: row.recorded_at
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
