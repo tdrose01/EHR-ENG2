@@ -244,8 +244,10 @@ If the last login timestamp is not displaying:
   - Make sure the migration was run and there is at least one row in `environmental_data`.
   - Check the browser console and network tab for errors.
 
-## UI/UX Update (2025-06-25)
+## 🆕 UI/UX Update (2025-06-25)
 
 - The "Last login" information is now only displayed in the header card at the top of the app.
 - The user email is no longer shown next to the logout button in the EH Module screen.
 - All duplicate or footer displays of "Last login" have been removed for a cleaner interface.
+- The Environmental Dashboard now has its own dedicated route (`/environmental-dashboard`) and card navigation, similar to Patient Management.
+- The System Status page is restored to show system health and status as originally designed.
