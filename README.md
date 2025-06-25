@@ -187,3 +187,4 @@ If the last login timestamp is not displaying:
 - Backend and manual SQL client must connect to the same database instance.
 - Schema changes must be applied to the correct database.
 - The backend uses camelCase (`lastLoginAt`) in JSON, but the database uses snake_case (`last_login_at`).
+- Improperly closed HTML tags can cause Vite build errors like `[vue/compiler-sfc] Unexpected token`. Ensure component templates are well-formed.

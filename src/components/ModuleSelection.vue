@@ -8,8 +8,7 @@
           <span
             v-if="lastLogin"
             class="block text-xs text-gray-600 dark:text-gray-300 mt-1"
-            >Last login: {{ lastLogin }}</span
-          >
+          >Last login: {{ lastLogin }}</span>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -61,12 +60,11 @@ export default {
     }
   },
   methods: {
-      goToModule(module) {
-        let path = ""
-        if (module === "EH") path = "/eh-module"
-        else if (module === "RH") path = "/rh-module"
-        this.$router.push(path)
-      }
+    goToModule(module) {
+      let path = ""
+      if (module === "EH") path = "/eh-module"
+      else if (module === "RH") path = "/rh-module"
+      this.$router.push(path)
     }
   }
 }
