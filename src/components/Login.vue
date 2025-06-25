@@ -84,8 +84,14 @@ export default {
           localStorage.setItem('isAuthenticated', 'true')
           localStorage.setItem('userRole', data.role)
           localStorage.setItem('userEmail', this.email)
+          if (data.userId) {
+            localStorage.setItem('userId', data.userId)
+          }
           if (data.lastLoginAt) {
             localStorage.setItem('lastLoginAt', data.lastLoginAt)
+          }
+          if (data.lastLogin) {
+            localStorage.setItem('lastLogin', data.lastLogin)
           }
           if (data.role === 'admin') {
             localStorage.setItem('adminPassword', this.password)
