@@ -254,3 +254,30 @@ If the last login timestamp is not displaying:
 - All duplicate or footer displays of "Last login" have been removed for a cleaner interface.
 - The Environmental Dashboard now has its own dedicated route (`/environmental-dashboard`) and card navigation, similar to Patient Management.
 - The System Status page is restored to show system health and status as originally designed.
+
+## Navy Environmental Health Tracker
+
+### Database Setup
+1. **Run the migration to create Navy tables:**
+   ```sh
+   psql -U postgres -d ehr_eng2 -f db/migrations/007_create_navy_tables.sql
+   ```
+2. **Insert sample Navy data:**
+   ```sh
+   psql -U postgres -d ehr_eng2 -f db/seed_navy_data.sql
+   ```
+
+### Backend API Endpoints
+- `GET /api/navy/overview` — Returns summary stats for the Navy dashboard
+- `GET /api/navy/exposure-events` — Returns all exposure events
+- `GET /api/navy/bio-tests` — Returns all biological test results
+- `GET /api/navy/med-surveillance` — Returns all medical surveillance compliance records
+- `GET /api/navy/deployment-logs` — Returns all deployment environmental logs
+
+### Frontend Usage
+- The Navy Environmental Health Tracker dashboard fetches and displays data from these endpoints in real time.
+- Data is color-coded and organized into cards and tables for easy review.
+
+### Troubleshooting
+- If the dashboard is empty, ensure you have run both the migration and the seed script above.
+- Check the backend server logs for any errors related to the new endpoints or tables.
