@@ -60,6 +60,7 @@ After successful login, users can access two main modules:
      - Medical Records
      - Appointment Scheduling
      - Environmental Dashboard for exposure tracking
+     - Environment status cards with modal details
    - Blue-themed interface
 
 2. **RH Module (Resource & Hospital)**
@@ -94,6 +95,7 @@ ehr-eng2/
 │   └── patients table with duty status, PID, paygrade, branch_of_service, ethnicity, religion, RH factor and DoD ID fields
 ├── src/                # Frontend source code
 │   ├── components/     # Vue components (includes EHModulesScreen and EnvironmentalDashboard)
+│                       # plus EnvironmentStatusCard
 │   ├── composables/    # Reusable logic
 │   ├── router/         # Vue router configuration
 │   ├── assets/         # Static assets like images and fonts
