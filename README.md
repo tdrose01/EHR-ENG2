@@ -200,6 +200,7 @@ If the last login timestamp is not displaying:
 - Fetches real-time data from the backend `/api/environmental/latest` endpoint.
 - Data is stored in the `environmental_data` table in PostgreSQL.
 - Ready for chart integration (see below).
+- Includes a `PatientCard` showing basic details from the electronic health module.
 
 ### Database Setup
 1. **Run the migration:**

@@ -20,12 +20,14 @@
       </div>
     </div>
     <div class="mt-6 text-gray-400 text-sm">Last updated: {{ new Date(data.lastUpdated).toLocaleString() }}</div>
+    <PatientCard :patient-id="1" class="mt-6" />
     <!-- Chart placeholder: Add chart here in the future -->
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import PatientCard from './PatientCard.vue'
 
 const data = ref({
   airQuality: {},
