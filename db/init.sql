@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL DEFAULT 'user',
-    last_login_at TIMESTAMPTZ
+    last_login_at TIMESTAMPTZ,
+    last_login TIMESTAMP
 );
 
 -- Create login_audit table

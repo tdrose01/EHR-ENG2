@@ -38,6 +38,22 @@ function goBack() {
 const userEmail = ref('')
 const lastLoginAt = ref('')
 
+async function fetchProfile() {
+  const id = localStorage.getItem('userId')
+  if (!id) return
+  try {
+    const res = await fetch(`/api/users/${id}`)
+    if (!res.ok) return
+    const data = await res.json()
+    if (data.lastLogin) {
+      lastLoginAt.value = data.lastLogin
+      localStorage.setItem('lastLoginAt', data.lastLogin)
+    }
+  } catch (e) {
+    console.error('Profile fetch failed:', e)
+  }
+}
+
 const lastLoginDisplay = computed(() => {
   if (!lastLoginAt.value) return 'First login'
   const date = new Date(lastLoginAt.value)
@@ -52,10 +68,12 @@ function refreshUserInfo() {
 
 onMounted(() => {
   refreshUserInfo()
+  fetchProfile()
 })
 
 watch(route, () => {
   refreshUserInfo()
+  fetchProfile()
 })
 </script>
 

@@ -166,15 +166,16 @@ For support, email support@example.com or join our Slack channel.
 
 ## Last Login Timestamp Logic
 
-  - The backend updates the `last_login_at` column in the `users` table on every successful login.
-  - The server first queries the existing value, then updates the column. That previous timestamp is returned as `lastLoginAt` in the login API response.
-  - The frontend displays this value as the user's last login time. If `lastLoginAt` is `null`, it shows "First login".
+  - The backend updates both the `last_login_at` and `last_login` columns in the `users` table on every successful login.
+  - The server first queries the existing values, then updates the columns. The previous timestamp is returned as `lastLoginAt` in the login API response and persisted as `lastLogin` for profile requests.
+  - The frontend displays this value as the user's last login time. If no timestamp is present, it shows "First login".
+  - Use `GET /api/users/:id` to fetch a user's profile with the `lastLogin` timestamp.
 
 ### Troubleshooting Last Login Timestamp
 
 If the last login timestamp is not displaying:
 1. **Check the Database Schema:**
-   - Ensure the `last_login_at` column exists in the `users` table and is of type `timestamp with time zone`.
+   - Ensure the `last_login_at` and `last_login` columns exist in the `users` table and are of type `timestamp`.
    - Confirm you are connected to the correct database (see `server/db.js`).
 2. **Check Backend Logs:**
    - Look for messages like `last_login_at column missing, skipping update`. This means the backend cannot see the column.

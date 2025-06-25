@@ -12,6 +12,7 @@ CREATE TABLE users (
   password_hash TEXT NOT NULL,
   role TEXT NOT NULL DEFAULT 'user',
   last_login_at TIMESTAMPTZ,
+  last_login TIMESTAMP,
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );

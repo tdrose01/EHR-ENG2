@@ -80,16 +80,18 @@ app.post('/api/login', async (req, res) => {
         console.log('Updated password hash for user')
       }
       let lastLoginAt = null
+      let lastLogin = null
       try {
         // fetch previous timestamp before updating
         const prev = await pool.query(
-          'SELECT last_login_at FROM users WHERE id = $1',
+          'SELECT last_login_at, last_login FROM users WHERE id = $1',
           [user.id]
         )
         lastLoginAt = prev.rows[0]?.last_login_at || null
+        lastLogin = prev.rows[0]?.last_login || null
 
         await pool.query(
-          'UPDATE users SET last_login_at = NOW() WHERE id = $1',
+          'UPDATE users SET last_login_at = NOW(), last_login = NOW() WHERE id = $1',
           [user.id]
         )
       } catch (err) {
@@ -99,7 +101,7 @@ app.post('/api/login', async (req, res) => {
           throw err
         }
       }
-      res.json({ success: true, role: user.role, userId: user.id, lastLoginAt })
+      res.json({ success: true, role: user.role, userId: user.id, lastLoginAt, lastLogin })
     } else {
       res.status(401).json({ success: false, message: 'Invalid credentials' })
     }
@@ -181,10 +183,36 @@ app.get('/api/admin/users', async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized' })
     }
 
-  const users = await pool.query('SELECT id, email, last_login_at FROM users ORDER BY email')
+  const users = await pool.query('SELECT id, email, last_login_at, last_login FROM users ORDER BY email')
   res.json(users.rows)
   } catch (err) {
     console.error('User list error:', err)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
+// Endpoint to fetch a user's profile
+app.get('/api/users/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    const result = await pool.query(
+      'SELECT id, email, role, last_login FROM users WHERE id = $1',
+      [id]
+    )
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    const user = result.rows[0]
+    res.json({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      lastLogin: user.last_login
+    })
+  } catch (err) {
+    console.error('User profile error:', err)
     res.status(500).json({ error: 'Internal server error' })
   }
 })
@@ -218,6 +246,7 @@ if (require.main === module) {
     console.log('- PUT    /api/patients/:id')
     console.log('- DELETE /api/patients/:id')
     console.log('- GET    /api/patients/search/:query')
+    console.log('- GET    /api/users/:id')
     console.log('- GET    /api/v1/health/status')
   })
 }
