@@ -8,6 +8,7 @@ import Settings from '../components/Settings.vue'
 import SystemStatus from '../views/SystemStatus.vue'
 import PatientView from '../views/PatientView.vue'
 import EnvironmentalDashboard from '../components/EnvironmentalDashboard.vue'
+import LandingDashboard from '../views/LandingDashboard.vue'
 
 const routes = [
   {
@@ -62,6 +63,11 @@ const routes = [
     name: 'EnvironmentalDashboard',
     component: EnvironmentalDashboard,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/',
+    name: 'LandingDashboard',
+    component: LandingDashboard
   }
 ]
 
