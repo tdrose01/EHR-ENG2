@@ -227,4 +227,37 @@
    - The user email is no longer displayed next to the logout button in the EH Module screen, resulting in a cleaner interface.
 
 3. **Documentation Updates**
-   - The README and project documentation were updated to reflect these UI/UX changes and to clarify the new behavior for future contributors. 
+   - The README and project documentation were updated to reflect these UI/UX changes and to clarify the new behavior for future contributors.
+
+## Lesson: Building the Navy Environmental Health Tracker Dashboard
+
+### 1. Schema Design & Migration
+- Identify all data needed for the dashboard (exposure events, bio tests, surveillance, deployments).
+- Design normalized tables for each data type, using clear column names and appropriate types.
+- Create a migration file (e.g., `db/migrations/007_create_navy_tables.sql`) to add the new tables.
+- Apply the migration to the database before seeding or querying data.
+
+### 2. Seeding Data
+- Write a seed script (e.g., `db/seed_navy_data.sql`) with realistic sample data for each new table.
+- Run the seed script after the migration to populate the dashboard for development and testing.
+
+### 3. Backend & API Integration
+- Create modular Express routes for each dashboard section (overview, exposure, bio tests, etc.).
+- Ensure each route queries the correct table and returns data in the expected format for the frontend.
+
+### 4. Frontend Integration
+- Update the Vue dashboard to fetch data from the new backend endpoints using `fetch` and `onMounted`.
+- Replace all mock data with live API data.
+- Use Vue's reactivity to update the UI as data loads.
+
+### 5. Documentation & Workflow
+- Update the README with migration and seeding instructions, new endpoints, and troubleshooting tips.
+- Commit all changes (migration, seed, code, docs) together for traceability.
+- Keep documentation in sync with code to help future developers and users.
+
+### 6. Best Practices
+- Use separate migration and seed files for clarity and repeatability.
+- Design tables to match real-world data and dashboard needs.
+- Modularize backend routes for maintainability.
+- Always test new endpoints with both backend and frontend before deploying.
+- Document every new feature and schema change in the README and LESSONS.md. 
