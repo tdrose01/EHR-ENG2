@@ -59,6 +59,7 @@ After successful login, users can access two main modules:
      - Dark mode support with proper contrast
      - Medical Records
      - Appointment Scheduling
+     - Environmental Dashboard for exposure tracking
    - Blue-themed interface
 
 2. **RH Module (Resource & Hospital)**
@@ -92,7 +93,7 @@ ehr-eng2/
 ├── db/                 # Database migrations and schemas
 │   └── patients table with duty status, PID, paygrade, branch_of_service, ethnicity, religion, RH factor and DoD ID fields
 ├── src/                # Frontend source code
-│   ├── components/     # Vue components
+│   ├── components/     # Vue components (includes EHModulesScreen and EnvironmentalDashboard)
 │   ├── composables/    # Reusable logic
 │   ├── router/         # Vue router configuration
 │   ├── assets/         # Static assets like images and fonts

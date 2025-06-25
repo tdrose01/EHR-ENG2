@@ -56,7 +56,7 @@
       <main>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div class="px-4 py-8 sm:px-0">
-            <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+            <div class="grid grid-cols-1 gap-6">
               <!-- Patient Management Card -->
               <div
                 @click="navigateTo('/patients')"
@@ -70,8 +70,8 @@
                   </button>
                 </div>
               </div>
-
             </div>
+            <EnvironmentalDashboard />
           </div>
         </div>
       </main>
@@ -80,8 +80,11 @@
 </template>
 
 <script>
+import EnvironmentalDashboard from './EnvironmentalDashboard.vue'
+
 export default {
-  name: 'EHModule',
+  name: 'EHModulesScreen',
+  components: { EnvironmentalDashboard },
   computed: {
     isAdmin() {
       return localStorage.getItem('userRole') === 'admin'
@@ -111,3 +114,5 @@ export default {
   }
 }
 </script>
+
+<style scoped></style>
