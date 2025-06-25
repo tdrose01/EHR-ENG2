@@ -215,4 +215,16 @@
 
 ### Testing
 - [Vue Test Utils](https://test-utils.vuejs.org/)
-- [Puppeteer Documentation](https://pptr.dev/) 
+- [Puppeteer Documentation](https://pptr.dev/)
+
+## 🆕 Recent UI/UX and Code Improvements (2025-06-25)
+
+1. **'Last login' Display Simplification**
+   - The 'Last login' information is now only shown in the header card at the top of the app for clarity and consistency.
+   - All duplicate or footer displays of 'Last login' have been removed from module screens and footers.
+
+2. **Logout Area Cleanup**
+   - The user email is no longer displayed next to the logout button in the EH Module screen, resulting in a cleaner interface.
+
+3. **Documentation Updates**
+   - The README and project documentation were updated to reflect these UI/UX changes and to clarify the new behavior for future contributors. 
