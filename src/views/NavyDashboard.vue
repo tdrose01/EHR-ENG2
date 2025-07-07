@@ -1,5 +1,15 @@
 <template>
-  <div class="min-h-screen bg-black text-white py-10 px-4">
+  <div class="min-h-screen bg-black text-white py-10 px-4 relative">
+    <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <svg class="animate-spin h-10 w-10 text-blue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+      </svg>
+    </div>
+    <div v-if="error" class="max-w-7xl mx-auto mt-20 p-6 border border-red-500 text-red-400 rounded bg-gray-900 text-center">
+      {{ error }}
+    </div>
+    <div v-else>
     <!-- Title -->
     <div class="max-w-7xl mx-auto mb-8">
       <h1 class="text-4xl font-bold text-blue-300 mb-2">Navy Environmental Health Tracker</h1>
@@ -158,6 +168,7 @@
         </table>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -176,20 +187,31 @@ const exposureEvents = ref([])
 const bioTests = ref([])
 const medSurveillance = ref([])
 const deploymentLogs = ref([])
+const isLoading = ref(true)
+const error = ref(null)
 
 async function fetchAll() {
-  const [ov, ev, bt, ms, dl] = await Promise.all([
-    fetch('/api/navy/overview').then(r => r.json()),
-    fetch('/api/navy/exposure-events').then(r => r.json()),
-    fetch('/api/navy/bio-tests').then(r => r.json()),
-    fetch('/api/navy/med-surveillance').then(r => r.json()),
-    fetch('/api/navy/deployment-logs').then(r => r.json()),
-  ])
-  overview.value = ov
-  exposureEvents.value = ev
-  bioTests.value = bt
-  medSurveillance.value = ms
-  deploymentLogs.value = dl
+  isLoading.value = true
+  error.value = null
+  try {
+    const [ov, ev, bt, ms, dl] = await Promise.all([
+      fetch('/api/navy/overview').then(r => r.json()),
+      fetch('/api/navy/exposure-events').then(r => r.json()),
+      fetch('/api/navy/bio-tests').then(r => r.json()),
+      fetch('/api/navy/med-surveillance').then(r => r.json()),
+      fetch('/api/navy/deployment-logs').then(r => r.json()),
+    ])
+    overview.value = ov
+    exposureEvents.value = ev
+    bioTests.value = bt
+    medSurveillance.value = ms
+    deploymentLogs.value = dl
+  } catch (e) {
+    console.error(e)
+    error.value = 'Failed to fetch Navy dashboard data.'
+  } finally {
+    isLoading.value = false
+  }
 }
 
 onMounted(fetchAll)
