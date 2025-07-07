@@ -249,6 +249,7 @@
 - Update the Vue dashboard to fetch data from the new backend endpoints using `fetch` and `onMounted`.
 - Replace all mock data with live API data.
 - Use Vue's reactivity to update the UI as data loads.
+- Implement a loading spinner overlay and show a clear error message if any fetch fails.
 
 ### 5. Documentation & Workflow
 - Update the README with migration and seeding instructions, new endpoints, and troubleshooting tips.
