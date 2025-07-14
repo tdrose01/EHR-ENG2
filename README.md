@@ -59,8 +59,9 @@ After successful login, users can access two main modules:
      - Dark mode support with proper contrast
      - Medical Records
      - Appointment Scheduling
-     - Environmental Dashboard for exposure tracking
-     - Environment status cards with modal details
+    - Environmental Dashboard for exposure tracking
+    - Record water test results for each patient
+    - Environment status cards with modal details
    - Blue-themed interface
 
 2. **RH Module (Resource & Hospital)**
@@ -215,6 +216,10 @@ If the last login timestamp is not displaying:
    INSERT INTO environmental_data (pm25, pm10, o3, lead, arsenic, status_air, status_water)
    VALUES (15, 22, 0.04, 0.001, 0.0002, 'Good', 'Safe');
    ```
+3. **Create patient water tests table:**
+   ```sh
+   psql -U postgres -d ehr_eng2 -f db/migrations/008_create_patient_water_tests.sql
+   ```
 
 ### Backend API
 - **Route:** `GET /api/environmental/latest`
@@ -227,6 +232,10 @@ If the last login timestamp is not displaying:
   }
   ```
 - Returns 404 if no data is present.
+
+### Patient Water Test API
+- `GET /api/patients/:id/water-tests` — List all tests for a patient
+- `POST /api/patients/:id/water-tests` — Add a new water test
 
 ### Frontend Usage
 - The dashboard fetches and displays the latest data in cards.

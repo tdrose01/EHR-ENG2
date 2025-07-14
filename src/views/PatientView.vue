@@ -22,16 +22,29 @@
       <p class="mb-2"><span class="font-bold">Date of Birth:</span> {{ formatDate(patient.date_of_birth) }}</p>
       <p class="mb-2"><span class="font-bold">Phone:</span> {{ displayPhone(patient.phone_number) }}</p>
     </div>
+    <div v-if="patient" class="mt-6">
+      <h3 class="text-xl font-semibold mb-2">Water Tests</h3>
+      <ul v-if="tests.length" class="mb-4 list-disc ml-6">
+        <li v-for="t in tests" :key="t.id">
+          {{ formatDate(t.recorded_at) }} - Lead: {{ t.lead }} Arsenic: {{ t.arsenic }} ({{ t.status }})
+        </li>
+      </ul>
+      <p v-else class="mb-4">No water tests recorded.</p>
+      <WaterTestForm :patient-id="patient.id" @saved="fetchWaterTests" />
+    </div>
   </div>
 </template>
 
 <script>
 import { formatPhoneNumber } from '../utils/formatters'
+import WaterTestForm from '../components/WaterTestForm.vue'
 export default {
   name: 'PatientView',
+  components: { WaterTestForm },
   data() {
     return {
-      patient: null
+      patient: null,
+      tests: []
     }
   },
   async mounted() {
@@ -40,6 +53,7 @@ export default {
       const res = await fetch(`/api/patients/${id}`)
       if (res.ok) {
         this.patient = await res.json()
+        await this.fetchWaterTests()
       } else {
         console.error('Failed to fetch patient', await res.text())
       }
@@ -53,6 +67,12 @@ export default {
     },
     displayPhone(number) {
       return formatPhoneNumber(number)
+    },
+    async fetchWaterTests() {
+      const res = await fetch(`/api/patients/${this.patient.id}/water-tests`)
+      if (res.ok) {
+        this.tests = await res.json()
+      }
     }
   }
 }
