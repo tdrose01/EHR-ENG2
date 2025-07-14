@@ -286,6 +286,8 @@ if (require.main === module) {
     console.log('- POST   /api/patients')
     console.log('- PUT    /api/patients/:id')
     console.log('- DELETE /api/patients/:id')
+    console.log('- GET    /api/patients/:id/water-tests')
+    console.log('- POST   /api/patients/:id/water-tests')
     console.log('- GET    /api/patients/search/:query')
     console.log('- GET    /api/users/:id')
     console.log('- GET    /api/environments')
