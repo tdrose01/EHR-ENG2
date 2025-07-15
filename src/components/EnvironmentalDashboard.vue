@@ -25,15 +25,20 @@
         <div>Status: <span :class="statusColor(data.waterQuality.status)">{{ data.waterQuality.status }}</span></div>
       </div>
     </div>
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <AirQualityChart v-if="data.airQuality" :air-quality="data.airQuality" />
+      <WaterQualityChart v-if="data.waterQuality" :water-quality="data.waterQuality" />
+    </div>
     <div class="mt-6 text-gray-400 text-sm">Last updated: {{ new Date(data.lastUpdated).toLocaleString() }}</div>
     <PatientCard :patient-id="1" class="mt-6" />
-    <!-- Chart placeholder: Add chart here in the future -->
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import PatientCard from './PatientCard.vue'
+import AirQualityChart from './AirQualityChart.vue'
+import WaterQualityChart from './WaterQualityChart.vue'
 
 const data = ref({
   airQuality: {},
