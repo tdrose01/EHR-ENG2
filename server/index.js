@@ -42,6 +42,9 @@ app.use('/api/patients', patientRoutes)
 app.use('/api/environments', environmentRoutes)
 app.use('/api/navy', navyRoutes)
 
+const adminRoutes = require('./routes/admin');
+app.use('/api/admin', adminRoutes);
+
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body
   console.log('Login attempt:', { email, password })
@@ -117,86 +120,6 @@ app.post('/api/login', async (req, res) => {
   } catch (error) {
     console.error('Login error:', error)
     res.status(500).json({ success: false })
-  }
-})
-
-// Admin endpoint to update a user's password
-app.put('/api/admin/users/:id/password', async (req, res) => {
-  const { id } = req.params
-  const { adminEmail, adminPassword, newPassword } = req.body
-
-  if (!adminEmail || !adminPassword || !newPassword) {
-    return res.status(400).json({ error: 'Missing parameters' })
-  }
-
-  try {
-    const adminResult = await pool.query(
-      'SELECT id, password_hash, role FROM users WHERE email = $1',
-      [adminEmail]
-    )
-
-    if (
-      adminResult.rows.length === 0 ||
-      adminResult.rows[0].role !== 'admin'
-    ) {
-      return res.status(403).json({ error: 'Unauthorized' })
-    }
-
-    const adminUser = adminResult.rows[0]
-    const validAdmin = await bcrypt.compare(
-      adminPassword,
-      adminUser.password_hash
-    )
-
-    if (!validAdmin) {
-      return res.status(403).json({ error: 'Unauthorized' })
-    }
-
-    const hashed = await bcrypt.hash(newPassword, 10)
-    await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hashed, id])
-
-    res.json({ success: true })
-  } catch (err) {
-    console.error('Password update error:', err)
-    res.status(500).json({ error: 'Internal server error' })
-  }
-})
-
-// Admin endpoint to list users
-app.get('/api/admin/users', async (req, res) => {
-  const { adminEmail, adminPassword } = req.query
-
-  if (!adminEmail || !adminPassword) {
-    return res.status(400).json({ error: 'Missing parameters' })
-  }
-
-  try {
-    const adminResult = await pool.query(
-      'SELECT password_hash, role FROM users WHERE email = $1',
-      [adminEmail]
-    )
-
-    if (
-      adminResult.rows.length === 0 ||
-      adminResult.rows[0].role !== 'admin'
-    ) {
-      return res.status(403).json({ error: 'Unauthorized' })
-    }
-
-    const valid = await bcrypt.compare(
-      adminPassword,
-      adminResult.rows[0].password_hash
-    )
-
-    if (!valid) {
-      return res.status(403).json({ error: 'Unauthorized' })
-    }
-
-  const users = await pool.query('SELECT id, email, last_login_at, last_login FROM users ORDER BY email')
-  res.json(users.rows)
-  } catch (err) {
-    console.error('User list error:', err)
-    res.status(500).json({ error: 'Internal server error' })
   }
 })
 

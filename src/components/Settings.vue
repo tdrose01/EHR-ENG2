@@ -43,12 +43,17 @@ export default {
   methods: {
     async fetchUsers() {
       const adminEmail = localStorage.getItem('userEmail')
-      const adminPassword = localStorage.getItem('adminPassword')
+      const adminPassword = prompt('Please enter your admin password:');
       if (!adminEmail || !adminPassword) return
-      const query = new URLSearchParams({ adminEmail, adminPassword }).toString()
-      const res = await fetch(`/api/admin/users?${query}`)
+      const res = await fetch(`/api/admin/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminEmail, adminPassword })
+      })
       if (res.ok) {
         this.users = await res.json()
+      } else {
+        this.error = 'Failed to fetch users. Please check your admin password.'
       }
     },
     async updatePassword() {
@@ -62,7 +67,7 @@ export default {
         return
       }
       const adminEmail = localStorage.getItem('userEmail')
-      const adminPassword = localStorage.getItem('adminPassword')
+      const adminPassword = prompt('Please enter your admin password to confirm:')
       if (!adminEmail || !adminPassword) {
         this.error = 'Admin credentials missing'
         return
