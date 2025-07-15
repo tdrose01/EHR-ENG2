@@ -39,7 +39,7 @@ npm run lint
 After successful login, users can access two main modules:
   Use the Back button in the header to return to the previous page.
 
-1. **EH Module (Electronic Health)**
+1. **⚕️ EH Module (Electronic Health)**
    - Access via `/eh-module` route
    - Manages electronic health records
    - Features:

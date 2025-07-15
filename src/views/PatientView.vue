@@ -6,7 +6,7 @@
     >
       Back
     </button>
-    <h2 class="text-2xl font-semibold mb-4">Patient Details</h2>
+    <h2 class="text-2xl font-semibold mb-4">⚕️ Patient Details</h2>
     <div v-if="patient" class="bg-white dark:bg-gray-700 shadow rounded-lg p-4">
       <p class="mb-2"><span class="font-bold">Name:</span> {{ patient.first_name }} {{ patient.last_name }}</p>
       <p class="mb-2"><span class="font-bold">Gender:</span> {{ patient.gender }}</p>
