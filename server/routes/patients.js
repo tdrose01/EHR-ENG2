@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { updatePatient } = require('../models/patientModel');
+const { createWaterTest, getWaterTests } = require('../models/waterTestModel');
 
 // Get all patients
 router.get('/', async (req, res) => {
@@ -127,6 +128,28 @@ router.delete('/:id', async (req, res) => {
     res.json({ message: 'Patient deactivated successfully' });
   } catch (err) {
     console.error('Error deactivating patient:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get water tests for a patient
+router.get('/:id/water-tests', async (req, res) => {
+  try {
+    const tests = await getWaterTests(req.params.id);
+    res.json(tests);
+  } catch (err) {
+    console.error('Error fetching water tests:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Add water test for a patient
+router.post('/:id/water-tests', async (req, res) => {
+  try {
+    const test = await createWaterTest(req.params.id, req.body);
+    res.status(201).json(test);
+  } catch (err) {
+    console.error('Error creating water test:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
