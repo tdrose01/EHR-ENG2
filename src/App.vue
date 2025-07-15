@@ -9,7 +9,7 @@
       </button>
       <div class="flex flex-col items-end">
         <span v-if="userEmail" class="text-base font-medium text-gray-800 dark:text-gray-100">{{ userEmail }}</span>
-        <LastLoginCard />
+        <LastLoginCard :last-login-at="lastLoginAt" />
       </div>
     </header>
 
@@ -26,7 +26,7 @@
 
 <script setup>
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import LastLoginCard from './components/LastLoginCard.vue'
 
 const router = useRouter()
@@ -54,13 +54,6 @@ async function fetchProfile() {
     console.error('Profile fetch failed:', e)
   }
 }
-
-const lastLoginDisplay = computed(() => {
-  if (!lastLoginAt.value) return 'First login'
-  const date = new Date(lastLoginAt.value)
-  if (isNaN(date.getTime())) return 'First login'
-  return `Last login: ${date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}`
-})
 
 function refreshUserInfo() {
   userEmail.value = localStorage.getItem('userEmail') || ''

@@ -7,10 +7,17 @@
 
 <script setup>
 import { computed } from 'vue'
-const lastLoginAt = localStorage.getItem('lastLoginAt') || ''
+
+const props = defineProps({
+  lastLoginAt: {
+    type: String,
+    default: ''
+  }
+})
+
 const display = computed(() => {
-  if (!lastLoginAt) return 'First login'
-  const date = new Date(lastLoginAt)
+  if (!props.lastLoginAt) return 'First login'
+  const date = new Date(props.lastLoginAt)
   if (isNaN(date.getTime())) return 'First login'
   return date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
 })
