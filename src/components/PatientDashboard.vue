@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto px-4 py-8 text-gray-900 dark:text-gray-100">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-semibold">Patients</h2>
+      <h2 class="text-2xl font-semibold">⚕️ Patients</h2>
       <button
         @click="openAddModal"
         class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"

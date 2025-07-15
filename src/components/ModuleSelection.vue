@@ -13,7 +13,7 @@
           @click="goToModule('EH')"
           class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
         >
-          <h2 class="text-2xl font-semibold text-blue-600 mb-3">EH Module</h2>
+          <h2 class="text-2xl font-semibold text-blue-600 mb-3">⚕️ EH Module</h2>
           <p class="text-gray-600 dark:text-gray-300">Electronic Health Records Management</p>
           <div class="mt-4 flex justify-end">
             <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
