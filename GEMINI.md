@@ -5,6 +5,8 @@
 ```bash
 # Install dependencies
 npm install
+# Ensure jsPDF libraries are installed for PDF export
+npm install jspdf jspdf-autotable
 
 # Copy environment configuration
 cp .env.example .env
