@@ -24,14 +24,34 @@ const checkAdmin = async (req, res, next) => {
   next();
 };
 
-
-// POST /api/admin/users (for fetching users with credentials in body)
-router.post('/users', checkAdmin, async (req, res) => {
+// POST /api/admin/users/list (for fetching users with credentials in body)
+router.post('/users/list', checkAdmin, async (req, res) => {
   try {
     const users = await User.findAll();
     res.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// POST /api/admin/users (for creating a user)
+router.post('/users', checkAdmin, async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  try {
+    const existingUser = await User.findByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+    const newUser = await User.create(email, password);
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error('Error creating user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

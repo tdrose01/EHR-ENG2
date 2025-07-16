@@ -21,13 +21,19 @@
         <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update Password</button>
       </form>
+      <create-user-form @user-created="fetchUsers" />
     </div>
   </div>
 </template>
 
 <script>
+import CreateUserForm from './CreateUserForm.vue'
+
 export default {
   name: 'Settings',
+  components: {
+    CreateUserForm
+  },
   data() {
     return {
       users: [],
@@ -45,7 +51,7 @@ export default {
       const adminEmail = localStorage.getItem('userEmail')
       const adminPassword = prompt('Please enter your admin password:');
       if (!adminEmail || !adminPassword) return
-      const res = await fetch(`/api/admin/users`, {
+      const res = await fetch(`/api/admin/users/list`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ adminEmail, adminPassword })

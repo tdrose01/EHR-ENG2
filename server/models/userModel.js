@@ -2,6 +2,16 @@ const db = require('../db');
 const bcrypt = require('bcryptjs');
 
 const User = {
+  async create(email, password) {
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+    const { rows } = await db.query(
+      'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email',
+      [email, passwordHash]
+    );
+    return rows[0];
+  },
+
   async findAll() {
     const { rows } = await db.query('SELECT id, email FROM users');
     return rows;
