@@ -47,7 +47,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import HeatmapjsVue from 'vue-heatmapjs';
-import deckPlanImage from '@/assets/deck_plan_placeholder.png'; // Placeholder image
+import deckPlanImage from '../assets/deck_plan_placeholder.png'; // Placeholder image
 
 // --- State ---
 const selectedMetric = ref('noise');

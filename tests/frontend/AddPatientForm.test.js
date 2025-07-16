@@ -1,13 +1,32 @@
-const { mount } = require('@vue/test-utils')
-const Vue = require('vue')
-global.Vue = Vue
-const AddPatientForm = require('../../src/components/AddPatientForm.vue').default
+import { mount } from '@vue/test-utils'
+import AddPatientForm from '../../src/components/AddPatientForm.vue'
 
-describe('AddPatientForm', () => {
-  it('updates model when branch of service selected', async () => {
+describe('AddPatientForm.vue', () => {
+  it('renders a date of birth input', () => {
     const wrapper = mount(AddPatientForm)
-    const select = wrapper.find('[data-test="branch-select"]')
-    await select.setValue('Navy')
-    expect(wrapper.vm.form.branch_of_service).toBe('Navy')
+    const dobInput = wrapper.find('input[type="date"]')
+    expect(dobInput.exists()).toBe(true)
+  })
+
+  it('submits the form with the correct date of birth', async () => {
+    const wrapper = mount(AddPatientForm)
+    await wrapper.find('input[type="date"]').setValue('1990-01-01')
+    
+    // Mock the fetch call
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({}),
+      })
+    )
+
+    await wrapper.find('form').trigger('submit.prevent')
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/patients',
+      expect.objectContaining({
+        body: expect.stringContaining('"date_of_birth":"1990-01-01"')
+      })
+    )
   })
 })
