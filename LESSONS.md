@@ -261,4 +261,15 @@
 - Design tables to match real-world data and dashboard needs.
 - Modularize backend routes for maintainability.
 - Always test new endpoints with both backend and frontend before deploying.
-- Document every new feature and schema change in the README and LESSONS.md. 
+- Document every new feature and schema change in the README and LESSONS.md.
+
+## Lesson: Modernizing UI Components and Git Workflow
+
+### 1. Modern Vue Component Development
+- **Embrace `<script setup>`:** For Vue 3 components, using the `<script setup>` syntax is highly recommended. It reduces boilerplate, improves readability, and makes component logic more concise and easier to manage.
+- **Self-Contained SVGs:** Embedding SVG icons directly within the component (as template literals or shallow refs) is an effective strategy. It eliminates the need for extra file loaders or HTTP requests, simplifies the component's dependencies, and ensures icons are always available.
+- **Dynamic Styling with TailwindCSS:** Use computed properties to dynamically apply TailwindCSS classes for state-driven styling (e.g., online/offline status). This is a clean and powerful way to manage component appearance without writing complex CSS.
+
+### 2. Cross-Platform Git Practices
+- **Handling Multi-line Commits:** When `git commit -m "..."` fails with multi-line messages on certain shells (like Windows CMD/PowerShell), use a temporary file. Write the full commit message to a file (e.g., `commit.tmp`) and then use `git commit -F commit.tmp`. This is a robust, cross-platform solution.
+- **OS-Specific Commands:** Be mindful of the underlying operating system when using shell commands. For file deletion, `del` is the correct command on Windows, whereas `rm` is used on Linux and macOS. Using the wrong command will result in an error.
