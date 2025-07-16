@@ -80,12 +80,8 @@ After successful login, users can access two main modules:
 
 4. **System Status**
   - Access via `/status` route
-  - Displays API and database availability in a modern, card-based interface.
-  - Features include:
-    - Real-time service health monitoring with auto-refreshing status indicators.
-    - A manual refresh button to check the current status on demand.
-    - A "Last Updated" timestamp for clarity.
-    - Dynamic icons and a clean, responsive design that supports dark mode.
+  - Displays API and database availability
+  - Real-time service health monitoring
 
 ## 🏗️ Project Structure
 
