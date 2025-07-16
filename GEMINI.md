@@ -61,6 +61,10 @@ After successful login, users can access two main modules:
      - Appointment Scheduling
      - Environmental Dashboard for exposure tracking
      - Environment status cards with modal details
+     - **New:** A suite of advanced dashboards for visualizing environmental data:
+        - **Heatmap Dashboard:** Overlays exposure data on ship deck plans.
+        - **Trend Charts:** Tracks exposure metrics over time against safety limits.
+        - **Data Explorer:** A filterable, sortable, and paginated table for all raw exposure data, with a PDF export feature.
    - Blue-themed interface
 
 2. **RH Module (Resource & Hospital)**

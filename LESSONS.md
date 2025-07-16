@@ -261,4 +261,47 @@
 - Design tables to match real-world data and dashboard needs.
 - Modularize backend routes for maintainability.
 - Always test new endpoints with both backend and frontend before deploying.
-- Document every new feature and schema change in the README and LESSONS.md. 
+- Document every new feature and schema change in the README and LESSONS.md.
+
+## Lesson: Building Interactive Frontend Dashboards
+
+The development of the frontend dashboards provided several key insights into building data-centric user interfaces with Vue 3.
+
+### 1. Integrating Third-Party Visualization Libraries
+- **Pattern:** For complex visualizations, leverage specialized libraries. We used `heatmap.js` for geospatial heatmaps and `Chart.js` for time-series trends.
+- **Integration:** Using Vue wrappers (e.g., `vue-heatmapjs`, `vue-chartjs`) simplifies the integration process. These wrappers handle the component lifecycle and reactivity, making it easy to pass data and options from the Vue script to the underlying library.
+- **Best Practice:** Encapsulate each complex visualization within its own component (`HeatmapDashboard.vue`, `TrendChartDashboard.vue`). This keeps the code organized and reusable.
+
+### 2. Client-Side Reporting (PDF Export)
+- **Pattern:** For features like "Export to PDF," client-side libraries like `jspdf` and the `jspdf-autotable` plugin are highly effective. They allow the user to instantly generate a report based on the data currently displayed in the browser.
+- **Benefit:** This approach avoids the need for a dedicated server-side reporting engine, reducing backend complexity and server load. The user gets immediate feedback and a downloadable file.
+
+### 3. Structuring Data-Heavy Components
+- **Filtering:** Use a reactive object (created with `reactive`) to hold all filter values. This makes it easy to watch for changes and trigger data fetches.
+- **Pagination:** The backend API should drive pagination. The API response should include pagination details (current page, total pages), which the frontend then uses to render the pagination controls. The frontend's responsibility is simply to request the correct page.
+- **Loading & Error States:** Always include clear loading and error states in the UI. This provides essential feedback to the user, preventing confusion when data is fetching or if an API call fails.
+
+## Lesson: Architecting the Environmental Exposure Backend
+
+The development of the environmental exposure tracking system followed a microservice-based architecture. This approach was chosen to handle the diverse data sources and protocols required by the project.
+
+### 1. Microservices for Data Ingestion
+- **Pattern:** Instead of a single monolithic application, we created small, independent services for each data source. This is known as the "Single Responsibility Principle" applied to services.
+  - **FastAPI (MQTT Bridge):** Ideal for asynchronous tasks and modern web protocols like WebSockets or, in this case, bridging MQTT to Kafka.
+  - **gRPC (Noise Dosimeter):** Chosen for its high performance and strongly-typed contract-first design, making it perfect for inter-service communication or device-to-server data transfer where efficiency is key.
+  - **Polling Scripts (CSV/SFTP):** A simple and effective pattern for legacy systems that drop files into a directory. Using `watchdog` for real-time polling and `pysftp` for scheduled batch jobs covers both use cases.
+- **Benefit:** Each service can be developed, deployed, and scaled independently. If one data source fails, it doesn't bring down the entire ingestion pipeline.
+
+### 2. Decoupling with a Message Broker (Kafka)
+- **Pattern:** For real-time data streams like the AERPS sensors, a message broker (Kafka) was introduced between the ingestion service (MQTT Bridge) and the eventual consumer/database writer.
+- **Benefit:** This decouples the data producer from the consumer. The MQTT bridge's only job is to get the message into Kafka. This prevents data loss if the database is temporarily unavailable and allows multiple downstream services to consume the same data stream without impacting the source.
+
+### 3. Using the Right Database for the Job (PostgreSQL + TimescaleDB)
+- **Pattern:** While a standard relational database (PostgreSQL) is used for storing structured data, the `TimescaleDB` extension was leveraged to turn the `exposures` table into a hypertable.
+- **Benefit:** This provides significant performance improvements for time-series queries (e.g., "show me all readings from last week").
+- **Continuous Aggregates:** We used TimescaleDB's continuous aggregates to automatically create pre-calculated summary tables (e.g., `hourly_air_quality_summary`). This is a powerful feature that makes dashboard queries extremely fast, as they query a small, pre-aggregated table instead of the raw, multi-million-row hypertable.
+
+### 4. Database-Level Business Logic (PostgreSQL Functions)
+- **Pattern:** For complex queries like checking for alert conditions, we created a PostgreSQL function (`check_for_alerts`).
+- **Benefit:** This keeps the complex logic within the database, where the data resides. It's often more performant than pulling large datasets into an application to perform checks. A separate, simple script or scheduled job can then call this function periodically.
+ 

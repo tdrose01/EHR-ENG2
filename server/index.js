@@ -22,6 +22,8 @@ const PORT = process.env.PORT || 3000
 const patientRoutes = require('./routes/patients')
 const environmentRoutes = require('./routes/environments')
 const navyRoutes = require('./routes/navy')
+const exposureRoutes = require('./routes/exposures')
+const waterTestRoutes = require('./routes/waterTests')
 
 // Middleware
 app.use(cors({
@@ -41,6 +43,8 @@ app.use((req, res, next) => {
 app.use('/api/patients', patientRoutes)
 app.use('/api/environments', environmentRoutes)
 app.use('/api/navy', navyRoutes)
+app.use('/api/exposures', exposureRoutes)
+app.use('/api/water-tests', waterTestRoutes)
 
 const adminRoutes = require('./routes/admin');
 app.use('/api/admin', adminRoutes);

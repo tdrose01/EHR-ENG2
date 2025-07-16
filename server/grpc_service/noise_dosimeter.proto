@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package noisedosimeter;
+
+import "google/protobuf/timestamp.proto";
+
+// The service definition for the NoisePro Dosimeter.
+service NoiseDosimeter {
+  // Sends noise data from a dosimeter.
+  rpc UploadNoiseData (NoiseDataRequest) returns (NoiseDataResponse) {}
+}
+
+// The request message containing the noise data.
+// This structure is based on the expected JSON from the dosimeter.
+message NoiseDataRequest {
+  string device_id = 1;
+  string location_code = 2;
+  google.protobuf.Timestamp timestamp_utc = 3;
+  string captured_by = 4;
+  double dosimeter_interval_min = 5;
+  double laeq = 6;
+  double peak_db = 7;
+  google.protobuf.Timestamp calibration_date = 8; // Added for data quality check
+}
+
+// The response message confirming the data was received.
+message NoiseDataResponse {
+  bool success = 1;
+  string message = 2;
+  string sample_id = 3; // Return the generated sample_id
+}

@@ -1,0 +1,4 @@
+watchdog
+pandas
+requests
+python-dotenv

@@ -1,0 +1,553 @@
+Requirements – US Navy E‑Health App
+
+1. Scope
+
+Detail the specific environmental and occupational exposure data elements the application must collect, store, and visualize to support force health protection afloat and ashore.
+
+2. Core Exposure Domains & Key Metrics
+
+Domain
+
+Primary Metric
+
+Units
+
+Shipboard Source
+
+Shore Source
+
+Regulatory Reference
+
+Air Quality
+
+PM2.5, PM10
+
+µg/m³
+
+AERPS sensor (CIWS compartment, berthing)
+
+NAVFAC outdoor monitors
+
+EPA NAAQS, OPNAV 5100.19
+
+Chemical Vapors
+
+VOC (TVOC), Benzene, JP‑5 fumes
+
+ppm
+
+Draeger CMS, PSTD VOC carts
+
+IH labs (Charcoal tube)
+
+NIOSH REL, OPNAV 5100.19
+
+Noise
+
+Dose %, dBA TWA
+
+Personal dosimeters (NoisePro)
+
+DOEHRS‑IH uploads
+
+29 CFR 1910.95
+
+Radiation
+
+Gamma dose
+
+mrem
+
+SAMS RAD‑1 handheld, TLD badges
+
+NAVSEA Radiological Control
+
+NAVMED P‑5055
+
+Potable Water
+
+Free Chlorine, pH, Turbidity
+
+mg/L, pH units, NTU
+
+Ship’s distiller log, WQAS‑PDK kit
+
+NED sample uploads
+
+NAVMED P‑5010‑6
+
+Heat Stress
+
+WBGT, Humidity
+
+°C
+
+Kestrel 5400, VENTMASK smart sensors
+
+Base METOC feeds
+
+OPNAV 5100.20
+
+3. Minimum Data Elements per Metric
+
+3.1 Generic Fields (all metrics)
+
+sample_id (UUID) – Unique identifier
+
+device_id – Sensor serial or lab kit
+
+location_code – Ship frame # or Facility Bldg/Rm
+
+timestamp_utc – ISO 8601
+
+captured_by – Crew ID / laboratory code
+
+method_code – ASTM/NIOSH method or sensor firmware rev
+
+value – Numeric reading
+
+unit – Units (SI/imperial)
+
+qualifier – OK, ALERT, OVER_LIMIT, PENDING
+
+3.2 Domain‑Specific Extensions
+
+Metric
+
+Additional Fields
+
+Air Quality
+
+duration_sec, flow_rate_lpm, filter_type
+
+VOC
+
+compound_name, media_type (tube, PID), humidity_pct
+
+Noise
+
+dosimeter_interval_min, laeq, peak_db
+
+Radiation
+
+detector_type (TLD, GM), shielding_cm, calibration_date
+
+Water
+
+sample_type (grab, composite), temp_c, residual_chlorine_mg_l
+
+Heat Stress
+
+db_c, wb_c, globe_c, flag_color
+
+4. Data Acquisition & Frequency
+
+Metric
+
+Shipboard Polling
+
+Shore Polling
+
+Notes
+
+PM2.5/PM10
+
+5‑min rolling
+
+15‑min
+
+Store‑and‑forward during satcom outages
+
+VOC
+
+On‑demand (spill)
+
+Quarterly IH
+
+Event‑triggered alerts
+
+Noise
+
+Daily dosimeter upload
+
+Shift‑based
+
+Auto‑import from DOEHRS‑IH
+
+Radiation
+
+Daily badge dock
+
+Weekly
+
+Cumulative quarterly reports
+
+Water
+
+Twice daily
+
+Daily lab
+
+Immediate alert if >2 mg/L free chlorine
+
+Heat Stress
+
+10‑min
+
+10‑min
+
+Interface with METOC’s Oceano JSON feed
+
+5. Source Systems & Ingestion Adapters
+
+Source
+
+Protocol
+
+Adapter
+
+AERPS Sensor Hub
+
+MQTT
+
+FastAPI MQTT bridge → Kafka
+
+Draeger CMS Dock
+
+USB CSV
+
+Polling service → NiFi ingest
+
+NoisePro Dosimeter
+
+USB JSON
+
+gRPC microservice
+
+SAMS RAD‑1 Export
+
+CSV over SFTP
+
+NiFi batch loader
+
+Kestrel 5400 BLE
+
+Bluetooth GATT
+
+Edge‑device listener → REST
+
+DOEHR‑IH
+
+HL7 v2
+
+HL7 TCP listener → FHIR mapping
+
+NED CSV Upload
+
+SFTP CSV
+
+Cron‑based loader
+
+6. Aggregation & Alert Rules
+
+Threshold Engine: Postgres check_constraints + TimescaleDB continuous aggregates.
+
+Alert Examples:
+
+PM2.5 > 35 µg/m³ for 1 hr → YELLOW FLAG, notify IDC.
+
+WBGT > 32 °C for 30 min → Heat Stress Flag RED, throttle physical training.
+
+Radiation dose rate > 2 mrem/hr any 5‑min block → Stop work order.
+
+7. Data Quality & Governance
+
+Calibration Enforce: Reject records if calibration_date > 180 days old.
+
+Anomalies: Z‑score > 3 flagged for SME review.
+
+Retention: Raw sensor data → 5 yrs; Aggregates → 10 yrs per SECNAV M‑5210.1.
+
+8. UI/UX Requirements
+
+Heat map deck‑plans for ships.
+
+Trend charts with upper/lower specs.
+
+One‑click export to PDF for 8050 reports.Requirements – US Navy E‑Health App
+
+1. Scope
+
+Detail the specific environmental and occupational exposure data elements the application must collect, store, and visualize to support force health protection afloat and ashore.
+
+2. Core Exposure Domains & Key Metrics
+
+Domain
+
+Primary Metric
+
+Units
+
+Shipboard Source
+
+Shore Source
+
+Regulatory Reference
+
+Air Quality
+
+PM2.5, PM10
+
+µg/m³
+
+AERPS sensor (CIWS compartment, berthing)
+
+NAVFAC outdoor monitors
+
+EPA NAAQS, OPNAV 5100.19
+
+Chemical Vapors
+
+VOC (TVOC), Benzene, JP‑5 fumes
+
+ppm
+
+Draeger CMS, PSTD VOC carts
+
+IH labs (Charcoal tube)
+
+NIOSH REL, OPNAV 5100.19
+
+Noise
+
+Dose %, dBA TWA
+
+Personal dosimeters (NoisePro)
+
+DOEHRS‑IH uploads
+
+29 CFR 1910.95
+
+Radiation
+
+Gamma dose
+
+mrem
+
+SAMS RAD‑1 handheld, TLD badges
+
+NAVSEA Radiological Control
+
+NAVMED P‑5055
+
+Potable Water
+
+Free Chlorine, pH, Turbidity
+
+mg/L, pH units, NTU
+
+Ship’s distiller log, WQAS‑PDK kit
+
+NED sample uploads
+
+NAVMED P‑5010‑6
+
+Heat Stress
+
+WBGT, Humidity
+
+°C
+
+Kestrel 5400, VENTMASK smart sensors
+
+Base METOC feeds
+
+OPNAV 5100.20
+
+3. Minimum Data Elements per Metric
+
+3.1 Generic Fields (all metrics)
+
+sample_id (UUID) – Unique identifier
+
+device_id – Sensor serial or lab kit
+
+location_code – Ship frame # or Facility Bldg/Rm
+
+timestamp_utc – ISO 8601
+
+captured_by – Crew ID / laboratory code
+
+method_code – ASTM/NIOSH method or sensor firmware rev
+
+value – Numeric reading
+
+unit – Units (SI/imperial)
+
+qualifier – OK, ALERT, OVER_LIMIT, PENDING
+
+3.2 Domain‑Specific Extensions
+
+Metric
+
+Additional Fields
+
+Air Quality
+
+duration_sec, flow_rate_lpm, filter_type
+
+VOC
+
+compound_name, media_type (tube, PID), humidity_pct
+
+Noise
+
+dosimeter_interval_min, laeq, peak_db
+
+Radiation
+
+detector_type (TLD, GM), shielding_cm, calibration_date
+
+Water
+
+sample_type (grab, composite), temp_c, residual_chlorine_mg_l
+
+Heat Stress
+
+db_c, wb_c, globe_c, flag_color
+
+4. Data Acquisition & Frequency
+
+Metric
+
+Shipboard Polling
+
+Shore Polling
+
+Notes
+
+PM2.5/PM10
+
+5‑min rolling
+
+15‑min
+
+Store‑and‑forward during satcom outages
+
+VOC
+
+On‑demand (spill)
+
+Quarterly IH
+
+Event‑triggered alerts
+
+Noise
+
+Daily dosimeter upload
+
+Shift‑based
+
+Auto‑import from DOEHRS‑IH
+
+Radiation
+
+Daily badge dock
+
+Weekly
+
+Cumulative quarterly reports
+
+Water
+
+Twice daily
+
+Daily lab
+
+Immediate alert if >2 mg/L free chlorine
+
+Heat Stress
+
+10‑min
+
+10‑min
+
+Interface with METOC’s Oceano JSON feed
+
+5. Source Systems & Ingestion Adapters
+
+Source
+
+Protocol
+
+Adapter
+
+AERPS Sensor Hub
+
+MQTT
+
+FastAPI MQTT bridge → Kafka
+
+Draeger CMS Dock
+
+USB CSV
+
+Polling service → NiFi ingest
+
+NoisePro Dosimeter
+
+USB JSON
+
+gRPC microservice
+
+SAMS RAD‑1 Export
+
+CSV over SFTP
+
+NiFi batch loader
+
+Kestrel 5400 BLE
+
+Bluetooth GATT
+
+Edge‑device listener → REST
+
+DOEHR‑IH
+
+HL7 v2
+
+HL7 TCP listener → FHIR mapping
+
+NED CSV Upload
+
+SFTP CSV
+
+Cron‑based loader
+
+6. Aggregation & Alert Rules
+
+Threshold Engine: Postgres check_constraints + TimescaleDB continuous aggregates.
+
+Alert Examples:
+
+PM2.5 > 35 µg/m³ for 1 hr → YELLOW FLAG, notify IDC.
+
+WBGT > 32 °C for 30 min → Heat Stress Flag RED, throttle physical training.
+
+Radiation dose rate > 2 mrem/hr any 5‑min block → Stop work order.
+
+7. Data Quality & Governance
+
+Calibration Enforce: Reject records if calibration_date > 180 days old.
+
+Anomalies: Z‑score > 3 flagged for SME review.
+
+Retention: Raw sensor data → 5 yrs; Aggregates → 10 yrs per SECNAV M‑5210.1.
+
+8. UI/UX Requirements
+
+Heat map deck‑plans for ships.
+
+Trend charts with upper/lower specs.
+
+One‑click export to PDF for 8050 reports.

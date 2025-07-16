@@ -10,6 +10,10 @@ import PatientView from '../views/PatientView.vue'
 import EnvironmentalDashboard from '../components/EnvironmentalDashboard.vue'
 import LandingDashboard from '../views/LandingDashboard.vue'
 import NavyDashboard from '../views/NavyDashboard.vue'
+import WaterTesting from '../views/WaterTesting.vue'
+import HeatmapDashboard from '../components/HeatmapDashboard.vue'
+import TrendChartDashboard from '../components/TrendChartDashboard.vue'
+import DataTableDashboard from '../components/DataTableDashboard.vue'
 
 const routes = [
   {
@@ -66,6 +70,24 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/heatmap-dashboard',
+    name: 'HeatmapDashboard',
+    component: HeatmapDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/trend-chart-dashboard',
+    name: 'TrendChartDashboard',
+    component: TrendChartDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/data-table-dashboard',
+    name: 'DataTableDashboard',
+    component: DataTableDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/',
     name: 'LandingDashboard',
     component: LandingDashboard
@@ -74,6 +96,12 @@ const routes = [
     path: '/navy-dashboard',
     name: 'NavyDashboard',
     component: NavyDashboard
+  },
+  {
+    path: '/water-testing',
+    name: 'WaterTesting',
+    component: WaterTesting,
+    meta: { requiresAuth: true }
   }
 ]
 

@@ -1,20 +1,42 @@
-const pool = require('../db')
+const pool = require('../db');
 
-async function createWaterTest(patientId, { lead, arsenic, status }) {
-  const result = await pool.query(
-    `INSERT INTO patient_water_tests (patient_id, lead, arsenic, status)
-     VALUES ($1, $2, $3, $4) RETURNING *`,
-    [patientId, lead, arsenic, status]
-  )
-  return result.rows[0]
+async function getAllWaterTests() {
+    const result = await pool.query('SELECT * FROM water_tests ORDER BY timestamp_utc DESC');
+    return result.rows;
 }
 
-async function getWaterTests(patientId) {
-  const result = await pool.query(
-    'SELECT * FROM patient_water_tests WHERE patient_id = $1 ORDER BY recorded_at DESC',
-    [patientId]
-  )
-  return result.rows
+async function createWaterTest(testData) {
+    const {
+        device_id,
+        location_code,
+        timestamp_utc,
+        captured_by,
+        method_code,
+        value,
+        unit,
+        qualifier,
+        sample_type,
+        temp_c,
+        residual_chlorine_mg_l,
+        ph,
+        turbidity_ntu
+    } = testData;
+
+    const result = await pool.query(
+        `INSERT INTO water_tests (
+            device_id, location_code, timestamp_utc, captured_by, method_code,
+            value, unit, qualifier, sample_type, temp_c, residual_chlorine_mg_l, ph, turbidity_ntu
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
+        [
+            device_id, location_code, timestamp_utc, captured_by, method_code,
+            value, unit, qualifier, sample_type, temp_c, residual_chlorine_mg_l, ph, turbidity_ntu
+        ]
+    );
+
+    return result.rows[0];
 }
 
-module.exports = { createWaterTest, getWaterTests }
+module.exports = {
+    getAllWaterTests,
+    createWaterTest,
+};

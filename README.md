@@ -265,6 +265,13 @@ If the last login timestamp is not displaying:
 - The Environmental Dashboard now has its own dedicated route (`/environmental-dashboard`) and card navigation, similar to Patient Management.
 - The System Status page is restored to show system health and status as originally designed.
 
+### Environmental Exposure Dashboards
+The application includes a suite of powerful dashboards for visualizing and exploring environmental exposure data.
+
+- **Heatmap Dashboard (`/heatmap-dashboard`):** Displays exposure data as a heatmap overlaid on ship deck plans, providing an intuitive visualization of hotspots for various metrics like noise or air quality.
+- **Trend Chart Dashboard (`/trend-chart-dashboard`):** Renders time-series data in dynamic line charts, allowing users to track metric trends over time against upper and lower specification limits.
+- **Data Explorer (`/data-table-dashboard`):** A comprehensive data table for viewing raw exposure records with advanced filtering, sorting, and pagination. It also includes a one-click feature to export the current view as a PDF report.
+
 ## Navy Environmental Health Tracker
 
 ### Database Setup
@@ -292,3 +299,32 @@ If the last login timestamp is not displaying:
 ### Troubleshooting
 - If the dashboard is empty, ensure you have run both the migration and the seed script above.
 - Check the backend server logs for any errors related to the new endpoints or tables.
+
+## 🔬 Environmental Exposure Tracking Backend (Phase 1: Complete)
+
+The application now includes a robust backend system for ingesting, storing, and querying environmental and occupational exposure data. This system is composed of several microservices and a centralized database designed for time-series data.
+
+### Database Schema
+- **Central Table:** A generic `exposures` table captures common data for all metrics.
+- **Detail Tables:** Specific tables for `air_quality`, `voc`, `noise`, `radiation`, `water`, and `heat_stress` store domain-specific fields.
+- **Time-Series Ready:** The `exposures` table is a TimescaleDB hypertable, optimized for fast queries on time-series data.
+
+### Data Ingestion Adapters
+A suite of microservices has been developed to handle data ingestion from various sources:
+- **AERPS Sensor Hub (MQTT):** A FastAPI bridge listens for MQTT messages and forwards them to a Kafka topic for asynchronous processing.
+- **Draeger CMS Dock (USB CSV):** A Python polling service watches a directory for new CSV files and sends them to a NiFi ingest endpoint.
+- **NoisePro Dosimeter (USB JSON):** A gRPC microservice provides a high-performance endpoint for receiving JSON data directly from dosimeters.
+- **SAMS RAD-1 Export (SFTP CSV):** A NiFi flow plan and processing script are available to handle batch loading of CSV files from an SFTP server.
+- **DOEHR-IH (HL7 v2):** An HL7 TCP listener parses incoming HL7 v2 messages, maps them to the FHIR standard, and posts them to a FHIR server.
+- **NED CSV Upload (SFTP CSV):** A cron-based script processes CSV files from an SFTP server in batches.
+
+### Backend API
+- **New Endpoint:** `GET /api/exposures`
+- **Functionality:**
+  - Retrieves a paginated list of all exposure events.
+  - Supports filtering by metric type, location, and date range.
+  - Provides detailed information by joining the generic and specific exposure tables.
+
+### Aggregation & Alerting
+- **Continuous Aggregates:** TimescaleDB materialized views automatically calculate hourly summaries (avg, max, min) for key metrics, enabling fast dashboard queries.
+- **Alerting Function:** A PostgreSQL function (`check_for_alerts`) has been created to detect threshold breaches (e.g., high PM2.5, heat stress, or radiation levels) and can be integrated with a notification service.
