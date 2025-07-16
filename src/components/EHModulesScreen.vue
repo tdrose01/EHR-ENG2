@@ -101,11 +101,8 @@
 </template>
 
 <script>
-import EnvironmentalDashboard from './EnvironmentalDashboard.vue'
-
 export default {
   name: 'EHModulesScreen',
-  components: { EnvironmentalDashboard },
   computed: {
     isAdmin() {
       return localStorage.getItem('userRole') === 'admin'

@@ -30,13 +30,11 @@
       <WaterQualityChart v-if="data.waterQuality" :water-quality="data.waterQuality" />
     </div>
     <div class="mt-6 text-gray-400 text-sm">Last updated: {{ new Date(data.lastUpdated).toLocaleString() }}</div>
-    <PatientCard :patient-id="1" class="mt-6" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import PatientCard from './PatientCard.vue'
 import AirQualityChart from './AirQualityChart.vue'
 import WaterQualityChart from './WaterQualityChart.vue'
 

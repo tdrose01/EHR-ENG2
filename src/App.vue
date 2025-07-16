@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-900">
+  <div class="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
     <header class="p-4 flex justify-between items-center">
       <button
         @click="goBack"
@@ -13,11 +13,7 @@
       </div>
     </header>
 
-    <div class="text-gray-900 dark:text-gray-100">
-      <div class="p-4 text-right">
-        <ThemeSwitcher />
-      </div>
-
+    <div class="text-gray-900 dark:text-gray-100 flex-grow">
       <router-view></router-view>
     </div>
   </div>
@@ -72,11 +68,8 @@ watch(route, () => {
 </script>
 
 <script>
-import ThemeSwitcher from './components/ThemeSwitcher.vue'
-
 export default {
   name: 'App',
-  components: { ThemeSwitcher }
 }
 </script>
 
