@@ -43,9 +43,15 @@
               </button>
               <button
                 @click="editPatient(patient)"
-                class="text-blue-600 hover:text-blue-900"
+                class="text-blue-600 hover:text-blue-900 mr-4"
               >
                 Edit
+              </button>
+              <button
+                @click="confirmDelete(patient)"
+                class="text-red-600 hover:text-red-900"
+              >
+                Delete
               </button>
             </td>
           </tr>
@@ -208,6 +214,27 @@
         </div>
       </div>
     </div>
+  <!-- Delete Confirmation Modal -->
+    <div v-if="showDeleteModal" class="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-75 overflow-y-auto h-full w-full">
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-700">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">Confirm Delete</h3>
+        <p class="text-sm mb-4">Are you sure you want to delete this patient? This action cannot be undone.</p>
+        <div class="flex justify-end mt-6">
+          <button
+            @click="closeDeleteModal"
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 mr-2"
+          >
+            Cancel
+          </button>
+          <button
+            @click="deletePatient"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -222,7 +249,9 @@ export default {
       error: null,
       showModal: false,
       showViewModal: false,
+      showDeleteModal: false,
       editingPatient: null,
+      deletingPatient: null,
       viewPatientData: {},
       patientForm: this.getEmptyForm()
     }
@@ -320,6 +349,30 @@ export default {
     closeViewModal() {
       this.showViewModal = false
       this.viewPatientData = {}
+    },
+    confirmDelete(patient) {
+      this.deletingPatient = patient
+      this.showDeleteModal = true
+    },
+    async deletePatient() {
+      if (!this.deletingPatient) return
+      try {
+        const res = await fetch(`/api/patients/${this.deletingPatient.id}`, {
+          method: 'DELETE'
+        })
+        if (res.ok) {
+          this.closeDeleteModal()
+          this.fetchPatients()
+        } else {
+          console.error('Error deleting patient:', await res.text())
+        }
+      } catch (err) {
+        console.error('Error deleting patient:', err)
+      }
+    },
+    closeDeleteModal() {
+      this.showDeleteModal = false
+      this.deletingPatient = null
     }
   },
   mounted() {

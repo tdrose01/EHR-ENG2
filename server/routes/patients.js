@@ -82,12 +82,12 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete patient (soft delete by setting is_active to false)
+// Delete patient (hard delete)
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
-      'UPDATE patients SET is_active = false WHERE id = $1 RETURNING *',
+      'DELETE FROM patients WHERE id = $1 RETURNING *',
       [id]
     );
 
@@ -95,9 +95,9 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Patient not found' });
     }
 
-    res.json({ message: 'Patient deactivated successfully' });
+    res.json({ message: 'Patient deleted successfully' });
   } catch (err) {
-    console.error('Error deactivating patient:', err);
+    console.error('Error deleting patient:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
