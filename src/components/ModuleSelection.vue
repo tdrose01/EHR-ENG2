@@ -36,6 +36,19 @@
           </div>
         </div>
 
+      <!-- Agent Dashboard Card -->
+        <div
+          @click="goToAgentDashboard"
+          class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105 md:col-span-2"
+        >
+          <h2 class="text-2xl font-semibold text-purple-600 mb-3">🤖 Agent Dashboard</h2>
+          <p class="text-gray-600 dark:text-gray-300">Monitor and trigger agent workflows</p>
+          <div class="mt-4 flex justify-end">
+            <button class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors">
+              Go to Dashboard
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -61,6 +74,9 @@ export default {
       if (module === "EH") path = "/eh-module"
       else if (module === "RH") path = "/rh-module"
       this.$router.push(path)
+    },
+    goToAgentDashboard() {
+      this.$router.push('/agent-dashboard');
     }
   }
 }

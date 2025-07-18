@@ -31,7 +31,7 @@ npm run lint
 
 ## 🔑 Login Credentials
 
-- Email: admin@example.com
+- Email: `admin@example.com`
 - Password: password123
 
 **New:** The login form now includes a password visibility toggle. Click the eye (👁️) icon in the password field to show or hide your password as you type. This improves usability and helps prevent typos during login.
@@ -170,7 +170,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🤝 Support
 
-For support, email support@example.com or join our Slack channel.
+For support, email `support@example.com` or join our Slack channel.
 
 ## Last Login Timestamp Logic
 

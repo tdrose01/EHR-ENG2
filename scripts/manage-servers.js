@@ -1,76 +1,108 @@
-const { spawn, exec } = require('child_process');
+const { spawn } = require('child_process');
 const path = require('path');
 
-// Function to execute npm scripts
-function runNpmScript(script) {
+// Function to start a server and wait for a success message
+function startServer(command, successMessage, options = {}) {
     return new Promise((resolve, reject) => {
-        exec(`npm run ${script}`, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error running ${script}:`, error);
-                reject(error);
-                return;
+        const serverProcess = spawn(command, {
+            ...options,
+            shell: true,
+            stdio: ['pipe', 'pipe', 'pipe'], // Use pipes to capture stdio
+        });
+
+        let output = '';
+        const onData = (data) => {
+            const chunk = data.toString();
+            output += chunk;
+            console.log(chunk); // Log output in real-time
+
+            // Check for success message
+            if (chunk.includes(successMessage)) {
+                resolve(serverProcess);
             }
-            console.log(stdout);
-            resolve();
+        };
+
+        serverProcess.stdout.on('data', onData);
+        serverProcess.stderr.on('data', onData);
+
+        // Timeout to prevent hanging
+        const timeout = setTimeout(() => {
+            reject(new Error(`Timeout waiting for server to start with command: ${command}`));
+            serverProcess.kill();
+        }, 60000); // 60-second timeout
+
+        serverProcess.on('close', (code) => {
+            clearTimeout(timeout);
+            if (code !== 0) {
+                reject(new Error(`Server process exited with code ${code}. Full output:\n${output}`));
+            }
         });
     });
 }
 
-// Function to start both servers
-async function startServers() {
+// Main function to start both servers
+async function start() {
+    let backendProcess;
+    let frontendProcess;
+
     try {
-        // Start the backend server
         console.log('Starting backend server...');
-        const backendServer = spawn('npm', ['run', 'start:server'], {
-            stdio: 'inherit',
-            shell: true
-        });
+        backendProcess = await startServer('npm run start:server', 'Database connected successfully');
+        console.log('✅ Backend server started successfully.');
 
-        // Start the frontend dev server
         console.log('Starting frontend server...');
-        const frontendServer = spawn('npm', ['run', 'dev'], {
-            stdio: 'inherit',
-            shell: true
-        });
+        frontendProcess = await startServer('npm run dev', 'ready in');
+        console.log('✅ Frontend server started successfully.');
 
-        // Handle process termination
-        process.on('SIGINT', async () => {
-            console.log('\nStopping servers...');
-            try {
-                await runNpmScript('stop:server');
-                process.exit(0);
-            } catch (error) {
-                console.error('Error stopping servers:', error);
-                process.exit(1);
-            }
-        });
+        console.log('\n🚀 Both servers are running. Press Ctrl+C to stop.');
 
-        console.log('\nBoth servers are running. Press Ctrl+C to stop.');
     } catch (error) {
-        console.error('Error starting servers:', error);
+        console.error('❌ Error starting servers:', error.message);
+        if (backendProcess) backendProcess.kill();
+        if (frontendProcess) frontendProcess.kill();
         process.exit(1);
     }
+
+    // Handle graceful shutdown
+    process.on('SIGINT', () => {
+        console.log('\nStopping servers...');
+        if (backendProcess) backendProcess.kill();
+        if (frontendProcess) frontendProcess.kill();
+        console.log('Servers stopped.');
+        process.exit(0);
+    });
 }
 
-// Function to stop both servers
-async function stopServers() {
+// Function to stop servers (using kill-port for reliability)
+async function stop() {
+    console.log('Stopping servers via kill-port...');
     try {
-        console.log('Stopping servers...');
-        await runNpmScript('stop:server');
-        console.log('Servers stopped successfully.');
+        const { exec } = require('child_process');
+        await new Promise((resolve, reject) => {
+            exec('npx kill-port 3000 && npx kill-port 5173', (err, stdout, stderr) => {
+                if (err) {
+                    // Don't reject if ports weren't running, just log it
+                    console.warn('Could not kill ports (they may not have been running):', stderr);
+                }
+                console.log(stdout);
+                resolve();
+            });
+        });
+        console.log('✅ Servers stopped.');
     } catch (error) {
-        console.error('Error stopping servers:', error);
+        console.error('❌ Error stopping servers:', error);
         process.exit(1);
     }
 }
+
 
 // Handle command line arguments
 const command = process.argv[2];
 if (command === 'start') {
-    startServers();
+    start();
 } else if (command === 'stop') {
-    stopServers();
+    stop();
 } else {
-    console.log('Usage: node manage-servers.js [start|stop]');
+    console.log('Usage: node scripts/manage-servers.js [start|stop]');
     process.exit(1);
-} 
+}

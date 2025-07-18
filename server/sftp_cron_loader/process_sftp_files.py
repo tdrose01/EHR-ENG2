@@ -12,12 +12,12 @@ load_dotenv()
 
 # SFTP Config
 SFTP_HOST = os.getenv("SFTP_HOST")
-SFTP_PORT = int(os.getenv("SFTP_PORT", 22))
+SFTP_PORT = int(os.getenv("SFTP_PORT", "22"))
 SFTP_USER = os.getenv("SFTP_USER")
 SFTP_PASSWORD = os.getenv("SFTP_PASSWORD")
 SFTP_REMOTE_DIR = os.getenv("SFTP_REMOTE_DIR")
+PROCESSED_DIR = os.getenv("PROCESSED_DIR")
 
-# DB Config
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("DB_NAME")

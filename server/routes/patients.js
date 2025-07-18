@@ -125,16 +125,15 @@ router.post('/:id/water-tests', async (req, res) => {
 });
 
 // Search patients
-router.get('/search/:query', async (req, res) => {
+router.get('/search', async (req, res) => {
   try {
-    const { query } = req.params;
+    const { q } = req.query;
     const result = await pool.query(
       `SELECT * FROM patients
-       WHERE (LOWER(first_name) LIKE LOWER($1)
-       OR LOWER(last_name) LIKE LOWER($1))
+       WHERE (first_name ILIKE $1 OR last_name ILIKE $1)
        AND is_active = true
        ORDER BY last_name, first_name`,
-      [`%${query}%`]
+      [`%${q}%`]
     );
     
     res.json(result.rows);

@@ -46,19 +46,8 @@ async function getExposures(filters = {}) {
   `;
 
   if (metric_type) {
-    // This logic assumes a naming convention between metric_type and the details table
-    const detailTableMap = {
-      'air_quality': 'aqd',
-      'voc': 'vd',
-      'noise': 'nd',
-      'radiation': 'rd',
-      'water': 'wd',
-      'heat_stress': 'hsd'
-    };
-    const detailTableAlias = detailTableMap[metric_type];
-    if (detailTableAlias) {
-      whereClauses.push(`${detailTableAlias}.sample_id IS NOT NULL`);
-    }
+    queryParams.push(metric_type);
+    whereClauses.push(`e.metric_type = ${queryParams.length}`);
   }
 
   if (location_code) {

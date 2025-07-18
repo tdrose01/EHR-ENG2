@@ -1,0 +1,25 @@
+[
+  {
+    "id": "dev-task-1752692168767",
+    "agent": "DeveloperAgent",
+    "action": "GENERATE_CODE",
+    "file_path": "server/index.js",
+    "params": {
+      "prompt": "Add a new API endpoint `/api/hello` to this file. It should be a GET request that responds with a simple JSON object: `{ message: 'Hello from the new endpoint!' }`. Place it before the existing `/api/login` route."
+    },
+    "status": "PENDING"
+  },
+  {
+    "id": "test-task-1752692168767",
+    "agent": "TestAgent",
+    "action": "GENERATE_TEST",
+    "file_path": "tests/backend/hello.test.js",
+    "params": {
+      "prompt": "Create a new Jest test file to verify the functionality of the `/api/hello` endpoint. It should check for a 200 status code and the correct JSON response."
+    },
+    "status": "PENDING",
+    "depends_on": [
+      "dev-task-1752692168767"
+    ]
+  }
+]

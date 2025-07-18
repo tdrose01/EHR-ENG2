@@ -4,7 +4,7 @@ describe('MCP Login (Puppeteer)', () => {
   let browser, page
   const baseUrl = process.env.MCP_URL || 'http://localhost:5173/'
   const validEmail = 'admin@example.com'
-  const validPassword = 'password123'
+  const validPassword = process.env.TEST_PASSWORD || 'password123';
   const invalidPassword = 'wrongpassword'
 
   beforeAll(async () => {

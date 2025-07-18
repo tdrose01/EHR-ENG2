@@ -25,27 +25,9 @@ CREATE TABLE login_audit (
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
--- Example admin user for testing
-INSERT INTO users (email, password_hash, role)
-VALUES (
-  'admin@example.com',
-  '$2b$10$jeY.en9U2c2J9gAQYZAas.yEGkAwwQ.GTsQqiQ5VLzyUASDs5MmRW',
-  'admin'
-);
 
--- Example regular user
-INSERT INTO users (email, password_hash, role)
-VALUES (
-  'user@example.com',
-  '$2b$10$lilvThtbofLoIyhAJS0O1.wAQAplhae6nrfDnM2tG1RP/yxB9CRg.',
-  'user'
-);
 
--- Grant necessary permissions to the web user
-CREATE USER web WITH PASSWORD 'webpass';
-GRANT ALL PRIVILEGES ON DATABASE "ehr-eng2" TO web;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO web;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO web;
+
 
 -- Enumerated types for patients
 CREATE TYPE marital_status_enum AS ENUM ('Single', 'Married', 'Divorced', 'Widowed');
@@ -54,6 +36,7 @@ CREATE TYPE blood_type_enum AS ENUM ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+',
 -- Create patients table
 CREATE TABLE IF NOT EXISTS patients (
     id SERIAL PRIMARY KEY,
+    -- The following fields contain PII/PHI and should be encrypted at rest
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     gender VARCHAR(50),

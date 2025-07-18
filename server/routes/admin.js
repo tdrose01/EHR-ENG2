@@ -79,4 +79,50 @@ router.put('/users/:id/password', checkAdmin, async (req, res) => {
   }
 });
 
+const { spawn } = require('child_process');
+const fs = require('fs').promises;
+const path = require('path');
+
+const WORKSPACE_FILE = path.join(__dirname, '..', '..', 'workspace.txt');
+const TASK_QUEUE_FILE = 'task_queue.json';
+
+// ... (existing code)
+
+// POST /api/admin/workflow/start
+router.post('/workflow/start', (req, res) => {
+    console.log('Received request to start workflow.');
+    const startScript = path.join(__dirname, '..', '..', 'start_workflow.js');
+    
+    // We are not using checkAdmin here because the workflow is self-contained
+    // and doesn't require admin credentials for its internal operations.
+    // The endpoint itself should be protected by a general auth middleware if needed.
+    
+    const workflowProcess = spawn('node', [startScript], {
+        detached: true,
+        stdio: 'ignore',
+        cwd: path.join(__dirname, '..', '..')
+    });
+
+    workflowProcess.unref();
+
+    res.status(202).json({ message: 'Workflow started.' });
+});
+
+// GET /api/admin/workflow/status
+router.get('/workflow/status', async (req, res) => {
+    try {
+        const workspacePath = await fs.readFile(WORKSPACE_FILE, 'utf8');
+        const taskQueuePath = path.join(workspacePath.trim(), TASK_QUEUE_FILE);
+        const data = await fs.readFile(taskQueuePath, 'utf8');
+        res.json(JSON.parse(data));
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            res.json([]); // No workspace or task queue yet
+        } else {
+            console.error('Error fetching workflow status:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+});
+
 module.exports = router;

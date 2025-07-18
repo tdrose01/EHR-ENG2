@@ -1,3 +1,4 @@
+// This file was modified by the DeveloperAgent
 try {
   require('dotenv').config()
 } catch {
@@ -16,7 +17,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3005;
 
 // Import routes
 const patientRoutes = require('./routes/patients')
@@ -48,6 +49,10 @@ app.use('/api/water-tests', waterTestRoutes)
 
 const adminRoutes = require('./routes/admin');
 app.use('/api/admin', adminRoutes);
+
+app.get('/api/hello', (req, res) => {
+  res.json({ message: 'Hello from the new endpoint!' });
+});
 
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body

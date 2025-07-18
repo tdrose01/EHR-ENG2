@@ -29,7 +29,7 @@ npm run lint
 
 ## 🔑 Login Credentials
 
-- Email: admin@example.com
+- Email: `admin@example.com`
 - Password: password123
 
 **New:** The login form now includes a password visibility toggle. Click the eye (👁️) icon in the password field to show or hide your password as you type. This improves usability and helps prevent typos during login.
@@ -165,7 +165,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🤝 Support
 
-For support, email support@example.com or join our Slack channel.
+For support, email `support@example.com` or join our Slack channel.
 
 ## Last Login Timestamp Logic
 
@@ -303,6 +303,12 @@ The application includes a suite of powerful dashboards for visualizing and expl
 ## 🔬 Environmental Exposure Tracking Backend (Phase 1: Complete)
 
 The application now includes a robust backend system for ingesting, storing, and querying environmental and occupational exposure data. This system is composed of several microservices and a centralized database designed for time-series data.
+
+### Microservices Health Check (July 2025)
+A full troubleshooting pass was conducted on all backend microservices in the `server/` directory.
+- **Methodology**: For services with test suites, all tests were executed to ensure correctness. For services without tests (e.g., simple polling scripts or bridges), a thorough code review was performed to identify potential issues.
+- **Outcome**: All microservices were found to be in good operational order.
+- **Details**: A detailed checklist of the findings for each service has been documented in `TROUBLESHOOTING_FIXED.md`.
 
 ### Database Schema
 - **Central Table:** A generic `exposures` table captures common data for all metrics.

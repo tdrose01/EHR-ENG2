@@ -14,6 +14,10 @@
         <label class="block text-sm font-medium mb-1 dark:text-gray-200" for="confirmPasswordUser">Confirm Password</label>
         <input id="confirmPasswordUser" type="password" v-model="confirmPassword" class="w-full border rounded px-3 py-2 text-gray-900 dark:text-gray-100" />
       </div>
+      <div>
+        <label class="block text-sm font-medium mb-1 dark:text-gray-200" for="adminPassword">Admin Password</label>
+        <input id="adminPassword" type="password" v-model="adminPassword" class="w-full border rounded px-3 py-2 text-gray-900 dark:text-gray-100" />
+      </div>
       <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
       <p v-if="success" class="text-green-500 text-sm">{{ success }}</p>
       <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Create User</button>
@@ -29,6 +33,7 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
+      adminPassword: '',
       error: '',
       success: ''
     }
@@ -37,7 +42,7 @@ export default {
     async createUser() {
       this.error = ''
       this.success = ''
-      if (!this.email || !this.password || !this.confirmPassword) {
+      if (!this.email || !this.password || !this.confirmPassword || !this.adminPassword) {
         this.error = 'All fields are required'
         return
       }
@@ -46,8 +51,7 @@ export default {
         return
       }
       const adminEmail = localStorage.getItem('userEmail')
-      const adminPassword = prompt('Please enter your admin password to confirm:')
-      if (!adminEmail || !adminPassword) {
+      if (!adminEmail) {
         this.error = 'Admin credentials missing'
         return
       }
@@ -56,7 +60,7 @@ export default {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           adminEmail,
-          adminPassword,
+          adminPassword: this.adminPassword,
           email: this.email,
           password: this.password
         })
@@ -65,6 +69,7 @@ export default {
         this.email = ''
         this.password = ''
         this.confirmPassword = ''
+        this.adminPassword = ''
         this.success = 'User created successfully'
         this.$emit('user-created');
       } else {
