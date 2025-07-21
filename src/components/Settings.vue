@@ -81,10 +81,6 @@ export default {
       error: ''
     }
   },
-  async created() {
-    // We need the admin password to fetch users, so we can't do it on created.
-    // Instead, we'll have a button to fetch users.
-  },
   methods: {
     async fetchUsers() {
       const adminEmail = localStorage.getItem('userEmail')

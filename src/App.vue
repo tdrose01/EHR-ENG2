@@ -21,7 +21,7 @@
 
 
 <script setup>
-import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted, watch } from 'vue'
 import LastLoginCard from './components/LastLoginCard.vue'
 

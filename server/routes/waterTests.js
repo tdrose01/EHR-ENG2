@@ -16,6 +16,10 @@ router.get('/', async (req, res) => {
 // Create new water test
 router.post('/', async (req, res) => {
     try {
+        const { device_id, location_code, timestamp_utc, value, unit } = req.body;
+        if (!device_id || !location_code || !timestamp_utc || !value || !unit) {
+            return res.status(400).json({ error: 'device_id, location_code, timestamp_utc, value, and unit are required.' });
+        }
         const newTest = await createWaterTest(req.body);
         res.status(201).json(newTest);
     } catch (err) {

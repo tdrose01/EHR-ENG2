@@ -45,6 +45,14 @@ router.post('/', async (req, res) => {
       paygrade, branch_of_service, ethnicity, religion, dod_id, date_of_birth, phone_number, is_active
     } = req.body
 
+    if (!first_name || !last_name || !date_of_birth) {
+      return res.status(400).json({ error: 'First name, last name, and date of birth are required.' });
+    }
+
+    if (dod_id && isNaN(parseInt(dod_id, 10))) {
+      return res.status(400).json({ error: 'DoD ID must be a number.' });
+    }
+
     const result = await pool.query(
       `INSERT INTO patients (
         first_name, last_name, gender, blood_type, rh_factor, duty_status, pid,
@@ -66,6 +74,12 @@ router.post('/', async (req, res) => {
 // Update patient
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
+  const { dod_id } = req.body;
+
+  if (dod_id && isNaN(parseInt(dod_id, 10))) {
+    return res.status(400).json({ error: 'DoD ID must be a number.' });
+  }
+
   try {
     const updated = await updatePatient(id, req.body);
     if (!updated) {
@@ -125,9 +139,9 @@ router.post('/:id/water-tests', async (req, res) => {
 });
 
 // Search patients
-router.get('/search', async (req, res) => {
+router.get('/search/:q', async (req, res) => {
   try {
-    const { q } = req.query;
+    const { q } = req.params;
     const result = await pool.query(
       `SELECT * FROM patients
        WHERE (first_name ILIKE $1 OR last_name ILIKE $1)

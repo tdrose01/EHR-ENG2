@@ -151,7 +151,7 @@ const fetchChartData = async () => {
     url.searchParams.append('location_code', selectedLocation.value);
     url.searchParams.append('start_date', startDate);
     url.searchParams.append('end_date', endDate);
-    url.search_params.append('limit', 1000); // Fetch up to 1000 points for the chart
+    url.searchParams.append('limit', 1000); // Fetch up to 1000 points for the chart
 
     const response = await fetch(url);
     if (!response.ok) {

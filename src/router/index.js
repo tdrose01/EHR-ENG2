@@ -8,7 +8,6 @@ import Settings from '../components/Settings.vue'
 import SystemStatus from '../views/SystemStatus.vue'
 import PatientView from '../views/PatientView.vue'
 import EnvironmentalDashboard from '../components/EnvironmentalDashboard.vue'
-import LandingDashboard from '../views/LandingDashboard.vue'
 import NavyDashboard from '../views/NavyDashboard.vue'
 import WaterTesting from '../views/WaterTesting.vue'
 import HeatmapDashboard from '../components/HeatmapDashboard.vue'
@@ -86,11 +85,6 @@ const routes = [
     name: 'DataTableDashboard',
     component: DataTableDashboard,
     meta: { requiresAuth: true }
-  },
-  {
-    path: '/',
-    name: 'LandingDashboard',
-    component: LandingDashboard
   },
   {
     path: '/navy-dashboard',

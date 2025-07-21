@@ -253,23 +253,7 @@ export default {
       editingPatient: null,
       deletingPatient: null,
       viewPatientData: {},
-      patientForm: this.getEmptyForm()
-    }
-  },
-  computed: {
-    formattedPhoneNumber: {
-      get() {
-        const digits = this.patientForm.phone_number
-        if (!digits) return ''
-        const cleaned = digits.replace(/\D/g, '').slice(0, 10)
-        const len = cleaned.length
-        if (len <= 3) return `(${cleaned}`
-        if (len <= 6) return `(${cleaned.slice(0, 3)})-${cleaned.slice(3)}`
-        return `(${cleaned.slice(0, 3)})-${cleaned.slice(3, 6)}-${cleaned.slice(6)}`
-      },
-      set(value) {
-        this.patientForm.phone_number = value.replace(/\D/g, '').slice(0, 10)
-      }
+      patientForm: {}
     }
   },
   methods: {

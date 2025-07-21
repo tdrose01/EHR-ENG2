@@ -109,12 +109,6 @@ export default {
     },
     userEmail() {
       return localStorage.getItem('userEmail') || ''
-    },
-    lastLogin() {
-      const ts = localStorage.getItem('lastLoginAt')
-      if (!ts) return ''
-      const date = new Date(ts)
-      return date.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
     }
   },
   methods: {
