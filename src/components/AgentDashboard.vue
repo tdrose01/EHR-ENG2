@@ -25,7 +25,7 @@
               <td class="py-2">{{ task.agent }}</td>
               <td class="py-2">{{ task.task }}</td>
               <td class="py-2">
-                <span :class="statusColor(task.status)">{{ task.status }}</span>
+                <span :class="statusColor(task.status)">{{ statusText(task) }}</span>
               </td>
               <td class="py-2">{{ task.output }}</td>
             </tr>
@@ -66,6 +66,12 @@ export default {
         console.error('Error starting workflow:', error);
         this.workflowRunning = false;
       }
+    },
+    statusText(task) {
+      if (task.status === 'COMPLETE' || task.status === 'FAILED') {
+        return task.status;
+      }
+      return `${task.status} - ${task.agent} working`;
     },
     statusColor(status) {
       const colors = {
