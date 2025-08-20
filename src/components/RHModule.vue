@@ -2,20 +2,22 @@
   <div class="min-h-screen bg-gray-50 dark:bg-gray-800 p-6 text-gray-900 dark:text-gray-100">
     <div class="max-w-7xl mx-auto">
       <header class="mb-8">
-        <h1 class="text-3xl font-bold text-green-600">Resource & Hospital Management</h1>
-        <p class="text-gray-600 dark:text-gray-300 mt-2">Manage hospital resources and facilities</p>
+        <h1 class="text-3xl font-bold text-green-600">Radiation Health Patient Management</h1>
+        <p class="text-gray-600 dark:text-gray-300 mt-2">Manage patients for the Radiation Health module.</p>
       </header>
       
-      <!-- Placeholder content - to be implemented -->
-      <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
-        <p class="text-gray-700 dark:text-gray-300">RH Module functionality coming soon...</p>
-      </div>
+      <PatientManagement />
     </div>
   </div>
 </template>
 
 <script>
+import PatientManagement from './PatientManagement.vue';
+
 export default {
-  name: 'RHModule'
+  name: 'RHModule',
+  components: {
+    PatientManagement
+  }
 }
 </script> 
