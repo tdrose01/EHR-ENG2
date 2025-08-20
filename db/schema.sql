@@ -102,3 +102,9 @@ VALUES
   ('Jane', 'Smith', 'Female', 'Single', 'A+', 'Negative', 'Reserve', 'JS456', 'O2', 'Navy', 'Asian', 'Christian', 987654321, '1992-05-22', '555-0124', true)
 ON CONFLICT DO NOTHING;
 
+-- Add to existing schema.sql
+
+CREATE TABLE pop3 (
+    id SERIAL PRIMARY KEY,
+    dodid INTEGER NOT NULL
+);

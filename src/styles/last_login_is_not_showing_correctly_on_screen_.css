@@ -1,0 +1,7 @@
+/* Styles for last login is not showing correctly on screen. */
+
+.last_login_is_not_showing_correctly_on_screen_-container {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin: 16px 0;
+}
