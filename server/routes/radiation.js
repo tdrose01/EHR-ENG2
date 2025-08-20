@@ -14,14 +14,20 @@ router.get('/overview', (req, res) => {
 // 2. Personnel list
 router.get('/personnel', async (req, res) => {
   try {
-    const { Pool } = require('pg');
-    const testPool = new Pool({
-      connectionString: 'postgresql://postgres:postgres@localhost:5432/ehr_eng2'
-    });
+    const pool = require('../db');
+    const result = await pool.query(`
+      SELECT p.*, u.name as unit_name, d.serial as device_serial, 
+             MAX(dr.measured_ts) as last_reading
+      FROM radiation_personnel p
+      LEFT JOIN radiation_units u ON p.unit_id = u.id
+      LEFT JOIN radiation_assignments a ON p.id = a.personnel_id
+      LEFT JOIN radiation_devices d ON a.device_id = d.id
+      LEFT JOIN radiation_dose_readings dr ON d.id = dr.device_id
+      WHERE p.active = true
+      GROUP BY p.id, u.name, d.serial
+      ORDER BY p.lname, p.fname
+    `);
     
-    const result = await testPool.query('SELECT * FROM radiation_personnel WHERE active = true LIMIT 10');
-    
-    await testPool.end();
     res.json(result.rows);
   } catch (error) {
     console.error('Personnel fetch error:', error);
@@ -227,6 +233,131 @@ router.put('/alerts/:id/ack', async (req, res) => {
   } catch (error) {
     console.error('Alert ack error:', error);
     res.status(500).json({ error: 'Failed to acknowledge alert' });
+  }
+});
+
+// 9. Get units for personnel form
+router.get('/units', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const result = await pool.query('SELECT id, name FROM radiation_units ORDER BY name');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Units fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch units' });
+  }
+});
+
+// 10. Add new radiation personnel
+router.post('/personnel', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const {
+      first_name,
+      last_name,
+      rank_rate,
+      edipi,
+      unit_id,
+      radiation_category,
+      monitoring_frequency,
+      last_medical_exam,
+      next_medical_due,
+      dosimeter_type,
+      active,
+      notes
+    } = req.body;
+
+    // Validate required fields
+    if (!first_name || !last_name || !rank_rate || !edipi || !unit_id || !radiation_category || !monitoring_frequency) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Check if EDIPI already exists
+    const existingResult = await pool.query(
+      'SELECT id FROM radiation_personnel WHERE edipi = $1',
+      [edipi]
+    );
+
+    if (existingResult.rows.length > 0) {
+      return res.status(409).json({ error: 'Personnel with this EDIPI already exists' });
+    }
+
+         // Insert new personnel
+     const result = await pool.query(`
+       INSERT INTO radiation_personnel 
+       (fname, lname, rank_rate, edipi, unit_id, radiation_category, monitoring_frequency, 
+        last_medical_exam, next_medical_due, dosimeter_type, active, notes, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
+       RETURNING id
+     `, [first_name, last_name, rank_rate, edipi, unit_id, radiation_category, monitoring_frequency,
+          last_medical_exam, next_medical_due, dosimeter_type, active, notes]);
+
+    res.json({ 
+      success: true, 
+      personnel_id: result.rows[0].id,
+      message: 'Personnel added successfully'
+    });
+
+  } catch (error) {
+    console.error('Add personnel error:', error);
+    res.status(500).json({ error: 'Failed to add personnel' });
+  }
+});
+
+// 11. Update radiation personnel
+router.put('/personnel/:id', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { id } = req.params;
+    const {
+      first_name,
+      last_name,
+      rank_rate,
+      edipi,
+      unit_id,
+      radiation_category,
+      monitoring_frequency,
+      last_medical_exam,
+      next_medical_due,
+      dosimeter_type,
+      active,
+      notes
+    } = req.body;
+
+    // Validate required fields
+    if (!first_name || !last_name || !rank_rate || !edipi || !unit_id || !radiation_category || !monitoring_frequency) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Check if EDIPI already exists for other personnel
+    const existingResult = await pool.query(
+      'SELECT id FROM radiation_personnel WHERE edipi = $1 AND id != $2',
+      [edipi, id]
+    );
+
+    if (existingResult.rows.length > 0) {
+      return res.status(409).json({ error: 'Personnel with this EDIPI already exists' });
+    }
+
+    // Update personnel
+    await pool.query(`
+      UPDATE radiation_personnel 
+      SET fname = $1, lname = $2, rank_rate = $3, edipi = $4, unit_id = $5, 
+          radiation_category = $6, monitoring_frequency = $7, last_medical_exam = $8, 
+          next_medical_due = $9, dosimeter_type = $10, active = $11, notes = $12, 
+          updated_ts = NOW()
+      WHERE id = $13
+    `, [first_name, last_name, rank_rate, edipi, unit_id, radiation_category, monitoring_frequency,
+         last_medical_exam, next_medical_due, dosimeter_type, active, notes, id]);
+
+    res.json({ 
+      success: true, 
+      message: 'Personnel updated successfully'
+    });
+
+  } catch (error) {
+    console.error('Update personnel error:', error);
+    res.status(500).json({ error: 'Failed to update personnel' });
   }
 });
 

@@ -9,6 +9,7 @@ import SystemStatus from '../views/SystemStatus.vue'
 import PatientView from '../views/PatientView.vue'
 import EnvironmentalDashboard from '../components/EnvironmentalDashboard.vue'
 import NavyDashboard from '../views/NavyDashboard.vue'
+import RadiationDashboard from '../views/RadiationDashboard.vue'
 import WaterTesting from '../views/WaterTesting.vue'
 import HeatmapDashboard from '../components/HeatmapDashboard.vue'
 import TrendChartDashboard from '../components/TrendChartDashboard.vue'
@@ -89,7 +90,14 @@ const routes = [
   {
     path: '/navy-dashboard',
     name: 'NavyDashboard',
-    component: NavyDashboard
+    component: NavyDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/radiation-dashboard',
+    name: 'RadiationDashboard',
+    component: RadiationDashboard,
+    meta: { requiresAuth: true }
   },
   {
     path: '/water-testing',

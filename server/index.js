@@ -98,16 +98,16 @@ app.post('/api/login', async (req, res) => {
         console.log('Updated password hash for user')
       }
       try {
-        // Fetch the current last_login_at
+        // Fetch the current last_login
         const prev = await pool.query(
-          'SELECT last_login_at FROM users WHERE id = $1',
+          'SELECT last_login FROM users WHERE id = $1',
           [user.id]
         );
-        const previousLogin = prev.rows[0]?.last_login_at || null;
+        const previousLogin = prev.rows[0]?.last_login || null;
 
-        // Update last_login to previous last_login_at, and last_login_at to NOW()
+        // Update last_login to NOW()
         await pool.query(
-          'UPDATE users SET last_login = last_login_at, last_login_at = NOW() WHERE id = $1',
+          'UPDATE users SET last_login = NOW() WHERE id = $1',
           [user.id]
         );
 
