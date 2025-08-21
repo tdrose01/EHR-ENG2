@@ -95,6 +95,8 @@
       </div>
     </div>
 
+    <!-- Main Content -->
+    <div class="px-6">
       <!-- Tab Navigation -->
       <div class="bg-gray-800 rounded-lg border border-gray-700">
         <div class="border-b border-gray-700">
@@ -590,7 +592,7 @@
  </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import AddRadiationPersonnelForm from '../components/AddRadiationPersonnelForm.vue'
 import DeviceAssignmentModal from '../components/DeviceAssignmentModal.vue'
 
