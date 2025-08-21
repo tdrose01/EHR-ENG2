@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+  <div class="min-h-screen bg-black text-white">
     <!-- Navigation Bar -->
-    <nav class="bg-green-800 text-white shadow-lg">
+    <nav class="bg-green-800 text-white shadow-lg border-b border-green-700">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
@@ -30,23 +30,23 @@
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        <h2 class="text-3xl font-bold text-white mb-4">
           Welcome to Radiation Health Module
         </h2>
-        <p class="text-lg text-gray-600 dark:text-gray-300">
+        <p class="text-lg text-gray-300">
           Specialized radiation monitoring and dosimetry system for Navy personnel
         </p>
       </div>
 
       <!-- Single Radiation Dashboard Card -->
       <div class="flex justify-center">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-2xl w-full">
+        <div class="bg-gray-900 rounded-lg shadow-lg p-8 max-w-2xl w-full border border-gray-700">
           <div class="text-center">
             <div class="text-6xl mb-4">☢️</div>
-            <h3 class="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
+            <h3 class="text-2xl font-bold text-red-400 mb-4">
               Radiation Dashboard
             </h3>
-            <p class="text-gray-600 dark:text-gray-300 mb-6">
+            <p class="text-gray-300 mb-6">
               Personal dosimeter monitoring and dose reconciliation system.
             </p>
             <router-link 

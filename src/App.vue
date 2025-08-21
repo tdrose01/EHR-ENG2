@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
-    <header class="p-4 flex justify-between items-center">
+  <div class="min-h-screen bg-black flex flex-col">
+    <header class="p-4 flex justify-between items-center bg-gray-900 border-b border-gray-700">
       <button
         @click="goBack"
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -8,12 +8,12 @@
         Back
       </button>
       <div class="flex flex-col items-end">
-        <span v-if="userEmail" class="text-base font-medium text-gray-800 dark:text-gray-100">{{ userEmail }}</span>
+        <span v-if="userEmail" class="text-base font-medium text-white">{{ userEmail }}</span>
         <LastLoginCard :last-login-at="lastLoginAt" />
       </div>
     </header>
 
-    <div class="text-gray-900 dark:text-gray-100 flex-grow">
+    <div class="text-white flex-grow">
       <router-view></router-view>
     </div>
   </div>
