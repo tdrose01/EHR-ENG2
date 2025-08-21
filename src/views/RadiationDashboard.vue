@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-900 text-white">
+  <div class="min-h-screen bg-black text-white">
     <!-- Header -->
-    <div class="bg-gray-800 border-b border-gray-700 p-6">
+    <div class="bg-gray-900 border-b border-gray-700 p-6">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-bold text-blue-400">Navy Radiation Health Module</h1>
@@ -25,8 +25,8 @@
     </div>
 
     <!-- Overview Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 px-6">
+      <div class="bg-gray-900 rounded-lg p-6 border border-gray-700">
         <div class="flex items-center">
           <div class="p-3 rounded-full bg-blue-600 bg-opacity-20">
             <i class="fas fa-users text-blue-400 text-xl"></i>
@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <div class="bg-gray-900 rounded-lg p-6 border border-gray-700">
         <div class="flex items-center">
           <div class="p-3 rounded-full bg-green-600 bg-opacity-20">
             <i class="fas fa-microchip text-green-400 text-xl"></i>
@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <div class="bg-gray-900 rounded-lg p-6 border border-gray-700">
         <div class="flex items-center">
           <div class="p-3 rounded-full bg-red-600 bg-opacity-20">
             <i class="fas fa-exclamation-triangle text-red-400 text-xl"></i>
@@ -77,7 +77,7 @@
         </div>
       </div>
 
-      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <div class="bg-gray-900 rounded-lg p-6 border border-gray-700">
         <div class="flex items-center">
           <div class="p-3 rounded-full bg-purple-600 bg-opacity-20">
             <i class="fas fa-chart-line text-purple-400 text-xl"></i>
@@ -98,7 +98,7 @@
     <!-- Main Content -->
     <div class="px-6">
       <!-- Tab Navigation -->
-      <div class="bg-gray-800 rounded-lg border border-gray-700">
+      <div class="bg-gray-900 rounded-lg border border-gray-700">
         <div class="border-b border-gray-700">
           <nav class="flex space-x-0">
             <button
@@ -108,8 +108,8 @@
               :class="[
                 'px-6 py-4 text-sm font-medium transition-colors',
                 activeTab === tab.id
-                  ? 'text-blue-400 border-b-2 border-blue-400 bg-gray-750'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-750'
+                  ? 'text-blue-400 border-b-2 border-blue-400 bg-gray-800'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
               ]"
             >
               <i :class="tab.icon" class="mr-2"></i>
@@ -119,7 +119,7 @@
         </div>
 
         <!-- Tab Content -->
-        <div class="p-6">
+        <div class="p-6 bg-gray-900">
           <!-- Personnel Tab -->
           <div v-if="activeTab === 'personnel'" class="space-y-4">
             <div class="flex justify-between items-center mb-4">
@@ -1213,7 +1213,7 @@ export default {
 <style scoped>
 /* Custom styles for better visual hierarchy */
 .bg-gray-750 {
-  background-color: #2d3748;
+  background-color: #1f2937;
 }
 
 /* Ensure tables are readable on dark backgrounds */
@@ -1242,22 +1242,22 @@ table {
   100% { background: transparent; }
 }
 
-/* Custom scrollbar for dark theme */
+/* Custom scrollbar for black theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #2d3748;
+  background: #111827;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4a5568;
+  background: #374151;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #718096;
+  background: #4b5563;
 }
 </style>
