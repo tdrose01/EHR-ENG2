@@ -148,24 +148,24 @@
                       <div class="flex space-x-2">
                         <button 
                           @click="editPersonnel(person)"
-                          class="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                          class="text-blue-400 hover:text-blue-300 text-sm transition-colors px-2 py-1 rounded border border-blue-400 hover:border-blue-300"
                           :title="`Edit ${person.fname} ${person.lname}`"
                         >
-                          <i class="fas fa-edit"></i>
+                          <i class="fas fa-edit mr-1"></i>Edit
                         </button>
                         <button 
                           @click="viewPersonnelReadings(person)"
-                          class="text-green-400 hover:text-green-300 text-sm transition-colors"
+                          class="text-green-400 hover:text-green-300 text-sm transition-colors px-2 py-1 rounded border border-green-400 hover:border-green-300"
                           :title="`View readings for ${person.fname} ${person.lname}`"
                         >
-                          <i class="fas fa-chart-line"></i>
+                          <i class="fas fa-chart-line mr-1"></i>Readings
                         </button>
                         <button 
                           @click="openAssignmentModal(null, person)"
-                          class="text-purple-400 hover:text-purple-300 text-sm transition-colors"
+                          class="text-purple-400 hover:text-purple-300 text-sm transition-colors px-2 py-1 rounded border border-purple-400 hover:border-purple-300"
                           :title="`Assign device to ${person.fname} ${person.lname}`"
                         >
-                          <i class="fas fa-link"></i>
+                          <i class="fas fa-link mr-1"></i>Assign
                         </button>
                       </div>
                     </td>
