@@ -1,39 +1,25 @@
 <template>
-  <div class="min-h-screen bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-    <nav class="bg-white dark:bg-gray-700 shadow-lg">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="flex justify-between h-16">
-          <div class="flex">
-            <div class="flex-shrink-0 flex items-center">
-              <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">☢️ Radiation Health Module</h1>
-            </div>
-            <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <router-link
-                to="/patients"
-                class="border-green-500 text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Patient Management
-              </router-link>
-              <router-link
-                to="/status"
-                class="border-green-500 text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                System Status
-              </router-link>
-              <router-link
-                v-if="isAdmin"
-                to="/settings"
-                class="border-green-500 text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Settings
-              </router-link>
-            </div>
-          </div>
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <!-- Navigation Bar -->
+    <nav class="bg-green-800 text-white shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
-            <button
-              @click="logout"
-              class="ml-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            <h1 class="text-xl font-bold">Radiation Health Module</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <router-link 
+              to="/" 
+              class="text-green-200 hover:text-white transition-colors"
             >
+              <i class="fas fa-home mr-2"></i>
+              Back to Main
+            </router-link>
+            <button 
+              @click="logout" 
+              class="text-green-200 hover:text-white transition-colors"
+            >
+              <i class="fas fa-sign-out-alt mr-2"></i>
               Logout
             </button>
           </div>
@@ -41,65 +27,37 @@
       </div>
     </nav>
 
-    <div class="py-10">
-      <header>
-        <div class="max-w-7xl mx-auto px-4">
-          <h1 class="text-3xl font-bold leading-tight text-gray-900 dark:text-gray-100">
-            Welcome to Radiation Health Module
-          </h1>
-        </div>
-      </header>
-      <main>
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div class="px-4 py-8 sm:px-0">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <!-- Patient Management Card -->
-              <div
-                @click="navigateTo('/patients')"
-                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
-              >
-                <h2 class="text-2xl font-semibold text-green-600 dark:text-green-400 mb-3">Patient Management</h2>
-                <p class="text-gray-600 dark:text-gray-300">Access and manage patient records.</p>
-                <div class="mt-4 flex justify-end">
-                  <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
-                    Go to Patients
-                  </button>
-                </div>
-              </div>
-              
-              <!-- Radiation Dashboard Card -->
-              <div
-                @click="navigateTo('/radiation-dashboard')"
-                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
-              >
-                <h2 class="text-2xl font-semibold text-red-600 dark:text-red-400 mb-3">
-                  <i class="fas fa-radiation mr-2"></i>Radiation Dashboard
-                </h2>
-                <p class="text-gray-600 dark:text-gray-300">Personal dosimeter monitoring and dose reconciliation system.</p>
-                <div class="mt-4 flex justify-end">
-                  <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
-                    Go to Dashboard
-                  </button>
-                </div>
-              </div>
-              
-              <!-- System Status Card -->
-              <div
-                @click="navigateTo('/status')"
-                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
-              >
-                <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-400 mb-3">System Status</h2>
-                <p class="text-gray-600 dark:text-gray-300">Monitor system health and performance.</p>
-                <div class="mt-4 flex justify-end">
-                  <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-                    View Status
-                  </button>
-                </div>
-              </div>
-            </div>
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          Welcome to Radiation Health Module
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300">
+          Specialized radiation monitoring and dosimetry system for Navy personnel
+        </p>
+      </div>
+
+      <!-- Single Radiation Dashboard Card -->
+      <div class="flex justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 max-w-2xl w-full">
+          <div class="text-center">
+            <div class="text-6xl mb-4">☢️</div>
+            <h3 class="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
+              Radiation Dashboard
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">
+              Personal dosimeter monitoring and dose reconciliation system.
+            </p>
+            <router-link 
+              to="/radiation-dashboard"
+              class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            >
+              Go to Dashboard
+            </router-link>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   </div>
 </template>
@@ -107,28 +65,33 @@
 <script>
 export default {
   name: 'RHModule',
-  computed: {
-    isAdmin() {
-      return localStorage.getItem('userRole') === 'admin'
-    },
-    userEmail() {
-      return localStorage.getItem('userEmail') || ''
-    }
-  },
   methods: {
     logout() {
-      localStorage.removeItem('isAuthenticated')
-      localStorage.removeItem('userRole')
-      localStorage.removeItem('userEmail')
-      localStorage.removeItem('lastLoginAt')
-      localStorage.removeItem('adminPassword')
-      this.$router.push('/')
-    },
-    navigateTo(path) {
-      this.$router.push(path)
+      // Clear any stored authentication data
+      localStorage.removeItem('user')
+      // Redirect to login
+      this.$router.push('/login')
     }
   }
 }
 </script>
 
-<style scoped></style> 
+<style scoped>
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+</style> 
