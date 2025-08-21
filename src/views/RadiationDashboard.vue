@@ -129,7 +129,7 @@
                   </tr>
                 </thead>
                 <tbody v-if="personnel.length > 0" class="divide-y divide-gray-600">
-                  <tr v-for="person in filteredPersonnel" :key="person.id" class="hover:bg-gray-600 transition-colors">
+                  <tr v-for="person in filteredPersonnel" :key="person.id" :data-personnel-id="person.id" class="hover:bg-gray-600 transition-colors">
                     <td class="px-4 py-3">
                       <div>
                         <div class="font-medium text-white">{{ person.rank_rate }} {{ person.lname }}, {{ person.fname }}</div>
@@ -146,10 +146,18 @@
                     </td>
                     <td class="px-4 py-3">
                       <div class="flex space-x-2">
-                        <button class="text-blue-400 hover:text-blue-300 text-sm">
+                        <button 
+                          @click="editPersonnel(person)"
+                          class="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                          :title="`Edit ${person.fname} ${person.lname}`"
+                        >
                           <i class="fas fa-edit"></i>
                         </button>
-                        <button class="text-green-400 hover:text-green-300 text-sm">
+                        <button 
+                          @click="viewPersonnelReadings(person)"
+                          class="text-green-400 hover:text-green-300 text-sm transition-colors"
+                          :title="`View readings for ${person.fname} ${person.lname}`"
+                        >
                           <i class="fas fa-chart-line"></i>
                         </button>
                       </div>
@@ -663,6 +671,28 @@ export default {
       // You could add a toast notification here
     }
 
+    // Edit personnel functionality
+    const editPersonnel = (personnel) => {
+      editingPersonnel.value = { ...personnel }
+      showPersonnelModal.value = true
+      
+      // Add visual feedback
+      nextTick(() => {
+        const row = document.querySelector(`[data-personnel-id="${personnel.id}"]`)
+        if (row) {
+          row.classList.add('editing-highlight')
+          setTimeout(() => row.classList.remove('editing-highlight'), 2000)
+        }
+      })
+    }
+
+    // View personnel readings
+    const viewPersonnelReadings = (personnel) => {
+      // Filter readings to show only this personnel's data
+      readingsPersonnelFilter.value = personnel.id
+      activeTab.value = 'readings'
+    }
+
     const acknowledgeAlert = async (alertId) => {
       try {
         const response = await fetch(`/api/radiation/alerts/${alertId}/ack`, {
@@ -840,6 +870,8 @@ export default {
       closePersonnelModal,
       onPersonnelSaved,
       onPersonnelError,
+      editPersonnel,
+      viewPersonnelReadings,
       formatDate,
       formatDateTime,
       formatDateRange,
@@ -880,6 +912,16 @@ table {
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Editing highlight animation */
+.editing-highlight {
+  animation: highlightRow 2s ease-out;
+}
+
+@keyframes highlightRow {
+  0% { background: rgba(59, 130, 246, 0.3); }
+  100% { background: transparent; }
 }
 
 /* Custom scrollbar for dark theme */
