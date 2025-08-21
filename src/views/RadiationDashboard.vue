@@ -188,6 +188,13 @@
                         >
                           <i class="fas fa-link mr-1"></i>Assign
                         </button>
+                        <button 
+                          @click="deletePersonnel(person)"
+                          class="text-red-400 hover:text-red-300 text-sm transition-colors px-2 py-1 rounded border border-red-400 hover:border-red-300"
+                          :title="`Delete ${person.fname} ${person.lname}`"
+                        >
+                          <i class="fas fa-trash mr-1"></i>Delete
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -259,6 +266,13 @@
                   </button>
                   <button class="flex-1 bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-sm transition-colors">
                     <i class="fas fa-chart-line mr-1"></i>Readings
+                  </button>
+                  <button 
+                    @click="deleteDevice(device)"
+                    class="flex-1 bg-red-600 hover:bg-red-700 px-3 py-2 rounded text-sm transition-colors"
+                    :title="`Delete device ${device.serial}`"
+                  >
+                    <i class="fas fa-trash mr-1"></i>Delete
                   </button>
                 </div>
               </div>
@@ -931,6 +945,93 @@ export default {
       })
     }
 
+    // Delete personnel functionality
+    const deletePersonnel = async (personnel) => {
+      // Enhanced confirmation dialog
+      const confirmed = confirm(
+        `⚠️ DELETE PERSONNEL\n\n` +
+        `Are you sure you want to delete:\n` +
+        `• ${personnel.rank_rate} ${personnel.lname}, ${personnel.fname}\n` +
+        `• EDIPI: ${personnel.edipi}\n` +
+        `• Unit: ${personnel.unit_name || 'N/A'}\n\n` +
+        `This action will:\n` +
+        `• Mark the personnel as inactive\n` +
+        `• Preserve all historical data\n` +
+        `• Cannot be undone\n\n` +
+        `Click OK to proceed with deletion.`
+      )
+      
+      if (!confirmed) {
+        return
+      }
+
+      try {
+        const response = await fetch(`/api/radiation/personnel/${personnel.id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        })
+
+        if (response.ok) {
+          // Success - refresh data
+          await fetchPersonnel()
+          await fetchOverview()
+          
+          // Show success message
+          alert(`${personnel.fname} ${personnel.lname} has been successfully deleted.`)
+        } else {
+          const errorData = await response.json()
+          alert(`Failed to delete personnel: ${errorData.error}`)
+        }
+      } catch (error) {
+        console.error('Failed to delete personnel:', error)
+        alert('An error occurred while deleting personnel. Please try again.')
+      }
+    }
+
+    // Delete device functionality
+    const deleteDevice = async (device) => {
+      // Enhanced confirmation dialog
+      const confirmed = confirm(
+        `⚠️ DELETE DEVICE\n\n` +
+        `Are you sure you want to delete:\n` +
+        `• Serial: ${device.serial}\n` +
+        `• Model: ${device.vendor} ${device.model}\n` +
+        `• Firmware: ${device.firmware || 'N/A'}\n` +
+        `• RF Policy: ${device.rf_policy}\n\n` +
+        `This action will:\n` +
+        `• Mark the device as retired\n` +
+        `• Preserve all historical data\n` +
+        `• Cannot be undone\n\n` +
+        `Click OK to proceed with deletion.`
+      )
+      
+      if (!confirmed) {
+        return
+      }
+
+      try {
+        const response = await fetch(`/api/radiation/devices/${device.id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        })
+
+        if (response.ok) {
+          // Success - refresh data
+          await fetchDevices()
+          await fetchOverview()
+          
+          // Show success message
+          alert(`Device ${device.serial} has been successfully deleted.`)
+        } else {
+          const errorData = await response.json()
+          alert(`Failed to delete device: ${errorData.error}`)
+        }
+      } catch (error) {
+        console.error('Failed to delete device:', error)
+        alert('An error occurred while deleting device. Please try again.')
+      }
+    }
+
     // View personnel readings
     const viewPersonnelReadings = (personnel) => {
       // Filter readings to show only this personnel's data
@@ -1183,6 +1284,8 @@ export default {
       onAssignmentError,
       endAssignment,
       editPersonnel,
+      deletePersonnel,
+      deleteDevice,
       viewPersonnelReadings,
       clearReadingsFilter,
       clearAssignmentsFilter,
