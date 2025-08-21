@@ -299,11 +299,17 @@ router.post('/personnel', async (req, res) => {
       rank_rate,
       edipi,
       unit_id,
-      active
+      active,
+      radiation_category,
+      monitoring_frequency,
+      dosimeter_type,
+      last_medical_exam,
+      next_medical_due,
+      notes
     } = req.body;
 
     // Validate required fields
-    if (!fname || !lname || !rank_rate || !edipi || !unit_id) {
+    if (!fname || !lname || !rank_rate || !edipi || !unit_id || !radiation_category || !monitoring_frequency) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -320,10 +326,10 @@ router.post('/personnel', async (req, res) => {
     // Insert new personnel
     const result = await pool.query(`
       INSERT INTO radiation_personnel 
-      (fname, lname, rank_rate, edipi, unit_id, active, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      (fname, lname, rank_rate, edipi, unit_id, active, radiation_category, monitoring_frequency, dosimeter_type, last_medical_exam, next_medical_due, notes, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
       RETURNING id
-    `, [fname, lname, rank_rate, edipi, unit_id, active]);
+    `, [fname, lname, rank_rate, edipi, unit_id, active, radiation_category, monitoring_frequency, dosimeter_type, last_medical_exam, next_medical_due, notes]);
 
     res.json({ 
       success: true, 
@@ -348,11 +354,17 @@ router.put('/personnel/:id', async (req, res) => {
       rank_rate,
       edipi,
       unit_id,
-      active
+      active,
+      radiation_category,
+      monitoring_frequency,
+      dosimeter_type,
+      last_medical_exam,
+      next_medical_due,
+      notes
     } = req.body;
 
     // Validate required fields
-    if (!fname || !lname || !rank_rate || !edipi || !unit_id) {
+    if (!fname || !lname || !rank_rate || !edipi || !unit_id || !radiation_category || !monitoring_frequency) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -369,9 +381,11 @@ router.put('/personnel/:id', async (req, res) => {
     // Update personnel
     await pool.query(`
       UPDATE radiation_personnel 
-      SET fname = $1, lname = $2, rank_rate = $3, edipi = $4, unit_id = $5, active = $6
-      WHERE id = $7
-    `, [fname, lname, rank_rate, edipi, unit_id, active, id]);
+      SET fname = $1, lname = $2, rank_rate = $3, edipi = $4, unit_id = $5, active = $6, 
+          radiation_category = $7, monitoring_frequency = $8, dosimeter_type = $9, 
+          last_medical_exam = $10, next_medical_due = $11, notes = $12
+      WHERE id = $13
+    `, [fname, lname, rank_rate, edipi, unit_id, active, radiation_category, monitoring_frequency, dosimeter_type, last_medical_exam, next_medical_due, notes, id]);
 
     res.json({ 
       success: true, 

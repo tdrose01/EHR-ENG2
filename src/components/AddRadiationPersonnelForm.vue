@@ -86,6 +86,82 @@
       </select>
     </div>
 
+    <!-- Radiation Category (Required) -->
+    <div>
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Radiation Category *</label>
+      <select
+        v-model="form.radiation_category"
+        required
+        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
+      >
+        <option value="">Select Category</option>
+        <option value="CAT1">CAT1 - High Risk</option>
+        <option value="CAT2">CAT2 - Medium Risk</option>
+        <option value="CAT3">CAT3 - Low Risk</option>
+        <option value="CAT4">CAT4 - Minimal Risk</option>
+      </select>
+    </div>
+
+    <!-- Monitoring Frequency (Required) -->
+    <div>
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Monitoring Frequency *</label>
+      <select
+        v-model="form.monitoring_frequency"
+        required
+        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
+      >
+        <option value="">Select Frequency</option>
+        <option value="DAILY">Daily</option>
+        <option value="WEEKLY">Weekly</option>
+        <option value="MONTHLY">Monthly</option>
+        <option value="QUARTERLY">Quarterly</option>
+      </select>
+    </div>
+
+    <!-- Dosimeter Type -->
+    <div>
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Dosimeter Type</label>
+      <select
+        v-model="form.dosimeter_type"
+        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
+      >
+        <option value="TLD">TLD - Thermoluminescent Dosimeter</option>
+        <option value="OSL">OSL - Optically Stimulated Luminescence</option>
+        <option value="EPD">EPD - Electronic Personal Dosimeter</option>
+        <option value="BETA">BETA - Beta Dosimeter</option>
+      </select>
+    </div>
+
+    <!-- Medical Exam Dates -->
+    <div>
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Last Medical Exam</label>
+      <input
+        type="date"
+        v-model="form.last_medical_exam"
+        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
+      />
+    </div>
+
+    <div>
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Next Medical Due</label>
+      <input
+        type="date"
+        v-model="form.next_medical_due"
+        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
+      />
+    </div>
+
+    <!-- Notes -->
+    <div class="col-span-2">
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Notes</label>
+      <textarea
+        v-model="form.notes"
+        rows="3"
+        placeholder="Additional notes about the personnel..."
+        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
+      ></textarea>
+    </div>
+
     <!-- Action Buttons -->
     <div class="col-span-2 flex justify-end mt-4">
       <button 
@@ -126,7 +202,13 @@ export default {
         rank_rate: '',
         edipi: '',
         unit_id: '',
-        active: true
+        active: true,
+        radiation_category: 'CAT3', // Default to low risk
+        monitoring_frequency: 'MONTHLY', // Default to monthly
+        dosimeter_type: 'TLD', // Default to TLD
+        last_medical_exam: '',
+        next_medical_due: '',
+        notes: ''
       }
     }
   },
@@ -142,7 +224,13 @@ export default {
             rank_rate: value.rank_rate || '',
             edipi: value.edipi || '',
             unit_id: value.unit_id || '',
-            active: value.active !== undefined ? value.active : true
+            active: value.active !== undefined ? value.active : true,
+            radiation_category: value.radiation_category || 'CAT3',
+            monitoring_frequency: value.monitoring_frequency || 'MONTHLY',
+            dosimeter_type: value.dosimeter_type || 'TLD',
+            last_medical_exam: value.last_medical_exam || '',
+            next_medical_due: value.next_medical_due || '',
+            notes: value.notes || ''
           }
         } else {
           // Reset form for new personnel
@@ -152,7 +240,13 @@ export default {
             rank_rate: '',
             edipi: '',
             unit_id: '',
-            active: true
+            active: true,
+            radiation_category: 'CAT3',
+            monitoring_frequency: 'MONTHLY',
+            dosimeter_type: 'TLD',
+            last_medical_exam: '',
+            next_medical_due: '',
+            notes: ''
           }
         }
       }
