@@ -25,56 +25,75 @@
     </div>
 
     <!-- Overview Cards -->
-    <div class="p-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-          <div class="flex items-center">
-            <div class="p-3 rounded-full bg-blue-600 bg-opacity-20">
-              <i class="fas fa-users text-blue-400 text-xl"></i>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-gray-400 text-sm">Personnel Monitored</h3>
-              <p class="text-2xl font-bold text-white">{{ overview.personnelMonitored || '--' }}</p>
-            </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-blue-600 bg-opacity-20">
+            <i class="fas fa-users text-blue-400 text-xl"></i>
           </div>
-        </div>
-
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-          <div class="flex items-center">
-            <div class="p-3 rounded-full bg-green-600 bg-opacity-20">
-              <i class="fas fa-microchip text-green-400 text-xl"></i>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-gray-400 text-sm">Active Devices</h3>
-              <p class="text-2xl font-bold text-white">{{ overview.activeDevices || '--' }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-          <div class="flex items-center">
-            <div class="p-3 rounded-full bg-red-600 bg-opacity-20">
-              <i class="fas fa-exclamation-triangle text-red-400 text-xl"></i>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-gray-400 text-sm">Pending Alerts</h3>
-              <p class="text-2xl font-bold text-white">{{ overview.pendingAlerts || '--' }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-          <div class="flex items-center">
-            <div class="p-3 rounded-full bg-purple-600 bg-opacity-20">
-              <i class="fas fa-chart-line text-purple-400 text-xl"></i>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-gray-400 text-sm">Readings (24h)</h3>
-              <p class="text-2xl font-bold text-white">{{ overview.readingsLast24h || '--' }}</p>
-            </div>
+          <div class="ml-4">
+            <h3 class="text-gray-400 text-sm">Personnel Monitored</h3>
+            <p class="text-2xl font-bold text-white">
+              <span v-if="loading" class="animate-pulse">...</span>
+              <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
+              <span v-else>{{ overview.personnelMonitored || '0' }}</span>
+            </p>
+            <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
           </div>
         </div>
       </div>
+
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-green-600 bg-opacity-20">
+            <i class="fas fa-microchip text-green-400 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-gray-400 text-sm">Active Devices</h3>
+            <p class="text-2xl font-bold text-white">
+              <span v-if="loading" class="animate-pulse">...</span>
+              <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
+              <span v-else>{{ overview.activeDevices || '0' }}</span>
+            </p>
+            <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-red-600 bg-opacity-20">
+            <i class="fas fa-exclamation-triangle text-red-400 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-gray-400 text-sm">Pending Alerts</h3>
+            <p class="text-2xl font-bold text-white">
+              <span v-if="loading" class="animate-pulse">...</span>
+              <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
+              <span v-else>{{ overview.pendingAlerts || '0' }}</span>
+            </p>
+            <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-purple-600 bg-opacity-20">
+            <i class="fas fa-chart-line text-purple-400 text-xl"></i>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-gray-400 text-sm">Readings (24h)</h3>
+            <p class="text-2xl font-bold text-white">
+              <span v-if="loading" class="animate-pulse">...</span>
+              <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
+              <span v-else>{{ overview.readingsLast24h || '0' }}</span>
+            </p>
+            <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
       <!-- Tab Navigation -->
       <div class="bg-gray-800 rounded-lg border border-gray-700">
@@ -571,7 +590,7 @@
  </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import AddRadiationPersonnelForm from '../components/AddRadiationPersonnelForm.vue'
 import DeviceAssignmentModal from '../components/DeviceAssignmentModal.vue'
 
@@ -589,6 +608,7 @@ export default {
     
     // Data stores
     const overview = ref({})
+    const overviewError = ref('')
     const personnel = ref([])
     const devices = ref([])
     const readings = ref([])
@@ -647,9 +667,13 @@ export default {
         const response = await fetch('/api/radiation/overview')
         if (response.ok) {
           overview.value = await response.json()
+        } else {
+          const errorData = await response.json()
+          overviewError.value = errorData.error || 'Failed to load overview data'
         }
       } catch (error) {
         console.error('Failed to fetch overview:', error)
+        overviewError.value = 'Network error loading overview data'
       }
     }
 
@@ -1019,6 +1043,14 @@ export default {
     // Lifecycle
     onMounted(() => {
       refreshData()
+      
+      // Auto-refresh every 5 minutes
+      const autoRefreshInterval = setInterval(refreshData, 5 * 60 * 1000)
+      
+      // Cleanup on unmount
+      onUnmounted(() => {
+        clearInterval(autoRefreshInterval)
+      })
     })
 
     return {
@@ -1040,6 +1072,7 @@ export default {
       alertsError,
       reconciliationsError,
       assignmentsError,
+      overviewError,
       
       // Modal state
       showPersonnelModal,

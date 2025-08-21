@@ -7,8 +7,49 @@ router.get('/test', (req, res) => {
 });
 
 // Overview endpoint
-router.get('/overview', (req, res) => {
-  res.json({ message: 'Overview endpoint working' });
+router.get('/overview', async (req, res) => {
+  try {
+    const pool = require('../db');
+    
+    // Get personnel count
+    const personnelResult = await pool.query(`
+      SELECT COUNT(*) as count 
+      FROM radiation_personnel 
+      WHERE active = true
+    `);
+    
+    // Get active devices count
+    const devicesResult = await pool.query(`
+      SELECT COUNT(*) as count 
+      FROM radiation_devices 
+      WHERE retired_at IS NULL
+    `);
+    
+    // Get pending alerts count
+    const alertsResult = await pool.query(`
+      SELECT COUNT(*) as count 
+      FROM radiation_alerts 
+      WHERE ack_ts IS NULL
+    `);
+    
+    // Get readings in last 24 hours
+    const readingsResult = await pool.query(`
+      SELECT COUNT(*) as count 
+      FROM radiation_dose_readings 
+      WHERE measured_ts >= NOW() - INTERVAL '24 hours'
+    `);
+    
+    res.json({
+      personnelMonitored: personnelResult.rows[0]?.count || 0,
+      activeDevices: devicesResult.rows[0]?.count || 0,
+      pendingAlerts: alertsResult.rows[0]?.count || 0,
+      readingsLast24h: readingsResult.rows[0]?.count || 0
+    });
+    
+  } catch (error) {
+    console.error('Overview fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch overview data' });
+  }
 });
 
 // 2. Personnel list
