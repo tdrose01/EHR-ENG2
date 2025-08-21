@@ -92,21 +92,7 @@
                   </button>
                 </div>
               </div>
-              <!-- Navy Radiation Health Module Card -->
-              <div
-                @click="navigateTo('/radiation-dashboard')"
-                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
-              >
-                <h2 class="text-2xl font-semibold text-red-600 dark:text-red-400 mb-3">
-                  <i class="fas fa-radiation mr-2"></i>Navy Radiation Health
-                </h2>
-                <p class="text-gray-600 dark:text-gray-300">Personal dosimeter monitoring and dose reconciliation system.</p>
-                <div class="mt-4 flex justify-end">
-                  <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
-                    Go to Radiation Dashboard
-                  </button>
-                </div>
-              </div>
+
             </div>
           </div>
         </div>

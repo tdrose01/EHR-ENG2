@@ -1,23 +1,134 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-800 p-6 text-gray-900 dark:text-gray-100">
-    <div class="max-w-7xl mx-auto">
-      <header class="mb-8">
-        <h1 class="text-3xl font-bold text-green-600">Radiation Health Patient Management</h1>
-        <p class="text-gray-600 dark:text-gray-300 mt-2">Manage patients for the Radiation Health module.</p>
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+    <nav class="bg-white dark:bg-gray-700 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+          <div class="flex">
+            <div class="flex-shrink-0 flex items-center">
+              <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">☢️ Radiation Health Module</h1>
+            </div>
+            <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <router-link
+                to="/patients"
+                class="border-green-500 text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Patient Management
+              </router-link>
+              <router-link
+                to="/status"
+                class="border-green-500 text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                System Status
+              </router-link>
+              <router-link
+                v-if="isAdmin"
+                to="/settings"
+                class="border-green-500 text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Settings
+              </router-link>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <button
+              @click="logout"
+              class="ml-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="py-10">
+      <header>
+        <div class="max-w-7xl mx-auto px-4">
+          <h1 class="text-3xl font-bold leading-tight text-gray-900 dark:text-gray-100">
+            Welcome to Radiation Health Module
+          </h1>
+        </div>
       </header>
-      
-      <PatientManagement />
+      <main>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div class="px-4 py-8 sm:px-0">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Patient Management Card -->
+              <div
+                @click="navigateTo('/patients')"
+                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
+              >
+                <h2 class="text-2xl font-semibold text-green-600 dark:text-green-400 mb-3">Patient Management</h2>
+                <p class="text-gray-600 dark:text-gray-300">Access and manage patient records.</p>
+                <div class="mt-4 flex justify-end">
+                  <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
+                    Go to Patients
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Radiation Dashboard Card -->
+              <div
+                @click="navigateTo('/radiation-dashboard')"
+                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
+              >
+                <h2 class="text-2xl font-semibold text-red-600 dark:text-red-400 mb-3">
+                  <i class="fas fa-radiation mr-2"></i>Radiation Dashboard
+                </h2>
+                <p class="text-gray-600 dark:text-gray-300">Personal dosimeter monitoring and dose reconciliation system.</p>
+                <div class="mt-4 flex justify-end">
+                  <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
+                    Go to Dashboard
+                  </button>
+                </div>
+              </div>
+              
+              <!-- System Status Card -->
+              <div
+                @click="navigateTo('/status')"
+                class="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
+              >
+                <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-400 mb-3">System Status</h2>
+                <p class="text-gray-600 dark:text-gray-300">Monitor system health and performance.</p>
+                <div class="mt-4 flex justify-end">
+                  <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                    View Status
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
 </template>
 
 <script>
-import PatientManagement from './PatientManagement.vue';
-
 export default {
   name: 'RHModule',
-  components: {
-    PatientManagement
+  computed: {
+    isAdmin() {
+      return localStorage.getItem('userRole') === 'admin'
+    },
+    userEmail() {
+      return localStorage.getItem('userEmail') || ''
+    }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem('isAuthenticated')
+      localStorage.removeItem('userRole')
+      localStorage.removeItem('userEmail')
+      localStorage.removeItem('lastLoginAt')
+      localStorage.removeItem('adminPassword')
+      this.$router.push('/')
+    },
+    navigateTo(path) {
+      this.$router.push(path)
+    }
   }
 }
-</script> 
+</script>
+
+<style scoped></style> 
