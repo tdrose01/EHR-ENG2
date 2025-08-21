@@ -104,7 +104,7 @@
             <button
               v-for="tab in tabs"
               :key="tab.id"
-              @click="activeTab = tab.id"
+              @click="switchTab(tab.id)"
               :class="[
                 'px-6 py-4 text-sm font-medium transition-colors',
                 activeTab === tab.id
@@ -274,10 +274,23 @@
           <!-- Assignments Tab -->
           <div v-if="activeTab === 'assignments'" class="space-y-4">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xl font-semibold">Device Assignments</h3>
+              <h3 class="text-xl font-semibold">
+                Device Assignments
+                <span v-if="assignmentsPersonnelFilter" class="text-sm text-blue-400 ml-2">
+                  (Filtered by Personnel)
+                </span>
+              </h3>
               <div class="flex space-x-2">
                 <button @click="openAssignmentModal()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors">
                   <i class="fas fa-plus mr-2"></i>New Assignment
+                </button>
+                <button 
+                  v-if="assignmentsPersonnelFilter"
+                  @click="clearAssignmentsFilter"
+                  class="bg-gray-600 hover:bg-gray-500 px-3 py-2 rounded-lg transition-colors text-sm"
+                  title="Clear Personnel Filter"
+                >
+                  <i class="fas fa-times mr-1"></i>Clear Filter
                 </button>
               </div>
             </div>
@@ -296,7 +309,7 @@
                   </tr>
                 </thead>
                 <tbody v-if="assignments.length > 0" class="divide-y divide-gray-600">
-                  <tr v-for="assignment in assignments" :key="assignment.id" class="hover:bg-gray-600 transition-colors">
+                  <tr v-for="assignment in filteredAssignments" :key="assignment.id" class="hover:bg-gray-600 transition-colors">
                     <td class="px-4 py-3">
                       <div>
                         <div class="font-medium text-white">{{ assignment.rank_rate }} {{ assignment.lname }}, {{ assignment.fname }}</div>
@@ -353,7 +366,12 @@
           <!-- Readings Tab -->
           <div v-if="activeTab === 'readings'" class="space-y-4">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xl font-semibold">Dose Readings</h3>
+              <h3 class="text-xl font-semibold">
+                Dose Readings
+                <span v-if="readingsPersonnelFilter" class="text-sm text-blue-400 ml-2">
+                  (Filtered by Personnel)
+                </span>
+              </h3>
               <div class="flex space-x-2">
                 <input
                   v-model="readingsDateFilter"
@@ -366,6 +384,14 @@
                     {{ person.rank_rate }} {{ person.lname }}
                   </option>
                 </select>
+                <button 
+                  v-if="readingsPersonnelFilter"
+                  @click="clearReadingsFilter"
+                  class="bg-gray-600 hover:bg-gray-500 px-3 py-2 rounded-lg transition-colors text-sm"
+                  title="Clear Personnel Filter"
+                >
+                  <i class="fas fa-times mr-1"></i>Clear Filter
+                </button>
               </div>
             </div>
             
@@ -382,8 +408,8 @@
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Battery</th>
                   </tr>
                 </thead>
-                <tbody v-if="readings.length > 0" class="divide-y divide-gray-600">
-                  <tr v-for="reading in readings" :key="reading.id" class="hover:bg-gray-600 transition-colors">
+                <tbody v-if="filteredReadings.length > 0" class="divide-y divide-gray-600">
+                  <tr v-for="reading in filteredReadings" :key="reading.id" class="hover:bg-gray-600 transition-colors">
                     <td class="px-4 py-3 text-gray-300">{{ formatDateTime(reading.measured_ts) }}</td>
                     <td class="px-4 py-3 text-gray-300">{{ reading.rank_rate }} {{ reading.lname }}</td>
                     <td class="px-4 py-3 text-gray-300">{{ reading.device_serial }}</td>
@@ -641,6 +667,20 @@ export default {
     const alertsSeverityFilter = ref('')
     const reconciliationPeriodFilter = ref('')
 
+    // Computed properties for filtered data
+    const filteredReadings = computed(() => {
+      if (!readingsPersonnelFilter.value) return readings.value
+      return readings.value.filter(reading => reading.personnel_id === readingsPersonnelFilter.value)
+    })
+
+    const filteredAssignments = computed(() => {
+      if (!assignmentsPersonnelFilter.value) return assignments.value
+      return assignments.value.filter(assignment => assignment.personnel_id === assignmentsPersonnelFilter.value)
+    })
+
+    // Add assignmentsPersonnelFilter variable
+    const assignmentsPersonnelFilter = ref('')
+
     // Tab configuration
     const tabs = [
       { id: 'personnel', name: 'Personnel', icon: 'fas fa-users' },
@@ -823,11 +863,12 @@ export default {
 
     // Assignment modal control methods
     const openAssignmentModal = (assignment = null, personnel = null) => {
-      editingAssignment.value = assignment
       if (personnel) {
-        // Pre-populate personnel if provided
-        editingAssignment.value = { personnel_id: personnel.id }
+        // Called from personnel table - set filter and switch to assignments tab
+        assignmentsPersonnelFilter.value = personnel.id
+        activeTab.value = 'assignments'
       }
+      editingAssignment.value = assignment
       showAssignmentModal.value = true
     }
 
@@ -894,7 +935,36 @@ export default {
     const viewPersonnelReadings = (personnel) => {
       // Filter readings to show only this personnel's data
       readingsPersonnelFilter.value = personnel.id
+      assignmentsPersonnelFilter.value = personnel.id
       activeTab.value = 'readings'
+    }
+
+    const clearReadingsFilter = () => {
+      readingsPersonnelFilter.value = ''
+      assignmentsPersonnelFilter.value = ''
+      activeTab.value = 'readings'
+    }
+
+    const clearAssignmentsFilter = () => {
+      assignmentsPersonnelFilter.value = ''
+      activeTab.value = 'assignments'
+    }
+
+    // Clear all personnel filters
+    const clearAllPersonnelFilters = () => {
+      readingsPersonnelFilter.value = ''
+      assignmentsPersonnelFilter.value = ''
+    }
+
+    // Update tab switching to clear filters when switching between tabs
+    const switchTab = (tabName) => {
+      // Clear personnel filters when switching away from readings or assignments tabs
+      if (activeTab.value === 'readings' || activeTab.value === 'assignments') {
+        if (tabName !== 'readings' && tabName !== 'assignments') {
+          clearAllPersonnelFilters()
+        }
+      }
+      activeTab.value = tabName
     }
 
     const acknowledgeAlert = async (alertId) => {
@@ -1089,12 +1159,15 @@ export default {
       readingsPersonnelFilter,
       alertsSeverityFilter,
       reconciliationPeriodFilter,
+      assignmentsPersonnelFilter,
       
       // Static data
       tabs,
       
       // Computed
       filteredPersonnel,
+      filteredReadings,
+      filteredAssignments,
       
       // Methods
       refreshData,
@@ -1111,6 +1184,10 @@ export default {
       endAssignment,
       editPersonnel,
       viewPersonnelReadings,
+      clearReadingsFilter,
+      clearAssignmentsFilter,
+      clearAllPersonnelFilters, // Added this line
+      switchTab, // Added this line
       formatDate,
       formatDateTime,
       formatDateRange,
