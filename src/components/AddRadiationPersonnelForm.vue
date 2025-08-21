@@ -5,7 +5,7 @@
       <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">First Name</label>
       <input
         type="text"
-        v-model="form.first_name"
+        v-model="form.fname"
         required
         class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
       />
@@ -14,7 +14,7 @@
       <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Last Name</label>
       <input
         type="text"
-        v-model="form.last_name"
+        v-model="form.lname"
         required
         class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
       />
@@ -58,7 +58,7 @@
       />
     </div>
 
-    <!-- Radiation Health Specific Fields -->
+    <!-- Unit Assignment -->
     <div>
       <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Unit</label>
       <select
@@ -73,68 +73,7 @@
       </select>
     </div>
 
-    <div>
-      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Radiation Category</label>
-      <select
-        v-model="form.radiation_category"
-        required
-        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
-      >
-        <option value="">Select Category</option>
-        <option value="CAT1">Category 1 - High Risk</option>
-        <option value="CAT2">Category 2 - Medium Risk</option>
-        <option value="CAT3">Category 3 - Low Risk</option>
-        <option value="CAT4">Category 4 - Minimal Risk</option>
-      </select>
-    </div>
-
-    <div>
-      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Monitoring Frequency</label>
-      <select
-        v-model="form.monitoring_frequency"
-        required
-        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
-      >
-        <option value="">Select Frequency</option>
-        <option value="DAILY">Daily</option>
-        <option value="WEEKLY">Weekly</option>
-        <option value="MONTHLY">Monthly</option>
-        <option value="QUARTERLY">Quarterly</option>
-      </select>
-    </div>
-
-    <div>
-      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Last Medical Exam</label>
-      <input
-        type="date"
-        v-model="form.last_medical_exam"
-        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-      />
-    </div>
-
-    <div>
-      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Next Medical Due</label>
-      <input
-        type="date"
-        v-model="form.next_medical_due"
-        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-      />
-    </div>
-
-    <div>
-      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Dosimeter Type</label>
-      <select
-        v-model="form.dosimeter_type"
-        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
-      >
-        <option value="">Select Dosimeter</option>
-        <option value="TLD">TLD - Thermoluminescent</option>
-        <option value="OSL">OSL - Optically Stimulated Luminescence</option>
-        <option value="EPD">EPD - Electronic Personal Dosimeter</option>
-        <option value="BETA">Beta Dosimeter</option>
-      </select>
-    </div>
-
+    <!-- Status -->
     <div>
       <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Status</label>
       <select
@@ -142,20 +81,9 @@
         required
         class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
       >
-        <option value="true">Active</option>
-        <option value="false">Inactive</option>
+        <option :value="true">Active</option>
+        <option :value="false">Inactive</option>
       </select>
-    </div>
-
-    <!-- Notes -->
-    <div class="col-span-2">
-      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Notes</label>
-      <textarea
-        v-model="form.notes"
-        rows="3"
-        placeholder="Additional notes about this personnel..."
-        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-      ></textarea>
     </div>
 
     <!-- Action Buttons -->
@@ -193,18 +121,12 @@ export default {
   data() {
     return {
       form: {
-        first_name: '',
-        last_name: '',
+        fname: '',
+        lname: '',
         rank_rate: '',
         edipi: '',
         unit_id: '',
-        radiation_category: '',
-        monitoring_frequency: '',
-        last_medical_exam: '',
-        next_medical_due: '',
-        dosimeter_type: '',
-        active: true,
-        notes: ''
+        active: true
       }
     }
   },
@@ -213,13 +135,24 @@ export default {
       immediate: true,
       handler(value) {
         if (value) {
-          this.form = { ...value }
-          // Convert dates to YYYY-MM-DD format for input fields
-          if (this.form.last_medical_exam) {
-            this.form.last_medical_exam = new Date(this.form.last_medical_exam).toISOString().split('T')[0]
+          // Map the personnel data to form fields
+          this.form = {
+            fname: value.fname || '',
+            lname: value.lname || '',
+            rank_rate: value.rank_rate || '',
+            edipi: value.edipi || '',
+            unit_id: value.unit_id || '',
+            active: value.active !== undefined ? value.active : true
           }
-          if (this.form.next_medical_due) {
-            this.form.next_medical_due = new Date(this.form.next_medical_due).toISOString().split('T')[0]
+        } else {
+          // Reset form for new personnel
+          this.form = {
+            fname: '',
+            lname: '',
+            rank_rate: '',
+            edipi: '',
+            unit_id: '',
+            active: true
           }
         }
       }

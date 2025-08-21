@@ -253,22 +253,16 @@ router.post('/personnel', async (req, res) => {
   try {
     const pool = require('../db');
     const {
-      first_name,
-      last_name,
+      fname,
+      lname,
       rank_rate,
       edipi,
       unit_id,
-      radiation_category,
-      monitoring_frequency,
-      last_medical_exam,
-      next_medical_due,
-      dosimeter_type,
-      active,
-      notes
+      active
     } = req.body;
 
     // Validate required fields
-    if (!first_name || !last_name || !rank_rate || !edipi || !unit_id || !radiation_category || !monitoring_frequency) {
+    if (!fname || !lname || !rank_rate || !edipi || !unit_id) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -282,15 +276,13 @@ router.post('/personnel', async (req, res) => {
       return res.status(409).json({ error: 'Personnel with this EDIPI already exists' });
     }
 
-         // Insert new personnel
-     const result = await pool.query(`
-       INSERT INTO radiation_personnel 
-       (fname, lname, rank_rate, edipi, unit_id, radiation_category, monitoring_frequency, 
-        last_medical_exam, next_medical_due, dosimeter_type, active, notes, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
-       RETURNING id
-     `, [first_name, last_name, rank_rate, edipi, unit_id, radiation_category, monitoring_frequency,
-          last_medical_exam, next_medical_due, dosimeter_type, active, notes]);
+    // Insert new personnel
+    const result = await pool.query(`
+      INSERT INTO radiation_personnel 
+      (fname, lname, rank_rate, edipi, unit_id, active, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      RETURNING id
+    `, [fname, lname, rank_rate, edipi, unit_id, active]);
 
     res.json({ 
       success: true, 
@@ -310,22 +302,16 @@ router.put('/personnel/:id', async (req, res) => {
     const pool = require('../db');
     const { id } = req.params;
     const {
-      first_name,
-      last_name,
+      fname,
+      lname,
       rank_rate,
       edipi,
       unit_id,
-      radiation_category,
-      monitoring_frequency,
-      last_medical_exam,
-      next_medical_due,
-      dosimeter_type,
-      active,
-      notes
+      active
     } = req.body;
 
     // Validate required fields
-    if (!first_name || !last_name || !rank_rate || !edipi || !unit_id || !radiation_category || !monitoring_frequency) {
+    if (!fname || !lname || !rank_rate || !edipi || !unit_id) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -342,13 +328,9 @@ router.put('/personnel/:id', async (req, res) => {
     // Update personnel
     await pool.query(`
       UPDATE radiation_personnel 
-      SET fname = $1, lname = $2, rank_rate = $3, edipi = $4, unit_id = $5, 
-          radiation_category = $6, monitoring_frequency = $7, last_medical_exam = $8, 
-          next_medical_due = $9, dosimeter_type = $10, active = $11, notes = $12, 
-          updated_ts = NOW()
-      WHERE id = $13
-    `, [first_name, last_name, rank_rate, edipi, unit_id, radiation_category, monitoring_frequency,
-         last_medical_exam, next_medical_due, dosimeter_type, active, notes, id]);
+      SET fname = $1, lname = $2, rank_rate = $3, edipi = $4, unit_id = $5, active = $6
+      WHERE id = $7
+    `, [fname, lname, rank_rate, edipi, unit_id, active, id]);
 
     res.json({ 
       success: true, 
