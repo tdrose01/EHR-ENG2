@@ -536,4 +536,595 @@ router.put('/assignments/:id/end', async (req, res) => {
   }
 });
 
+// ===== NEW ENDPOINTS TO COMPLETE PHASE 1 =====
+
+// 16. DELETE Personnel endpoint
+router.delete('/personnel/:id', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { id } = req.params;
+
+    // Check if personnel has active assignments
+    const activeAssignments = await pool.query(
+      'SELECT COUNT(*) as count FROM radiation_assignments WHERE personnel_id = $1 AND (end_ts IS NULL OR end_ts > NOW())',
+      [id]
+    );
+
+    if (activeAssignments.rows[0].count > 0) {
+      return res.status(400).json({ 
+        error: 'Cannot delete personnel with active device assignments. End all assignments first.' 
+      });
+    }
+
+    // Soft delete - mark as inactive instead of hard delete
+    await pool.query(
+      'UPDATE radiation_personnel SET active = false WHERE id = $1',
+      [id]
+    );
+
+    res.json({ 
+      success: true, 
+      message: 'Personnel deactivated successfully'
+    });
+
+  } catch (error) {
+    console.error('Delete personnel error:', error);
+    res.status(500).json({ error: 'Failed to delete personnel' });
+  }
+});
+
+// 17. Device CRUD endpoints
+router.post('/devices', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { model_id, serial, ble_mac, firmware, calib_due, rf_policy } = req.body;
+
+    if (!model_id || !serial || !rf_policy) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Check if serial already exists
+    const existingDevice = await pool.query(
+      'SELECT id FROM radiation_devices WHERE serial = $1',
+      [serial]
+    );
+
+    if (existingDevice.rows.length > 0) {
+      return res.status(409).json({ error: 'Device with this serial number already exists' });
+    }
+
+    const result = await pool.query(`
+      INSERT INTO radiation_devices (model_id, serial, ble_mac, firmware, calib_due, rf_policy)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id
+    `, [model_id, serial, ble_mac, firmware, calib_due, rf_policy]);
+
+    res.json({ 
+      success: true, 
+      device_id: result.rows[0].id,
+      message: 'Device created successfully'
+    });
+
+  } catch (error) {
+    console.error('Create device error:', error);
+    res.status(500).json({ error: 'Failed to create device' });
+  }
+});
+
+router.put('/devices/:id', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { id } = req.params;
+    const { model_id, serial, ble_mac, firmware, calib_due, rf_policy } = req.body;
+
+    if (!model_id || !serial || !rf_policy) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Check if serial already exists for other devices
+    const existingDevice = await pool.query(
+      'SELECT id FROM radiation_devices WHERE serial = $1 AND id != $2',
+      [serial, id]
+    );
+
+    if (existingDevice.rows.length > 0) {
+      return res.status(409).json({ error: 'Device with this serial number already exists' });
+    }
+
+    await pool.query(`
+      UPDATE radiation_devices 
+      SET model_id = $1, serial = $2, ble_mac = $3, firmware = $4, calib_due = $5, rf_policy = $6
+      WHERE id = $7
+    `, [model_id, serial, ble_mac, firmware, calib_due, rf_policy, id]);
+
+    res.json({ success: true, message: 'Device updated successfully' });
+
+  } catch (error) {
+    console.error('Update device error:', error);
+    res.status(500).json({ error: 'Failed to update device' });
+  }
+});
+
+router.delete('/devices/:id', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { id } = req.params;
+
+    // Check if device has active assignments
+    const activeAssignments = await pool.query(
+      'SELECT COUNT(*) as count FROM radiation_assignments WHERE device_id = $1 AND (end_ts IS NULL OR end_ts > NOW())',
+      [id]
+    );
+
+    if (activeAssignments.rows[0].count > 0) {
+      return res.status(400).json({ 
+        error: 'Cannot delete device with active assignments. End all assignments first.' 
+      });
+    }
+
+    // Soft delete - mark as retired
+    await pool.query(
+      'UPDATE radiation_devices SET retired_at = NOW() WHERE id = $1',
+      [id]
+    );
+
+    res.json({ success: true, message: 'Device retired successfully' });
+
+  } catch (error) {
+    console.error('Delete device error:', error);
+    res.status(500).json({ error: 'Failed to delete device' });
+  }
+});
+
+// 18. Device Model CRUD endpoints
+router.get('/device-models', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const result = await pool.query('SELECT * FROM radiation_device_models ORDER BY vendor, model');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Device models fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch device models' });
+  }
+});
+
+router.post('/device-models', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { vendor, model, firmware_min, hp10_support, hp007_support, gatt_service_uuid, gatt_char_uuid } = req.body;
+
+    if (!vendor || !model) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const result = await pool.query(`
+      INSERT INTO radiation_device_models (vendor, model, firmware_min, hp10_support, hp007_support, gatt_service_uuid, gatt_char_uuid)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING id
+    `, [vendor, model, firmware_min, hp10_support, hp007_support, gatt_service_uuid, gatt_char_uuid]);
+
+    res.json({ 
+      success: true, 
+      model_id: result.rows[0].id,
+      message: 'Device model created successfully'
+    });
+
+  } catch (error) {
+    console.error('Create device model error:', error);
+    res.status(500).json({ error: 'Failed to create device model' });
+  }
+});
+
+// 19. Unit CRUD endpoints
+router.post('/units', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { uic, name, parent_uic } = req.body;
+
+    if (!uic || !name) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const result = await pool.query(`
+      INSERT INTO radiation_units (uic, name, parent_uic)
+      VALUES ($1, $2, $3)
+      RETURNING id
+    `, [uic, name, parent_uic]);
+
+    res.json({ 
+      success: true, 
+      unit_id: result.rows[0].id,
+      message: 'Unit created successfully'
+    });
+
+  } catch (error) {
+    console.error('Create unit error:', error);
+    res.status(500).json({ error: 'Failed to create unit' });
+  }
+});
+
+router.put('/units/:id', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { id } = req.params;
+    const { uic, name, parent_uic } = req.body;
+
+    if (!uic || !name) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    await pool.query(`
+      UPDATE radiation_units 
+      SET uic = $1, name = $2, parent_uic = $3
+      WHERE id = $4
+    `, [uic, name, parent_uic, id]);
+
+    res.json({ success: true, message: 'Unit updated successfully' });
+
+  } catch (error) {
+    console.error('Update unit error:', error);
+    res.status(500).json({ error: 'Failed to update unit' });
+  }
+});
+
+// 20. Alert management endpoints
+router.post('/alerts', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { type, severity, threshold, value, device_id, personnel_id, measured_ts, details } = req.body;
+
+    if (!type || !severity) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const result = await pool.query(`
+      INSERT INTO radiation_alerts (type, severity, threshold, value, device_id, personnel_id, measured_ts, details)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING id
+    `, [type, severity, threshold, value, device_id, personnel_id, measured_ts, details]);
+
+    res.json({ 
+      success: true, 
+      alert_id: result.rows[0].id,
+      message: 'Alert created successfully'
+    });
+
+  } catch (error) {
+    console.error('Create alert error:', error);
+    res.status(500).json({ error: 'Failed to create alert' });
+  }
+});
+
+router.delete('/alerts/:id', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { id } = req.params;
+
+    await pool.query('DELETE FROM radiation_alerts WHERE id = $1', [id]);
+
+    res.json({ success: true, message: 'Alert deleted successfully' });
+
+  } catch (error) {
+    console.error('Delete alert error:', error);
+    res.status(500).json({ error: 'Failed to delete alert' });
+  }
+});
+
+// 21. NDC (Naval Dosimetry Center) endpoints
+router.get('/ndc-periods', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const result = await pool.query('SELECT * FROM radiation_ndc_periods ORDER BY period_start DESC');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('NDC periods fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch NDC periods' });
+  }
+});
+
+router.post('/ndc-periods', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { period_start, period_end, ndc_source_doc } = req.body;
+
+    if (!period_start || !period_end) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const result = await pool.query(`
+      INSERT INTO radiation_ndc_periods (period_start, period_end, ndc_source_doc)
+      VALUES ($1, $2, $3)
+      RETURNING id
+    `, [period_start, period_end, ndc_source_doc]);
+
+    res.json({ 
+      success: true, 
+      period_id: result.rows[0].id,
+      message: 'NDC period created successfully'
+    });
+
+  } catch (error) {
+    console.error('Create NDC period error:', error);
+    res.status(500).json({ error: 'Failed to create NDC period' });
+  }
+});
+
+// 22. Reconciliation endpoints
+router.post('/reconciliations', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { period_id, personnel_id, op_hp10_mSv, ndc_hp10_mSv, variance_mSv, details } = req.body;
+
+    if (!period_id || !personnel_id) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const result = await pool.query(`
+      INSERT INTO radiation_reconciliations (period_id, personnel_id, op_hp10_mSv, ndc_hp10_mSv, variance_mSv, details)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id
+    `, [period_id, personnel_id, op_hp10_mSv, ndc_hp10_mSv, variance_mSv, details]);
+
+    res.json({ 
+      success: true, 
+      reconciliation_id: result.rows[0].id,
+      message: 'Reconciliation created successfully'
+    });
+
+  } catch (error) {
+    console.error('Create reconciliation error:', error);
+    res.status(500).json({ error: 'Failed to create reconciliation' });
+  }
+});
+
+// 23. Audit logging endpoints
+router.get('/audit-log', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { actor, action, obj_table, obj_id, start_date, end_date, limit = 100 } = req.query;
+    
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+    let paramCount = 0;
+
+    if (actor) {
+      paramCount++;
+      whereClause += ` AND actor = $${paramCount}`;
+      params.push(actor);
+    }
+
+    if (action) {
+      paramCount++;
+      whereClause += ` AND action = $${paramCount}`;
+      params.push(action);
+    }
+
+    if (obj_table) {
+      paramCount++;
+      whereClause += ` AND obj_table = $${paramCount}`;
+      params.push(obj_table);
+    }
+
+    if (obj_id) {
+      paramCount++;
+      whereClause += ` AND obj_id = $${paramCount}`;
+      params.push(obj_id);
+    }
+
+    if (start_date) {
+      paramCount++;
+      whereClause += ` AND ts >= $${paramCount}`;
+      params.push(start_date);
+    }
+
+    if (end_date) {
+      paramCount++;
+      whereClause += ` AND ts <= $${paramCount}`;
+      params.push(end_date);
+    }
+
+    const result = await pool.query(`
+      SELECT * FROM radiation_audit_log
+      ${whereClause}
+      ORDER BY ts DESC
+      LIMIT $${paramCount + 1}
+    `, [...params, parseInt(limit)]);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Audit log fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch audit log' });
+  }
+});
+
+// 24. Bulk operations endpoints
+router.post('/bulk/assignments', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { assignments } = req.body; // Array of assignment objects
+
+    if (!assignments || !Array.isArray(assignments) || assignments.length === 0) {
+      return res.status(400).json({ error: 'Invalid assignments array' });
+    }
+
+    const results = [];
+    for (const assignment of assignments) {
+      const { device_id, personnel_id, start_ts, end_ts } = assignment;
+      
+      if (!device_id || !personnel_id || !start_ts) {
+        results.push({ error: 'Missing required fields', assignment });
+        continue;
+      }
+
+      try {
+        // End any existing active assignments for this device
+        await pool.query(`
+          UPDATE radiation_assignments 
+          SET end_ts = $1 
+          WHERE device_id = $2 AND (end_ts IS NULL OR end_ts > $1)
+        `, [start_ts, device_id]);
+
+        // Create new assignment
+        const result = await pool.query(`
+          INSERT INTO radiation_assignments (device_id, personnel_id, start_ts, end_ts, created_at)
+          VALUES ($1, $2, $3, $4, NOW())
+          RETURNING id
+        `, [device_id, personnel_id, start_ts, end_ts]);
+
+        results.push({ 
+          success: true, 
+          assignment_id: result.rows[0].id,
+          device_id, 
+          personnel_id 
+        });
+      } catch (error) {
+        results.push({ error: error.message, assignment });
+      }
+    }
+
+    res.json({ 
+      success: true, 
+      results,
+      message: 'Bulk assignments processed'
+    });
+
+  } catch (error) {
+    console.error('Bulk assignments error:', error);
+    res.status(500).json({ error: 'Failed to process bulk assignments' });
+  }
+});
+
+// 25. Advanced search and filtering endpoints
+router.get('/search/personnel', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { query, unit_id, active, rank_rate, limit = 50 } = req.query;
+    
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+    let paramCount = 0;
+
+    if (query) {
+      paramCount++;
+      whereClause += ` AND (p.fname ILIKE $${paramCount} OR p.lname ILIKE $${paramCount} OR p.edipi ILIKE $${paramCount})`;
+      params.push(`%${query}%`);
+    }
+
+    if (unit_id) {
+      paramCount++;
+      whereClause += ` AND p.unit_id = $${paramCount}`;
+      params.push(unit_id);
+    }
+
+    if (active !== undefined) {
+      paramCount++;
+      whereClause += ` AND p.active = $${paramCount}`;
+      params.push(active === 'true');
+    }
+
+    if (rank_rate) {
+      paramCount++;
+      whereClause += ` AND p.rank_rate = $${paramCount}`;
+      params.push(rank_rate);
+    }
+
+    const result = await pool.query(`
+      SELECT p.*, u.name as unit_name
+      FROM radiation_personnel p
+      LEFT JOIN radiation_units u ON p.unit_id = u.id
+      ${whereClause}
+      ORDER BY p.lname, p.fname
+      LIMIT $${paramCount + 1}
+    `, [...params, parseInt(limit)]);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Personnel search error:', error);
+    res.status(500).json({ error: 'Failed to search personnel' });
+  }
+});
+
+router.get('/search/devices', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { query, model_id, rf_policy, retired, limit = 50 } = req.query;
+    
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+    let paramCount = 0;
+
+    if (query) {
+      paramCount++;
+      whereClause += ` AND (d.serial ILIKE $${paramCount} OR dm.vendor ILIKE $${paramCount} OR dm.model ILIKE $${paramCount})`;
+      params.push(`%${query}%`);
+    }
+
+    if (model_id) {
+      paramCount++;
+      whereClause += ` AND d.model_id = $${paramCount}`;
+      params.push(model_id);
+    }
+
+    if (rf_policy) {
+      paramCount++;
+      whereClause += ` AND d.rf_policy = $${paramCount}`;
+      params.push(rf_policy);
+    }
+
+    if (retired === 'true') {
+      whereClause += ` AND d.retired_at IS NOT NULL`;
+    } else if (retired === 'false') {
+      whereClause += ` AND d.retired_at IS NULL`;
+    }
+
+    const result = await pool.query(`
+      SELECT d.*, dm.vendor, dm.model, dm.hp10_support, dm.hp007_support
+      FROM radiation_devices d
+      LEFT JOIN radiation_device_models dm ON d.model_id = dm.id
+      ${whereClause}
+      ORDER BY d.serial
+      LIMIT $${paramCount + 1}
+    `, [...params, parseInt(limit)]);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Device search error:', error);
+    res.status(500).json({ error: 'Failed to search devices' });
+  }
+});
+
+// 26. Health check endpoint for monitoring
+router.get('/health', async (req, res) => {
+  try {
+    const pool = require('../db');
+    
+    // Test database connectivity
+    const dbTest = await pool.query('SELECT 1 as test');
+    
+    // Check table counts
+    const personnelCount = await pool.query('SELECT COUNT(*) as count FROM radiation_personnel');
+    const devicesCount = await pool.query('SELECT COUNT(*) as count FROM radiation_devices');
+    const readingsCount = await pool.query('SELECT COUNT(*) as count FROM radiation_dose_readings');
+    
+    res.json({
+      status: 'healthy',
+      database: 'connected',
+      tables: {
+        personnel: personnelCount.rows[0].count,
+        devices: devicesCount.rows[0].count,
+        readings: readingsCount.rows[0].count
+      },
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('Health check error:', error);
+    res.status(500).json({ 
+      status: 'unhealthy',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 module.exports = router;
