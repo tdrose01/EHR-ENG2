@@ -361,4 +361,156 @@ router.put('/personnel/:id', async (req, res) => {
   }
 });
 
+// 12. Get device assignments
+router.get('/assignments', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { personnel_id, device_id, active_only } = req.query;
+    
+    let whereClause = 'WHERE 1=1';
+    const params = [];
+    let paramCount = 0;
+
+    if (personnel_id) {
+      paramCount++;
+      whereClause += ` AND a.personnel_id = $${paramCount}`;
+      params.push(personnel_id);
+    }
+
+    if (device_id) {
+      paramCount++;
+      whereClause += ` AND a.device_id = $${paramCount}`;
+      params.push(device_id);
+    }
+
+    if (active_only === 'true') {
+      whereClause += ` AND (a.end_ts IS NULL OR a.end_ts > NOW())`;
+    }
+
+    const result = await pool.query(`
+      SELECT a.*, 
+             p.fname, p.lname, p.rank_rate, p.edipi,
+             d.serial as device_serial, dm.vendor, dm.model,
+             u.name as unit_name
+      FROM radiation_assignments a
+      LEFT JOIN radiation_personnel p ON a.personnel_id = p.id
+      LEFT JOIN radiation_devices d ON a.device_id = d.id
+      LEFT JOIN radiation_device_models dm ON d.model_id = dm.id
+      LEFT JOIN radiation_units u ON p.unit_id = u.id
+      ${whereClause}
+      ORDER BY a.start_ts DESC
+    `, params);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Assignments fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch assignments data' });
+  }
+});
+
+// 13. Create device assignment
+router.post('/assignments', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { device_id, personnel_id, start_ts, end_ts, notes } = req.body;
+
+    // Validate required fields
+    if (!device_id || !personnel_id || !start_ts) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Check if device is already assigned to this personnel in the time period
+    const existingAssignment = await pool.query(`
+      SELECT id FROM radiation_assignments 
+      WHERE device_id = $1 AND personnel_id = $2 
+      AND (end_ts IS NULL OR end_ts > $3)
+      AND (start_ts < COALESCE($4, NOW() + INTERVAL '1 year'))
+    `, [device_id, personnel_id, start_ts, end_ts]);
+
+    if (existingAssignment.rows.length > 0) {
+      return res.status(409).json({ error: 'Device is already assigned to this personnel in the specified time period' });
+    }
+
+    // End any existing active assignments for this device
+    await pool.query(`
+      UPDATE radiation_assignments 
+      SET end_ts = $1 
+      WHERE device_id = $2 AND (end_ts IS NULL OR end_ts > $1)
+    `, [start_ts, device_id]);
+
+    // Create new assignment
+    const result = await pool.query(`
+      INSERT INTO radiation_assignments 
+      (device_id, personnel_id, start_ts, end_ts, created_at)
+      VALUES ($1, $2, $3, $4, NOW())
+      RETURNING id
+    `, [device_id, personnel_id, start_ts, end_ts]);
+
+    res.json({ 
+      success: true, 
+      assignment_id: result.rows[0].id,
+      message: 'Device assignment created successfully'
+    });
+
+  } catch (error) {
+    console.error('Create assignment error:', error);
+    res.status(500).json({ error: 'Failed to create device assignment' });
+  }
+});
+
+// 14. Update device assignment
+router.put('/assignments/:id', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { id } = req.params;
+    const { start_ts, end_ts, notes } = req.body;
+
+    // Validate required fields
+    if (!start_ts) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Update assignment
+    await pool.query(`
+      UPDATE radiation_assignments 
+      SET start_ts = $1, end_ts = $2
+      WHERE id = $3
+    `, [start_ts, end_ts, id]);
+
+    res.json({ 
+      success: true, 
+      message: 'Device assignment updated successfully'
+    });
+
+  } catch (error) {
+    console.error('Update assignment error:', error);
+    res.status(500).json({ error: 'Failed to update device assignment' });
+  }
+});
+
+// 15. End device assignment
+router.put('/assignments/:id/end', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { id } = req.params;
+    const { end_ts } = req.body;
+
+    // End the assignment
+    await pool.query(`
+      UPDATE radiation_assignments 
+      SET end_ts = COALESCE($1, NOW())
+      WHERE id = $2
+    `, [end_ts, id]);
+
+    res.json({ 
+      success: true, 
+      message: 'Device assignment ended successfully'
+    });
+
+  } catch (error) {
+    console.error('End assignment error:', error);
+    res.status(500).json({ error: 'Failed to end device assignment' });
+  }
+});
+
 module.exports = router;

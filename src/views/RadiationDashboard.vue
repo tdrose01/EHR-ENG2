@@ -160,6 +160,13 @@
                         >
                           <i class="fas fa-chart-line"></i>
                         </button>
+                        <button 
+                          @click="openAssignmentModal(null, person)"
+                          class="text-purple-400 hover:text-purple-300 text-sm transition-colors"
+                          :title="`Assign device to ${person.fname} ${person.lname}`"
+                        >
+                          <i class="fas fa-link"></i>
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -189,6 +196,9 @@
                 </select>
                 <button class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors">
                   <i class="fas fa-plus mr-2"></i>Add Device
+                </button>
+                <button @click="openAssignmentModal()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                  <i class="fas fa-link mr-2"></i>Assign Device
                 </button>
               </div>
             </div>
@@ -237,6 +247,85 @@
               <i class="fas fa-microchip text-4xl mb-4"></i>
               <div>No devices found</div>
               <div class="text-sm">{{ devicesError || 'Loading...' }}</div>
+            </div>
+          </div>
+
+          <!-- Assignments Tab -->
+          <div v-if="activeTab === 'assignments'" class="space-y-4">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-xl font-semibold">Device Assignments</h3>
+              <div class="flex space-x-2">
+                <button @click="openAssignmentModal()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors">
+                  <i class="fas fa-plus mr-2"></i>New Assignment
+                </button>
+              </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="min-w-full bg-gray-700 rounded-lg">
+                <thead>
+                  <tr class="bg-gray-600">
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Personnel</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Device</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Unit</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Start Date</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">End Date</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody v-if="assignments.length > 0" class="divide-y divide-gray-600">
+                  <tr v-for="assignment in assignments" :key="assignment.id" class="hover:bg-gray-600 transition-colors">
+                    <td class="px-4 py-3">
+                      <div>
+                        <div class="font-medium text-white">{{ assignment.rank_rate }} {{ assignment.lname }}, {{ assignment.fname }}</div>
+                        <div class="text-sm text-gray-400">EDIPI: {{ assignment.edipi }}</div>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3">
+                      <div>
+                        <div class="font-medium text-white">{{ assignment.device_serial }}</div>
+                        <div class="text-sm text-gray-400">{{ assignment.vendor }} {{ assignment.model }}</div>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 text-gray-300">{{ assignment.unit_name || 'N/A' }}</td>
+                    <td class="px-4 py-3 text-gray-300">{{ formatDateTime(assignment.start_ts) }}</td>
+                    <td class="px-4 py-3 text-gray-300">{{ assignment.end_ts ? formatDateTime(assignment.end_ts) : 'Indefinite' }}</td>
+                    <td class="px-4 py-3">
+                      <span :class="getAssignmentStatusClass(assignment)" class="px-2 py-1 text-xs font-medium rounded-full">
+                        {{ getAssignmentStatus(assignment) }}
+                      </span>
+                    </td>
+                    <td class="px-4 py-3">
+                      <div class="flex space-x-2">
+                        <button 
+                          @click="openAssignmentModal(assignment)"
+                          class="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                          title="Edit Assignment"
+                        >
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button 
+                          @click="endAssignment(assignment.id)"
+                          class="text-red-400 hover:text-red-300 text-sm transition-colors"
+                          title="End Assignment"
+                        >
+                          <i class="fas fa-stop-circle"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr>
+                    <td colspan="7" class="px-4 py-8 text-center text-gray-400">
+                      <i class="fas fa-link text-4xl mb-4"></i>
+                      <div>No device assignments found</div>
+                      <div class="text-sm">{{ assignmentsError || 'Loading...' }}</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -440,43 +529,57 @@
       </div>
     </div>
 
-    <!-- Add/Edit Personnel Modal -->
-    <div v-if="showPersonnelModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white dark:bg-gray-800">
-        <div class="mt-3">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
-              {{ editingPersonnel ? 'Edit Personnel' : 'Add New Personnel' }}
-            </h3>
-            <button 
-              @click="closePersonnelModal" 
-              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            >
-              <i class="fas fa-times text-xl"></i>
-            </button>
-          </div>
-          
-          <AddRadiationPersonnelForm
-            :personnel="editingPersonnel"
-            :units="units"
-            @saved="onPersonnelSaved"
-            @cancel="closePersonnelModal"
-            @error="onPersonnelError"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
+         <!-- Add/Edit Personnel Modal -->
+     <div v-if="showPersonnelModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+       <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white dark:bg-gray-800">
+         <div class="mt-3">
+           <div class="flex justify-between items-center mb-4">
+             <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+               {{ editingPersonnel ? 'Edit Personnel' : 'Add New Personnel' }}
+             </h3>
+             <button 
+               @click="closePersonnelModal" 
+               class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+             >
+               <i class="fas fa-times text-xl"></i>
+             </button>
+           </div>
+           
+           <AddRadiationPersonnelForm
+             :personnel="editingPersonnel"
+             :units="units"
+             @saved="onPersonnelSaved"
+             @cancel="closePersonnelModal"
+             @error="onPersonnelError"
+           />
+         </div>
+       </div>
+     </div>
+
+     <!-- Device Assignment Modal -->
+     <DeviceAssignmentModal
+       v-if="showAssignmentModal"
+       :assignment="editingAssignment"
+       :personnel="personnel"
+       :devices="devices"
+       :visible="showAssignmentModal"
+       @close="closeAssignmentModal"
+       @saved="onAssignmentSaved"
+       @error="onAssignmentError"
+     />
+   </div>
+ </template>
 
 <script>
 import { ref, computed, onMounted } from 'vue'
 import AddRadiationPersonnelForm from '../components/AddRadiationPersonnelForm.vue'
+import DeviceAssignmentModal from '../components/DeviceAssignmentModal.vue'
 
 export default {
   name: 'RadiationDashboard',
   components: {
-    AddRadiationPersonnelForm
+    AddRadiationPersonnelForm,
+    DeviceAssignmentModal
   },
   setup() {
     // Reactive data
@@ -492,10 +595,13 @@ export default {
     const alerts = ref([])
     const reconciliations = ref([])
     const units = ref([])
+    const assignments = ref([])
     
     // Modal state
     const showPersonnelModal = ref(false)
     const editingPersonnel = ref(null)
+    const showAssignmentModal = ref(false)
+    const editingAssignment = ref(null)
     
     // Error states
     const personnelError = ref('')
@@ -503,6 +609,7 @@ export default {
     const readingsError = ref('')
     const alertsError = ref('')
     const reconciliationsError = ref('')
+    const assignmentsError = ref('')
     
     // Filters
     const personnelSearch = ref('')
@@ -516,6 +623,7 @@ export default {
     const tabs = [
       { id: 'personnel', name: 'Personnel', icon: 'fas fa-users' },
       { id: 'devices', name: 'Devices', icon: 'fas fa-microchip' },
+      { id: 'assignments', name: 'Assignments', icon: 'fas fa-link' },
       { id: 'readings', name: 'Readings', icon: 'fas fa-chart-line' },
       { id: 'alerts', name: 'Alerts', icon: 'fas fa-exclamation-triangle' },
       { id: 'reconciliation', name: 'Reconciliation', icon: 'fas fa-balance-scale' }
@@ -631,6 +739,21 @@ export default {
       }
     }
 
+    const fetchAssignments = async () => {
+      try {
+        const response = await fetch('/api/radiation/assignments?active_only=true')
+        if (response.ok) {
+          assignments.value = await response.json()
+        } else {
+          const errorData = await response.json()
+          assignmentsError.value = errorData.error || 'Failed to load assignments data'
+        }
+      } catch (error) {
+        console.error('Failed to fetch assignments:', error)
+        assignmentsError.value = 'Network error loading assignments data'
+      }
+    }
+
     const refreshData = async () => {
       loading.value = true
       try {
@@ -641,7 +764,8 @@ export default {
           fetchReadings(),
           fetchAlerts(),
           fetchReconciliations(),
-          fetchUnits()
+          fetchUnits(),
+          fetchAssignments()
         ])
         lastUpdated.value = new Date().toLocaleString()
       } finally {
@@ -669,6 +793,60 @@ export default {
     const onPersonnelError = (error) => {
       console.error('Personnel save error:', error)
       // You could add a toast notification here
+    }
+
+    // Assignment modal control methods
+    const openAssignmentModal = (assignment = null, personnel = null) => {
+      editingAssignment.value = assignment
+      if (personnel) {
+        // Pre-populate personnel if provided
+        editingAssignment.value = { personnel_id: personnel.id }
+      }
+      showAssignmentModal.value = true
+    }
+
+    const closeAssignmentModal = () => {
+      showAssignmentModal.value = false
+      editingAssignment.value = null
+    }
+
+    const onAssignmentSaved = () => {
+      closeAssignmentModal()
+      fetchAssignments() // Refresh the assignments list
+      fetchPersonnel() // Refresh personnel to show updated device info
+      fetchDevices() // Refresh devices to show updated assignment info
+      fetchOverview() // Refresh overview counts
+    }
+
+    const onAssignmentError = (error) => {
+      console.error('Assignment save error:', error)
+      // You could add a toast notification here
+    }
+
+    const endAssignment = async (assignmentId) => {
+      if (!confirm('Are you sure you want to end this device assignment?')) {
+        return
+      }
+
+      try {
+        const response = await fetch(`/api/radiation/assignments/${assignmentId}/end`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ end_ts: new Date().toISOString() })
+        })
+
+        if (response.ok) {
+          await fetchAssignments()
+          await fetchPersonnel()
+          await fetchDevices()
+          await fetchOverview()
+        } else {
+          const errorData = await response.json()
+          console.error('Failed to end assignment:', errorData.error)
+        }
+      } catch (error) {
+        console.error('Failed to end assignment:', error)
+      }
     }
 
     // Edit personnel functionality
@@ -821,6 +999,23 @@ export default {
       return 'bg-red-600 bg-opacity-20 text-red-400 border border-red-600'
     }
 
+    // Assignment status helper functions
+    const getAssignmentStatus = (assignment) => {
+      if (!assignment) return 'Unknown'
+      if (assignment.end_ts && new Date(assignment.end_ts) < new Date()) {
+        return 'Ended'
+      }
+      return 'Active'
+    }
+
+    const getAssignmentStatusClass = (assignment) => {
+      if (!assignment) return 'bg-gray-600 bg-opacity-20 text-gray-400'
+      if (assignment.end_ts && new Date(assignment.end_ts) < new Date()) {
+        return 'bg-red-600 bg-opacity-20 text-red-400 border border-red-600'
+      }
+      return 'bg-green-600 bg-opacity-20 text-green-400 border border-green-600'
+    }
+
     // Lifecycle
     onMounted(() => {
       refreshData()
@@ -838,15 +1033,19 @@ export default {
       alerts,
       reconciliations,
       units,
+      assignments,
       personnelError,
       devicesError,
       readingsError,
       alertsError,
       reconciliationsError,
+      assignmentsError,
       
       // Modal state
       showPersonnelModal,
       editingPersonnel,
+      showAssignmentModal,
+      editingAssignment,
       
       // Filters
       personnelSearch,
@@ -870,6 +1069,11 @@ export default {
       closePersonnelModal,
       onPersonnelSaved,
       onPersonnelError,
+      openAssignmentModal,
+      closeAssignmentModal,
+      onAssignmentSaved,
+      onAssignmentError,
+      endAssignment,
       editPersonnel,
       viewPersonnelReadings,
       formatDate,
@@ -886,7 +1090,9 @@ export default {
       getSeverityBadgeClass,
       getVarianceClass,
       getReconciliationStatus,
-      getReconciliationStatusClass
+      getReconciliationStatusClass,
+      getAssignmentStatus,
+      getAssignmentStatusClass
     }
   }
 }
