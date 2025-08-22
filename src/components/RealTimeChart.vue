@@ -279,11 +279,12 @@ export default {
     }, { deep: true })
     
     // Lifecycle
-    onMounted(() => {
+    onMounted(async () => {
       // Import Chart.js dynamically
-      import('chart.js/auto').then(() => {
-        initChart()
-      })
+      const { Chart } = await import('chart.js/auto')
+      // Make Chart available globally for this component
+      window.Chart = Chart
+      initChart()
     })
     
     onUnmounted(() => {

@@ -12,8 +12,8 @@ const cors = require('cors')
 const pool = require('./db')
 
 if (!process.env.DATABASE_URL) {
-  console.error('DATABASE_URL is not set')
-  process.exit(1)
+  console.warn('DATABASE_URL not set, using default')
+  process.env.DATABASE_URL = 'postgresql://postgres@localhost:5432/ehr_eng2'
 }
 
 const app = express()
@@ -27,6 +27,7 @@ const radiationRoutes = require('./routes/radiation')
 const exposureRoutes = require('./routes/exposures')
 const waterTestRoutes = require('./routes/waterTests')
 const monitoringRoutes = require('./routes/monitoring')
+const userRoutes = require('./routes/users')
 
 // Middleware
 app.use(cors({
@@ -50,6 +51,7 @@ app.use('/api/radiation', radiationRoutes)
 app.use('/api/exposures', exposureRoutes)
 app.use('/api/water-tests', waterTestRoutes)
 app.use('/api/monitoring', monitoringRoutes)
+app.use('/api/users', userRoutes)
 
 console.log('Loading admin routes...');
 const adminRoutes = require('./routes/admin');

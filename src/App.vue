@@ -39,12 +39,13 @@ async function fetchProfile() {
   const id = localStorage.getItem('userId')
   if (!id) return
   try {
-    const res = await fetch(`/api/users/${id}`)
+    // Call backend API on port 3005
+    const res = await fetch(`http://localhost:3005/api/users/${id}`)
     if (!res.ok) return
     const data = await res.json()
-    if (data.lastLogin) {
-      lastLoginAt.value = data.lastLogin
-      localStorage.setItem('lastLoginAt', data.lastLogin)
+    if (data.user && data.user.last_login_at) {
+      lastLoginAt.value = data.user.last_login_at
+      localStorage.setItem('lastLoginAt', data.user.last_login_at)
     }
   } catch (e) {
     console.error('Profile fetch failed:', e)

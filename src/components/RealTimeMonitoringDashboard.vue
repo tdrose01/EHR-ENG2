@@ -467,14 +467,38 @@ export default {
       console.log('Real-time notification received:', notification)
     }
     
-    const requestNotificationPermission = async () => {
-      if ('Notification' in window && Notification.permission === 'default') {
-        const permission = await Notification.requestPermission()
-        console.log('📱 Notification permission:', permission)
-        return permission
-      }
-      return Notification.permission
-    }
+         const requestNotificationPermission = async () => {
+       if ('Notification' in window && Notification.permission === 'default') {
+         const permission = await Notification.requestPermission()
+         console.log('📱 Notification permission:', permission)
+         return permission
+       }
+       return Notification.permission
+     }
+     
+     // Additional missing functions
+     const clearAlerts = () => {
+       recentAlerts.value = []
+     }
+     
+     const clearReadings = () => {
+       recentReadings.value = []
+     }
+     
+     const markAllAsRead = () => {
+       realtime.notifications.value.forEach(n => n.read = true)
+     }
+     
+     const clearNotifications = () => {
+       realtime.notifications.value = []
+     }
+     
+     const markAsRead = (id) => {
+       const notification = realtime.notifications.value.find(n => n.id === id)
+       if (notification) {
+         notification.read = true
+       }
+     }
     
     // Lifecycle
     onMounted(() => {
@@ -491,7 +515,7 @@ export default {
       window.removeEventListener('realtime-notification', handleRealtimeNotification)
     })
     
-    return {
+        return {
       ...realtime,
       showDebug,
       recentAlerts,
@@ -504,21 +528,18 @@ export default {
       dbStatus,
       notifStatus,
       lastUpdateTime,
-      addAlert,
-      addReading,
-      formatTime,
-      handleRealtimeUpdate,
-      handleRealtimeNotification,
-      requestNotificationPermission
+             addAlert,
+       addReading,
+       formatTime,
+       handleRealtimeUpdate,
+       handleRealtimeNotification,
+       requestNotificationPermission,
+       clearAlerts,
+       clearReadings,
+       markAllAsRead,
+       clearNotifications,
+       markAsRead
     }
-  },
-  mounted() {
-    // Listen for real-time events
-    window.addEventListener('realtime-update', this.handleRealtimeUpdate)
-    window.addEventListener('realtime-notification', this.handleRealtimeNotification)
-    
-    // Request notification permissions
-    requestNotificationPermission()
   }
 }
 </script>
