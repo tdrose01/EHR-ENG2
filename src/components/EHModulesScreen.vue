@@ -52,7 +52,7 @@
       <main>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div class="px-4 py-8 sm:px-0">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <!-- Patient Management Card -->
               <div
                 @click="navigateTo('/patients')"
@@ -91,6 +91,19 @@
                     Go to Navy Dashboard
                   </button>
                 </div>
+              </div>
+              <!-- Radiation Health Module Card -->
+              <div
+                @click="navigateTo('/radiation-dashboard')"
+                class="bg-gray-900 rounded-lg shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105 border border-gray-700"
+              >
+                <h2 class="text-2xl font-semibold text-purple-400 mb-3">Radiation Health</h2>
+                <p class="text-gray-300">Personal dosimeter monitoring & dose reconciliation.</p>
+                <div class="mt-4 flex justify-end">
+                  <button class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors">
+                    Go to Radiation Dashboard
+                  </button>
+                  </div>
               </div>
 
             </div>

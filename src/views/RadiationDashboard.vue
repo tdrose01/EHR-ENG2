@@ -26,70 +26,98 @@
 
     <!-- Overview Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 px-6">
-      <div class="bg-gray-900 rounded-lg p-6 border border-gray-700">
+      <!-- Personnel Monitored Card -->
+      <div 
+        @click="drillDownToTab('personnel')"
+        class="bg-gray-900 rounded-lg p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 group"
+      >
         <div class="flex items-center">
-          <div class="p-3 rounded-full bg-blue-600 bg-opacity-20">
-            <i class="fas fa-users text-blue-400 text-xl"></i>
+          <div class="p-3 rounded-full bg-blue-600 bg-opacity-20 group-hover:bg-blue-500 group-hover:bg-opacity-30 transition-colors">
+            <i class="fas fa-users text-blue-400 text-xl group-hover:text-blue-300"></i>
           </div>
           <div class="ml-4">
-            <h3 class="text-gray-400 text-sm">Personnel Monitored</h3>
-            <p class="text-2xl font-bold text-white">
+            <h3 class="text-gray-400 text-sm group-hover:text-blue-300 transition-colors">Personnel Monitored</h3>
+            <p class="text-2xl font-bold text-white group-hover:text-blue-200 transition-colors">
               <span v-if="loading" class="animate-pulse">...</span>
               <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
               <span v-else>{{ overview.personnelMonitored || '0' }}</span>
             </p>
             <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
+            <p class="text-xs text-blue-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <i class="fas fa-arrow-right mr-1"></i>Click to view details
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900 rounded-lg p-6 border border-gray-700">
+      <!-- Active Devices Card -->
+      <div 
+        @click="drillDownToTab('devices')"
+        class="bg-gray-900 rounded-lg p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-green-500 hover:shadow-lg hover:shadow-green-500/20 group"
+      >
         <div class="flex items-center">
-          <div class="p-3 rounded-full bg-green-600 bg-opacity-20">
-            <i class="fas fa-microchip text-green-400 text-xl"></i>
+          <div class="p-3 rounded-full bg-green-600 bg-opacity-20 group-hover:bg-green-500 group-hover:bg-opacity-30 transition-colors">
+            <i class="fas fa-microchip text-green-400 text-xl group-hover:text-green-300"></i>
           </div>
           <div class="ml-4">
-            <h3 class="text-gray-400 text-sm">Active Devices</h3>
-            <p class="text-2xl font-bold text-white">
+            <h3 class="text-gray-400 text-sm group-hover:text-green-300 transition-colors">Active Devices</h3>
+            <p class="text-2xl font-bold text-white group-hover:text-green-200 transition-colors">
               <span v-if="loading" class="animate-pulse">...</span>
               <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
               <span v-else>{{ overview.activeDevices || '0' }}</span>
             </p>
             <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
+            <p class="text-xs text-green-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <i class="fas fa-arrow-right mr-1"></i>Click to view details
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900 rounded-lg p-6 border border-gray-700">
+      <!-- Pending Alerts Card -->
+      <div 
+        @click="drillDownToTab('alerts')"
+        class="bg-gray-900 rounded-lg p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-red-500 hover:shadow-lg hover:shadow-red-500/20 group"
+      >
         <div class="flex items-center">
-          <div class="p-3 rounded-full bg-red-600 bg-opacity-20">
-            <i class="fas fa-exclamation-triangle text-red-400 text-xl"></i>
+          <div class="p-3 rounded-full bg-red-600 bg-opacity-20 group-hover:bg-red-500 group-hover:bg-opacity-30 transition-colors">
+            <i class="fas fa-exclamation-triangle text-red-400 text-xl group-hover:text-red-300"></i>
           </div>
           <div class="ml-4">
-            <h3 class="text-gray-400 text-sm">Pending Alerts</h3>
-            <p class="text-2xl font-bold text-white">
+            <h3 class="text-gray-400 text-sm group-hover:text-red-300 transition-colors">Pending Alerts</h3>
+            <p class="text-2xl font-bold text-white group-hover:text-red-200 transition-colors">
               <span v-if="loading" class="animate-pulse">...</span>
               <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
               <span v-else>{{ overview.pendingAlerts || '0' }}</span>
             </p>
             <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
+            <p class="text-xs text-red-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <i class="fas fa-arrow-right mr-1"></i>Click to view details
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="bg-gray-900 rounded-lg p-6 border border-gray-700">
+      <!-- Readings (24h) Card -->
+      <div 
+        @click="drillDownToTab('readings')"
+        class="bg-gray-900 rounded-lg p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/20 group"
+      >
         <div class="flex items-center">
-          <div class="p-3 rounded-full bg-purple-600 bg-opacity-20">
-            <i class="fas fa-chart-line text-purple-400 text-xl"></i>
+          <div class="p-3 rounded-full bg-purple-600 bg-opacity-20 group-hover:bg-purple-500 group-hover:bg-opacity-30 transition-colors">
+            <i class="fas fa-chart-line text-purple-400 text-xl group-hover:text-purple-300"></i>
           </div>
           <div class="ml-4">
-            <h3 class="text-gray-400 text-sm">Readings (24h)</h3>
-            <p class="text-2xl font-bold text-white">
+            <h3 class="text-gray-400 text-sm group-hover:text-purple-300 transition-colors">Readings (24h)</h3>
+            <p class="text-2xl font-bold text-white group-hover:text-purple-200 transition-colors">
               <span v-if="loading" class="animate-pulse">...</span>
               <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
               <span v-else>{{ overview.readingsLast24h || '0' }}</span>
             </p>
             <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
+            <p class="text-xs text-purple-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <i class="fas fa-arrow-right mr-1"></i>Click to view details
+            </p>
           </div>
         </div>
       </div>
@@ -104,6 +132,7 @@
             <button
               v-for="tab in tabs"
               :key="tab.id"
+              :data-tab="tab.id"
               @click="switchTab(tab.id)"
               :class="[
                 'px-6 py-4 text-sm font-medium transition-colors',
@@ -1068,6 +1097,30 @@ export default {
       activeTab.value = tabName
     }
 
+    // Drill down functionality for overview cards
+    const drillDownToTab = (tabName) => {
+      // Clear any existing filters when drilling down
+      clearAllPersonnelFilters()
+      
+      // Switch to the appropriate tab
+      activeTab.value = tabName
+      
+      // Add visual feedback - scroll to the tab content
+      nextTick(() => {
+        const tabContent = document.querySelector('.bg-gray-900.rounded-lg.border.border-gray-700')
+        if (tabContent) {
+          tabContent.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      })
+      
+      // Add a brief highlight effect to the tab button
+      const tabButton = document.querySelector(`[data-tab="${tabName}"]`)
+      if (tabButton) {
+        tabButton.classList.add('drill-down-highlight')
+        setTimeout(() => tabButton.classList.remove('drill-down-highlight'), 2000)
+      }
+    }
+
     const acknowledgeAlert = async (alertId) => {
       try {
         const response = await fetch(`/api/radiation/alerts/${alertId}/ack`, {
@@ -1289,8 +1342,9 @@ export default {
       viewPersonnelReadings,
       clearReadingsFilter,
       clearAssignmentsFilter,
-      clearAllPersonnelFilters, // Added this line
-      switchTab, // Added this line
+      clearAllPersonnelFilters,
+      switchTab,
+      drillDownToTab,
       formatDate,
       formatDateTime,
       formatDateRange,
@@ -1343,6 +1397,24 @@ table {
 @keyframes highlightRow {
   0% { background: rgba(59, 130, 246, 0.3); }
   100% { background: transparent; }
+}
+
+/* Drill down highlight animation */
+.drill-down-highlight {
+  animation: drillDownHighlight 2s ease-out;
+}
+
+@keyframes drillDownHighlight {
+  0% { 
+    background: rgba(59, 130, 246, 0.3);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  }
+  100% { 
+    background: transparent;
+    transform: scale(1);
+    box-shadow: none;
+  }
 }
 
 /* Custom scrollbar for black theme */

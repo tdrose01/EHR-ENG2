@@ -19,6 +19,12 @@ CREATE TABLE IF NOT EXISTS radiation_personnel (
   fname TEXT NOT NULL,
   unit_id INTEGER REFERENCES radiation_units(id),
   active BOOLEAN NOT NULL DEFAULT true,
+  radiation_category VARCHAR(50) NOT NULL DEFAULT 'CATEGORY_A',
+  monitoring_frequency VARCHAR(20) NOT NULL DEFAULT 'MONTHLY',
+  dosimeter_type VARCHAR(50) NOT NULL DEFAULT 'PERSONAL',
+  last_medical_exam DATE,
+  next_medical_due DATE,
+  notes TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -137,32 +143,31 @@ CREATE TABLE IF NOT EXISTS radiation_audit_log (
 );
 
 -- Create indexes for performance
-CREATE INDEX idx_radiation_units_uic ON radiation_units(uic);
-CREATE INDEX idx_radiation_personnel_edipi ON radiation_personnel(edipi);
-CREATE INDEX idx_radiation_personnel_unit ON radiation_personnel(unit_id);
-CREATE INDEX idx_radiation_personnel_active ON radiation_personnel(active);
-CREATE INDEX idx_radiation_devices_serial ON radiation_devices(serial);
-CREATE INDEX idx_radiation_devices_model ON radiation_devices(model_id);
-CREATE INDEX idx_radiation_devices_rf_policy ON radiation_devices(rf_policy);
-CREATE INDEX idx_radiation_devices_retired ON radiation_devices(retired_at);
-CREATE INDEX idx_radiation_assignments_device ON radiation_assignments(device_id);
-CREATE INDEX idx_radiation_assignments_personnel ON radiation_assignments(personnel_id);
-CREATE INDEX idx_radiation_assignments_time ON radiation_assignments(start_ts, end_ts);
-CREATE INDEX idx_radiation_dose_readings_device_ts ON radiation_dose_readings(device_id, measured_ts);
-CREATE INDEX idx_radiation_dose_readings_personnel_ts ON radiation_dose_readings(personnel_id, measured_ts);
-CREATE INDEX idx_radiation_dose_readings_gateway_ts ON radiation_dose_readings(gateway_ts);
-CREATE INDEX idx_radiation_alerts_personnel_created ON radiation_alerts(personnel_id, created_ts);
-CREATE INDEX idx_radiation_alerts_device_created ON radiation_alerts(device_id, created_ts);
-CREATE INDEX idx_radiation_alerts_type_severity ON radiation_alerts(type, severity);
-CREATE INDEX idx_radiation_alerts_unacknowledged ON radiation_alerts(ack_ts) WHERE ack_ts IS NULL;
-CREATE INDEX idx_radiation_ndc_periods_dates ON radiation_ndc_periods(period_start, period_end);
-CREATE INDEX idx_radiation_ndc_dose_records_period ON radiation_ndc_dose_records(period_id);
-CREATE INDEX idx_radiation_ndc_dose_records_personnel ON radiation_ndc_dose_records(personnel_id);
-CREATE INDEX idx_radiation_reconciliations_period ON radiation_reconciliations(period_id);
-CREATE INDEX idx_radiation_reconciliations_personnel ON radiation_reconciliations(personnel_id);
-CREATE INDEX idx_radiation_audit_log_ts ON radiation_audit_log(ts);
-CREATE INDEX idx_radiation_audit_log_actor ON radiation_audit_log(actor);
-CREATE INDEX idx_radiation_audit_log_object ON radiation_audit_log(obj_table, obj_id);
+CREATE INDEX IF NOT EXISTS idx_radiation_units_uic ON radiation_units(uic);
+CREATE INDEX IF NOT EXISTS idx_radiation_personnel_edipi ON radiation_personnel(edipi);
+CREATE INDEX IF NOT EXISTS idx_radiation_personnel_unit ON radiation_personnel(unit_id);
+CREATE INDEX IF NOT EXISTS idx_radiation_personnel_active ON radiation_personnel(active);
+CREATE INDEX IF NOT EXISTS idx_radiation_devices_serial ON radiation_devices(serial);
+CREATE INDEX IF NOT EXISTS idx_radiation_devices_model ON radiation_devices(model_id);
+CREATE INDEX IF NOT EXISTS idx_radiation_devices_rf_policy ON radiation_devices(rf_policy);
+CREATE INDEX IF NOT EXISTS idx_radiation_devices_retired ON radiation_devices(retired_at);
+CREATE INDEX IF NOT EXISTS idx_radiation_assignments_device ON radiation_assignments(device_id);
+CREATE INDEX IF NOT EXISTS idx_radiation_assignments_personnel ON radiation_assignments(personnel_id);
+CREATE INDEX IF NOT EXISTS idx_radiation_assignments_time ON radiation_assignments(start_ts, end_ts);
+CREATE INDEX IF NOT EXISTS idx_radiation_dose_readings_device_ts ON radiation_dose_readings(device_id, measured_ts);
+CREATE INDEX IF NOT EXISTS idx_radiation_dose_readings_gateway_ts ON radiation_dose_readings(gateway_ts);
+CREATE INDEX IF NOT EXISTS idx_radiation_alerts_personnel_created ON radiation_alerts(personnel_id, created_ts);
+CREATE INDEX IF NOT EXISTS idx_radiation_alerts_device_created ON radiation_alerts(device_id, created_ts);
+CREATE INDEX IF NOT EXISTS idx_radiation_alerts_type_severity ON radiation_alerts(type, severity);
+CREATE INDEX IF NOT EXISTS idx_radiation_alerts_unacknowledged ON radiation_alerts(ack_ts) WHERE ack_ts IS NULL;
+CREATE INDEX IF NOT EXISTS idx_radiation_ndc_periods_dates ON radiation_ndc_periods(period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_radiation_ndc_dose_records_period ON radiation_ndc_dose_records(period_id);
+CREATE INDEX IF NOT EXISTS idx_radiation_ndc_dose_records_personnel ON radiation_ndc_dose_records(personnel_id);
+CREATE INDEX IF NOT EXISTS idx_radiation_reconciliations_period ON radiation_reconciliations(period_id);
+CREATE INDEX IF NOT EXISTS idx_radiation_reconciliations_personnel ON radiation_reconciliations(personnel_id);
+CREATE INDEX IF NOT EXISTS idx_radiation_audit_log_ts ON radiation_audit_log(ts);
+CREATE INDEX IF NOT EXISTS idx_radiation_audit_log_actor ON radiation_audit_log(actor);
+CREATE INDEX IF NOT EXISTS idx_radiation_audit_log_object ON radiation_audit_log(obj_table, obj_id);
 
 -- Add comments for documentation
 COMMENT ON TABLE radiation_units IS 'Navy units and commands for personnel assignment';

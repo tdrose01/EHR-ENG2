@@ -36,52 +36,101 @@ npm run lint
 
 ## 📱 Module Navigation
 
-After successful login, users can access two main modules:
-  Use the Back button in the header to return to the previous page.
+After successful login, users can access multiple specialized modules through the main navigation:
 
-1. **⚕️ EH Module (Electronic Health)**
+### 1. **⚕️ EH Module (Electronic Health)**
    - Access via `/eh-module` route
-   - Manages electronic health records
-   - Features:
-    - Patient Management
-    - Patient dashboard displays a DoD Id column with add, view and edit actions
-    - View buttons open the patient detail page at `/patients/view/:id`
-    - Complete patient information including:
-      - Personal details (name, gender)
-       - Medical information (blood type, RH factor)
-       - Military information (duty status, paygrade, branch of service)
-       - Demographics (ethnicity, religion)
-       - Military IDs (PID, DoD ID)
-  - Contact information (phone formatted as `(XXX)-XXX-XXXX`)
-  - Automatic phone number formatting in forms and displays
-     - Dark mode support with proper contrast and background
-    - The `formatPhoneNumber` utility ensures numbers appear as `(XXX)-XXX-XXXX`.
-     - Dark mode support with proper contrast
-     - Medical Records
-     - Appointment Scheduling
-    - Environmental Dashboard for exposure tracking
-    - Record water test results for each patient
-    - Environment status cards with modal details
-   - Blue-themed interface
+   - Manages electronic health records and environmental data
+   - **Sub-modules:**
+     - **Patient Management** (`/patients`)
+       - Patient dashboard with DoD ID column
+       - Add, view, and edit patient actions
+       - View buttons open patient detail page at `/patients/view/:id`
+       - Complete patient information including personal details, demographics, insurance
+     - **Environmental Dashboard** (`/environmental-dashboard`)
+       - Water testing data management
+       - Environmental monitoring
+     - **Navy Dashboard** (`/navy-dashboard`)
+       - Navy-specific health records and data
 
-2. **RH Module (Resource & Hospital)**
- - Access via `/rh-module` route
-  - Manages hospital resources
-  - Features (Coming Soon):
-    - Staff Management
-    - Equipment Tracking
-    - Facility Management
-  - Green-themed interface
+### 2. **☢️ RH Module (Radiation Health)** ⭐ **NEW**
+   - Access via `/radiation-dashboard` route
+   - Comprehensive Navy radiation health monitoring system
+   - **Features:**
+     - **Overview Dashboard**: Real-time metrics with drill-down functionality
+       - Personnel Monitored count (clickable → Personnel tab)
+       - Active Devices count (clickable → Devices tab)
+       - Pending Alerts count (clickable → Alerts tab)
+       - Recent Readings count (clickable → Readings tab)
+     - **Personnel Management**: Add, edit, and manage radiation-monitored personnel
+     - **Device Inventory**: Personal dosimeter device management with RF policy settings
+     - **Device Assignments**: Personnel-device assignment tracking with time boundaries
+     - **Dose Readings**: Time-series dose data with filtering and visualization
+     - **Active Alerts**: Alert management with acknowledgment functionality
+          - **Dose Reconciliation**: Operational vs. NDC dose variance analysis
 
-3. **Settings**
-  - Access via `/settings` route
-  - Visible only to admin users
-  - Allows admins to change any user's password
+## 🛠️ Technical Implementation
 
-4. **System Status**
-  - Access via `/status` route
-  - Displays API and database availability
-  - Real-time service health monitoring
+### Database Schema
+- **PostgreSQL** with comprehensive migration system
+- **Radiation Health Tables**: 11 specialized tables for complete radiation monitoring
+- **Audit Trail**: Full audit logging for all radiation health data changes
+- **Performance Optimized**: Strategic indexing for fast queries
+
+### API Architecture
+- **RESTful API** with comprehensive CRUD operations
+- **Real-time Data**: Auto-refresh capabilities with manual override
+- **Error Handling**: Robust error handling with detailed logging
+- **Validation**: Both frontend and backend validation
+
+### Frontend Technology
+- **Vue.js 3** with Composition API
+- **Tailwind CSS** for responsive design
+- **Component-based** architecture for maintainability
+- **Dark Theme** with modern UI/UX principles
+
+## 🚀 Development Setup
+
+### Prerequisites
+- Node.js 16+ and npm
+- PostgreSQL 13+
+- Environment variables configured in `.env`
+
+### Running the Application
+```bash
+# Install dependencies
+npm install
+
+# Setup database (first time only)
+psql -f db/init.sql
+psql -f db/migrations/008_create_radiation_health_tables.sql
+psql -f db/seed_radiation_health_data.sql
+
+# Start development servers
+npm run dev        # Frontend (port 5173)
+npm run start:server   # Backend (port 3005)
+
+# Or start both simultaneously
+npm run start
+```
+
+### Current Status (2025)
+- ✅ **Electronic Health Module**: Fully functional with patient management
+- ✅ **Radiation Health Module**: Complete implementation with all features
+- ✅ **Authentication System**: Secure login with bcrypt hashing
+- ✅ **Database Integration**: PostgreSQL with full migration system
+- ✅ **API Testing**: All endpoints tested and working
+- ✅ **Frontend Dashboard**: Interactive UI with drill-down functionality
+
+## 📚 Documentation
+- `LESSONS.md` - Development lessons learned and best practices
+- `RadiationHealthMod.md` - Detailed radiation health module specifications
+- `RADIATION_HEALTH_TODO.md` - Implementation progress and task tracking
+- `TESTING_GUIDE.md` - Testing procedures and validation steps
+
+### Additional Routes
+- **Settings** (`/settings`) - Admin-only user password management
+- **System Status** (`/status`) - Real-time API and database health monitoring
 
 ## 🏗️ Project Structure
 
