@@ -1,19 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../components/Login.vue'
-import ModuleSelection from '../components/ModuleSelection.vue'
 import EHModulesScreen from '../components/EHModulesScreen.vue'
-import RHModule from '../components/RHModule.vue'
 import PatientManagement from '../components/PatientManagement.vue'
-import Settings from '../components/Settings.vue'
-import SystemStatus from '../views/SystemStatus.vue'
-import PatientView from '../views/PatientView.vue'
 import EnvironmentalDashboard from '../components/EnvironmentalDashboard.vue'
-import NavyDashboard from '../views/NavyDashboard.vue'
 import RadiationDashboard from '../views/RadiationDashboard.vue'
-import WaterTesting from '../views/WaterTesting.vue'
-import HeatmapDashboard from '../components/HeatmapDashboard.vue'
 import TrendChartDashboard from '../components/TrendChartDashboard.vue'
 import DataTableDashboard from '../components/DataTableDashboard.vue'
+import AdminBackupRestore from '../components/AdminBackupRestore.vue'
+import MonitoringDashboard from '../components/MonitoringDashboard.vue'
+import SystemStatus from '../components/SystemStatus.vue'
+import Settings from '../components/Settings.vue'
+import UserManagement from '../components/UserManagement.vue'
+import RealTimeMonitoringDashboard from '../components/RealTimeMonitoringDashboard.vue'
 
 const routes = [
   {
@@ -23,20 +21,8 @@ const routes = [
   },
   {
     path: '/select-module',
-    name: 'ModuleSelection',
-    component: ModuleSelection,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/eh-module',
     name: 'EHModulesScreen',
     component: EHModulesScreen,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/rh-module',
-    name: 'RHModule',
-    component: RHModule,
     meta: { requiresAuth: true }
   },
   {
@@ -46,9 +32,33 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/patients/view/:id',
-    name: 'PatientView',
-    component: PatientView,
+    path: '/environmental-dashboard',
+    name: 'EnvironmentalDashboard',
+    component: EnvironmentalDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/radiation-dashboard',
+    name: 'RadiationDashboard',
+    component: RadiationDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/backup-restore',
+    name: 'AdminBackupRestore',
+    component: AdminBackupRestore,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/users',
+    name: 'UserManagement',
+    component: UserManagement,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/monitoring-dashboard',
+    name: 'MonitoringDashboard',
+    component: MonitoringDashboard,
     meta: { requiresAuth: true }
   },
   {
@@ -64,45 +74,9 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/environmental-dashboard',
-    name: 'EnvironmentalDashboard',
-    component: EnvironmentalDashboard,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/heatmap-dashboard',
-    name: 'HeatmapDashboard',
-    component: HeatmapDashboard,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/trend-chart-dashboard',
-    name: 'TrendChartDashboard',
-    component: TrendChartDashboard,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/data-table-dashboard',
-    name: 'DataTableDashboard',
-    component: DataTableDashboard,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/navy-dashboard',
-    name: 'NavyDashboard',
-    component: NavyDashboard,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/radiation-dashboard',
-    name: 'RadiationDashboard',
-    component: RadiationDashboard,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/water-testing',
-    name: 'WaterTesting',
-    component: WaterTesting,
+    path: '/real-time-monitoring',
+    name: 'RealTimeMonitoringDashboard',
+    component: RealTimeMonitoringDashboard,
     meta: { requiresAuth: true }
   }
 ]
@@ -112,12 +86,15 @@ const router = createRouter({
   routes
 })
 
-// Navigation guard to check authentication
+// Navigation guard to check authentication and admin role
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
+  const userRole = localStorage.getItem('userRole')
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/')
+  } else if (to.meta.requiresAdmin && userRole !== 'admin') {
+    next('/select-module')
   } else if (to.path === '/' && isAuthenticated) {
     next('/select-module')
   } else {

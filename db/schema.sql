@@ -1,5 +1,9 @@
 -- Schema for ehr-eng2 database
 -- Run the CREATE DATABASE statement first while connected to the default 'postgres' database
+--
+-- This database includes real-time monitoring capabilities for the Radiation Health Module
+-- See db/migrations/011_add_real_time_triggers.sql for WebSocket notification triggers
+-- Real-time monitoring dashboard: http://localhost:5173/real-time-monitoring
 
 CREATE DATABASE "ehr-eng2";
 

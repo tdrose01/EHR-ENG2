@@ -121,6 +121,28 @@
           </div>
         </div>
       </div>
+
+      <!-- Database Backup & Restore Card (Admin Only) -->
+      <div 
+        v-if="isAdmin"
+        @click="navigateToBackup"
+        class="bg-gray-900 rounded-lg p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 group"
+      >
+        <div class="flex items-center">
+          <div class="p-3 rounded-full bg-yellow-600 bg-opacity-20 group-hover:bg-yellow-500 group-hover:bg-opacity-30 transition-colors">
+            <i class="fas fa-database text-yellow-400 text-xl group-hover:text-yellow-300"></i>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-gray-400 text-sm group-hover:text-yellow-300 transition-colors">Database Backup & Restore</h3>
+            <p class="text-lg font-bold text-white group-hover:text-yellow-200 transition-colors">
+              <i class="fas fa-shield-alt mr-2"></i>Secure
+            </p>
+            <p class="text-xs text-yellow-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <i class="fas fa-arrow-right mr-1"></i>Click to access backup system
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Main Content -->
@@ -664,6 +686,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import AddRadiationPersonnelForm from '../components/AddRadiationPersonnelForm.vue'
 import DeviceAssignmentModal from '../components/DeviceAssignmentModal.vue'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'RadiationDashboard',
@@ -672,6 +695,9 @@ export default {
     DeviceAssignmentModal
   },
   setup() {
+    // Get router instance
+    const router = useRouter()
+    
     // Reactive data
     const loading = ref(false)
     const lastUpdated = ref(new Date().toLocaleString())
@@ -745,6 +771,16 @@ export default {
         person.rank_rate.toLowerCase().includes(search)
       )
     })
+
+    // Admin check computed property
+    const isAdmin = computed(() => {
+      return localStorage.getItem('userRole') === 'admin'
+    })
+
+    // Navigation method for backup system
+    const navigateToBackup = () => {
+      router.push('/admin/backup-restore')
+    }
 
     // API methods
     const fetchOverview = async () => {
@@ -1322,6 +1358,7 @@ export default {
       filteredPersonnel,
       filteredReadings,
       filteredAssignments,
+      isAdmin, // Add isAdmin to the returned object
       
       // Methods
       refreshData,
@@ -1361,7 +1398,8 @@ export default {
       getReconciliationStatus,
       getReconciliationStatusClass,
       getAssignmentStatus,
-      getAssignmentStatusClass
+      getAssignmentStatusClass,
+      navigateToBackup // Add navigateToBackup to the returned object
     }
   }
 }

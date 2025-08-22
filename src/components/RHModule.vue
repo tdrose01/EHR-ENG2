@@ -58,6 +58,48 @@
           </div>
         </div>
       </div>
+
+      <!-- Real-Time Monitoring Dashboard Card -->
+      <div class="flex justify-center mt-8">
+        <div class="bg-gray-900 rounded-lg shadow-lg p-8 max-w-2xl w-full border border-gray-700">
+          <div class="text-center">
+            <div class="text-6xl mb-4">📡</div>
+            <h3 class="text-2xl font-bold text-green-400 mb-4">
+              Real-Time Monitoring
+            </h3>
+            <p class="text-gray-300 mb-6">
+              Live radiation health data, alerts, and real-time notifications.
+            </p>
+            <router-link 
+              to="/realtime-monitoring"
+              class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            >
+              Open Real-Time Dashboard
+            </router-link>
+          </div>
+        </div>
+      </div>
+
+      <!-- Database Backup & Restore Card (Admin Only) -->
+      <div v-if="isAdmin" class="flex justify-center mt-8">
+        <div class="bg-gray-900 rounded-lg shadow-lg p-8 max-w-2xl w-full border border-gray-700">
+          <div class="text-center">
+            <div class="text-6xl mb-4">💾</div>
+            <h3 class="text-2xl font-bold text-yellow-400 mb-4">
+              Database Backup & Restore
+            </h3>
+            <p class="text-gray-300 mb-6">
+              Create encrypted backups and restore database for disaster recovery.
+            </p>
+            <router-link 
+              to="/admin/backup-restore"
+              class="inline-block bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            >
+              Access Backup System
+            </router-link>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -65,6 +107,11 @@
 <script>
 export default {
   name: 'RHModule',
+  computed: {
+    isAdmin() {
+      return localStorage.getItem('userRole') === 'admin'
+    }
+  },
   methods: {
     logout() {
       // Clear any stored authentication data

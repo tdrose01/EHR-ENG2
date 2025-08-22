@@ -26,6 +26,7 @@ const navyRoutes = require('./routes/navy')
 const radiationRoutes = require('./routes/radiation')
 const exposureRoutes = require('./routes/exposures')
 const waterTestRoutes = require('./routes/waterTests')
+const monitoringRoutes = require('./routes/monitoring')
 
 // Middleware
 app.use(cors({
@@ -48,12 +49,39 @@ app.use('/api/navy', navyRoutes)
 app.use('/api/radiation', radiationRoutes)
 app.use('/api/exposures', exposureRoutes)
 app.use('/api/water-tests', waterTestRoutes)
+app.use('/api/monitoring', monitoringRoutes)
 
+console.log('Loading admin routes...');
 const adminRoutes = require('./routes/admin');
+console.log('Admin routes loaded successfully');
 app.use('/api/admin', adminRoutes);
+console.log('Admin routes registered at /api/admin');
 
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from the new endpoint!' });
+});
+
+// Debug endpoint to list all registered routes
+app.get('/api/debug/routes', (req, res) => {
+  const routes = [];
+  app._router.stack.forEach(middleware => {
+    if (middleware.route) {
+      const methods = Object.keys(middleware.route.methods);
+      methods.forEach(method => {
+        routes.push(`${method.toUpperCase()} ${middleware.route.path}`);
+      });
+    } else if (middleware.name === 'router') {
+      middleware.handle.stack.forEach(handler => {
+        if (handler.route) {
+          const methods = Object.keys(handler.route.methods);
+          methods.forEach(method => {
+            routes.push(`${method.toUpperCase()} ${middleware.regexp.source.replace(/\\\//g, '/').replace(/^\^/, '').replace(/\$/, '')}${handler.route.path}`);
+          });
+        }
+      });
+    }
+  });
+  res.json({ routes });
 });
 
 app.post('/api/login', async (req, res) => {
@@ -211,8 +239,76 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error', details: err.message });
 });
 
+// Real-time monitoring endpoints
+app.get('/api/realtime/status', (req, res) => {
+  const wsService = app.get('wsService');
+  const notificationService = app.get('notificationService');
+  const dbListenerService = app.get('dbListenerService');
+  
+  if (!wsService || !notificationService || !dbListenerService) {
+    return res.status(503).json({
+      success: false,
+      error: 'Real-time services not initialized'
+    });
+  }
+  
+  const wsStats = wsService.getConnectionStats();
+  const notifStats = notificationService.getNotificationStats();
+  const dbStats = dbListenerService.getStatus();
+  
+  res.json({
+    success: true,
+    realtime: {
+      websocket: wsStats,
+      notifications: notifStats,
+      databaseListener: dbStats,
+      serverUptime: process.uptime(),
+      timestamp: new Date().toISOString()
+    }
+  });
+});
+
+app.get('/api/realtime/health', async (req, res) => {
+  try {
+    const dbListenerService = app.get('dbListenerService');
+    const wsService = app.get('wsService');
+    
+    if (!dbListenerService || !wsService) {
+      return res.status(503).json({
+        success: false,
+        error: 'Real-time services not available'
+      });
+    }
+    
+    const dbHealth = await dbListenerService.performHealthCheck();
+    const wsHealth = {
+      status: wsService.wss.readyState === 1 ? 'healthy' : 'unhealthy',
+      connections: wsService.getConnectionStats().totalConnections
+    };
+    
+    const overallHealth = dbHealth.status === 'healthy' && wsHealth.status === 'healthy' 
+      ? 'healthy' : 'unhealthy';
+    
+    res.json({
+      success: true,
+      health: {
+        overall: overallHealth,
+        websocket: wsHealth,
+        databaseListener: dbHealth,
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Health check failed',
+      details: error.message
+    });
+  }
+});
+
 if (require.main === module) {
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`)
     console.log('Available routes:')
     console.log('- GET    /api/patients')
@@ -227,7 +323,38 @@ if (require.main === module) {
     console.log('- GET    /api/environments')
     console.log('- GET    /api/environments/:id')
     console.log('- GET    /api/v1/health/status')
-  })
+    console.log('- POST   /api/admin/backup/create')
+    console.log('- GET    /api/admin/backup/list')
+    console.log('- POST   /api/admin/backup/restore')
+    console.log('- DELETE /api/admin/backup/delete')
+    console.log('- GET    /api/admin/backup/locations')
+    console.log('- GET    /api/realtime/status')
+    console.log('- GET    /api/realtime/health')
+  });
+
+  // Import and initialize real-time services
+  const WebSocketService = require('./services/websocketService');
+  const NotificationService = require('./services/notificationService');
+  const DatabaseListenerService = require('./services/databaseListenerService');
+
+  // Initialize real-time services
+  const wsService = new WebSocketService(server);
+  const notificationService = new NotificationService(wsService);
+  const dbListenerService = new DatabaseListenerService(wsService, notificationService);
+
+  // Start database listener
+  dbListenerService.startListening().catch(error => {
+    console.error('❌ Failed to start database listener:', error);
+  });
+
+  // Make services available to routes
+  app.set('wsService', wsService);
+  app.set('notificationService', notificationService);
+  app.set('dbListenerService', dbListenerService);
+
+  console.log('🔌 Real-time monitoring services initialized');
+  console.log('📡 WebSocket endpoint: ws://localhost:' + PORT + '/ws');
+  console.log('📊 Real-time status: http://localhost:' + PORT + '/api/realtime/status');
 }
 
 module.exports = app

@@ -13,7 +13,13 @@
     "test": "jest",
     "test:unit": "vitest",
     "start": "node scripts/manage-servers.js start",
-    "stop": "node scripts/manage-servers.js stop"
+    "stop": "node scripts/manage-servers.js stop",
+    "test:backup": "node scripts/test-backup-system.js",
+    "test:backup-api": "node scripts/test-backup-api.js",
+    "test:backup-locations": "node scripts/test-backup-locations.js",
+    "test:server-status": "node scripts/test-server-status.js",
+    "test:proxy": "node scripts/test-proxy.js",
+    "test:monitoring": "node scripts/test-monitoring.js"
   },
   "dependencies": {
     "async-queue": "^0.1.0",
@@ -28,12 +34,16 @@
     "heatmap.js": "^2.0.5",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^6.9.7",
     "pg": "^8.16.0",
+    "socket.io": "^4.8.1",
     "tiny-async-queue": "^1.0.3",
     "vue": "^3.4.15",
     "vue-chartjs": "^5.3.2",
     "vue-heatmapjs": "^1.1.1",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
