@@ -100,14 +100,14 @@ app.post('/api/login', async (req, res) => {
       try {
         // Fetch the current last_login
         const prev = await pool.query(
-          'SELECT last_login FROM users WHERE id = $1',
+          'SELECT last_login_at FROM users WHERE id = $1',
           [user.id]
         );
-        const previousLogin = prev.rows[0]?.last_login || null;
+        const previousLogin = prev.rows[0]?.last_login_at || null;
 
-        // Update last_login to NOW()
+        // Update last_login_at to NOW()
         await pool.query(
-          'UPDATE users SET last_login = NOW() WHERE id = $1',
+          'UPDATE users SET last_login_at = NOW() WHERE id = $1',
           [user.id]
         );
 
@@ -139,7 +139,7 @@ app.get('/api/users/:id', async (req, res) => {
   const { id } = req.params
   try {
     const result = await pool.query(
-      'SELECT id, email, role, last_login FROM users WHERE id = $1',
+      'SELECT id, email, role, last_login_at FROM users WHERE id = $1',
       [id]
     )
 
@@ -152,7 +152,7 @@ app.get('/api/users/:id', async (req, res) => {
       id: user.id,
       email: user.email,
       role: user.role,
-      lastLogin: user.last_login
+      lastLogin: user.last_login_at
     })
   } catch (err) {
     console.error('User profile error:', err)

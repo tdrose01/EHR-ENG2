@@ -313,6 +313,10 @@ router.post('/personnel', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    // Validate date fields - convert empty strings to null
+    const cleanLastMedicalExam = last_medical_exam && last_medical_exam.trim() !== '' ? last_medical_exam : null;
+    const cleanNextMedicalDue = next_medical_due && next_medical_due.trim() !== '' ? next_medical_due : null;
+
     // Check if EDIPI already exists
     const existingResult = await pool.query(
       'SELECT id FROM radiation_personnel WHERE edipi = $1',
@@ -329,7 +333,7 @@ router.post('/personnel', async (req, res) => {
       (fname, lname, rank_rate, edipi, unit_id, active, radiation_category, monitoring_frequency, dosimeter_type, last_medical_exam, next_medical_due, notes, created_at)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
       RETURNING id
-    `, [fname, lname, rank_rate, edipi, unit_id, active, radiation_category, monitoring_frequency, dosimeter_type, last_medical_exam, next_medical_due, notes]);
+    `, [fname, lname, rank_rate, edipi, unit_id, active, radiation_category, monitoring_frequency, dosimeter_type, cleanLastMedicalExam, cleanNextMedicalDue, notes]);
 
     res.json({ 
       success: true, 
@@ -368,6 +372,10 @@ router.put('/personnel/:id', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    // Validate date fields - convert empty strings to null
+    const cleanLastMedicalExam = last_medical_exam && last_medical_exam.trim() !== '' ? last_medical_exam : null;
+    const cleanNextMedicalDue = next_medical_due && next_medical_due.trim() !== '' ? next_medical_due : null;
+
     // Check if EDIPI already exists for other personnel
     const existingResult = await pool.query(
       'SELECT id FROM radiation_personnel WHERE edipi = $1 AND id != $2',
@@ -385,7 +393,7 @@ router.put('/personnel/:id', async (req, res) => {
           radiation_category = $7, monitoring_frequency = $8, dosimeter_type = $9, 
           last_medical_exam = $10, next_medical_due = $11, notes = $12
       WHERE id = $13
-    `, [fname, lname, rank_rate, edipi, unit_id, active, radiation_category, monitoring_frequency, dosimeter_type, last_medical_exam, next_medical_due, notes, id]);
+    `, [fname, lname, rank_rate, edipi, unit_id, active, radiation_category, monitoring_frequency, dosimeter_type, cleanLastMedicalExam, cleanNextMedicalDue, notes, id]);
 
     res.json({ 
       success: true, 

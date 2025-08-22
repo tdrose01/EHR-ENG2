@@ -255,6 +255,13 @@ export default {
   methods: {
     async handleSubmit() {
       try {
+        // Clean up date fields - convert empty strings to null for database
+        const formData = {
+          ...this.form,
+          last_medical_exam: this.form.last_medical_exam || null,
+          next_medical_due: this.form.next_medical_due || null
+        }
+        
         const url = this.personnel && this.personnel.id
           ? `/api/radiation/personnel/${this.personnel.id}`
           : '/api/radiation/personnel'
@@ -263,7 +270,7 @@ export default {
         const res = await fetch(url, {
           method,
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.form)
+          body: JSON.stringify(formData)
         })
         
         if (res.ok) {
