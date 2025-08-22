@@ -383,3 +383,17 @@ A suite of microservices has been developed to handle data ingestion from variou
 ### Aggregation & Alerting
 - **Continuous Aggregates:** TimescaleDB materialized views automatically calculate hourly summaries (avg, max, min) for key metrics, enabling fast dashboard queries.
 - **Alerting Function:** A PostgreSQL function (`check_for_alerts`) has been created to detect threshold breaches (e.g., high PM2.5, heat stress, or radiation levels) and can be integrated with a notification service.
+
+## Recent Updates & Bug Fixes
+
+### Personnel Management Fixes (August 2025)
+- **Fixed**: Date validation errors when adding personnel with empty medical exam dates
+- **Fixed**: User profile endpoint column reference errors
+- **Improved**: Frontend form data validation and sanitization
+- **Enhanced**: Backend API date field handling and validation
+
+### Technical Improvements
+- **Date Handling**: Proper conversion of empty date strings to null values
+- **Column References**: Corrected database column name references throughout the system
+- **Error Handling**: Enhanced error messages and validation feedback
+- **Data Sanitization**: Improved input data cleaning on both frontend and backend
