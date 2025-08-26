@@ -395,7 +395,30 @@
   - Real-time assignment status updates
   - Integration with personnel and device tables
 
-### 6. **Template Structure and Compilation Fixes**
+### 6. **Admin Cards UI Consistency Update (August 2025)**
+- **Challenge**: Two admin cards (Database Backup & Restore and User Management) in EHModulesScreen.vue were using white backgrounds (`bg-white`) while the rest of the page used a consistent dark theme (`bg-gray-900`)
+- **Solution**: Updated both admin cards to match the page's dark theme styling
+- **Changes Made**:
+  - **Database Backup & Restore Card**: 
+    - Background: Changed from `bg-white` to `bg-gray-900`
+    - Text: Updated from `text-gray-900` to `text-purple-400` (title) and `text-gray-300` (description)
+    - Added: `border border-gray-700`, hover effects, and consistent button styling
+  - **User Management Card**:
+    - Background: Changed from `bg-white` to `bg-gray-900`
+    - Text: Updated from `text-gray-900` to `text-blue-400` (title) and `text-gray-300` (description)
+    - Added: `border border-gray-700`, hover effects, and consistent button styling
+- **Benefits**:
+  - **Visual Consistency**: All cards now follow the same dark theme design pattern
+  - **Better Contrast**: Text colors optimized for dark backgrounds
+  - **Unified Experience**: Seamless integration with the page's black theme
+  - **Professional Appearance**: Modern, consistent UI across all module cards
+- **Technical Details**:
+  - Used `bg-gray-900` for consistent dark backgrounds
+  - Applied `border border-gray-700` for visual separation
+  - Added `cursor-pointer transform transition-transform hover:scale-105` for interactive effects
+  - Maintained color-coded accents (purple for backup, blue for user management)
+
+### 7. **Template Structure and Compilation Fixes**
 - **Challenge**: Vue template compilation errors due to missing wrapper divs
 - **Solution**: Fixed template structure and added missing imports
 - **Fixes Applied**:

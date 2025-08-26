@@ -33,7 +33,10 @@ npm run start:server # Backend (Express) - Port 3005
 - **Patient Management**: Comprehensive patient records and demographics
 - **Medical History**: Detailed medical history tracking
 - **Treatment Plans**: Structured treatment and care planning
+- **Environmental Dashboard**: Advanced environmental data visualization and exposure tracking
+- **System Monitoring**: Real-time system health and performance metrics
 - **Database Backup & Restore**: Admin-only secure backup system
+- **User Management**: Admin-only user and role management system
 
 ### Radiation Health (RH) Module  
 - **Radiation Monitoring**: Personnel exposure tracking
@@ -51,10 +54,11 @@ npm run start:server # Backend (Express) - Port 3005
 - **Multi-Channel Support**: Alerts, readings, personnel, and device updates
 
 ### Administrative Features
-- **User Management**: Role-based access control
+- **User Management**: Role-based access control with admin interface
 - **Audit Logging**: Comprehensive system activity tracking
 - **Data Export**: Secure data export capabilities
 - **System Monitoring**: Performance and health monitoring
+- **Database Backup & Restore**: Secure encrypted backup system
 
 ## 🔐 Database Backup & Restore System
 
@@ -74,8 +78,8 @@ The system includes a **fully operational** backup and restore system with the f
 - ✅ **Route Protection**: Admin middleware properly configured
 
 ### 📍 **Access Points**
-- **EH Module**: Purple "Database Backup & Restore" card
-- **RH Module**: Yellow "Database Backup & Restore" card
+- **EH Module**: Purple "Database Backup & Restore" card (dark theme styled)
+- **RH Module**: Yellow "Database Backup & Restore" card (dark theme styled)
 - **Direct URL**: `/admin/backup-restore` (admin access required)
 
 ## 🛠️ Development
@@ -117,6 +121,7 @@ NODE_ENV=development
 
 - **[Backup & Restore System](docs/backup-restore-system.md)** - Complete backup system documentation
 - **[Monitoring & Alerting System](docs/monitoring-system.md)** - Comprehensive system monitoring and alerting
+- **[UI/UX Improvements](docs/UI_UX_IMPROVEMENTS.md)** - Design system standards and UI consistency updates
 - **[API Documentation](docs/api/)**: Backend API endpoints and usage
 - **[User Guides](docs/user/)**: End-user documentation and tutorials
 - **[Security Documentation](docs/security/)**: Security features and compliance
@@ -181,5 +186,5 @@ For technical support or questions:
 ---
 
 **Last Updated**: August 22, 2025  
-**Version**: 2.0.0  
-**Status**: ✅ **PRODUCTION READY** - All systems operational
+**Version**: 2.0.1  
+**Status**: ✅ **PRODUCTION READY** - All systems operational with enhanced UI consistency
