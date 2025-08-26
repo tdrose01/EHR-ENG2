@@ -277,4 +277,63 @@ router.get('/workflow/status', async (req, res) => {
     }
 });
 
+// GET /api/admin/database/schema - Database schema endpoint for testing
+router.get('/database/schema', async (req, res) => {
+  try {
+    const pool = require('../db');
+    
+    // Get comprehensive table information
+    const tablesQuery = `
+      SELECT 
+        t.table_name,
+        t.table_type,
+        c.column_name,
+        c.data_type,
+        c.is_nullable,
+        c.column_default,
+        c.character_maximum_length,
+        c.numeric_precision,
+        c.numeric_scale
+      FROM information_schema.tables t
+      LEFT JOIN information_schema.columns c ON t.table_name = c.table_name
+      WHERE t.table_schema = 'public' 
+      AND t.table_type = 'BASE TABLE'
+      ORDER BY t.table_name, c.ordinal_position
+    `;
+    
+    const tablesResult = await pool.query(tablesQuery);
+    
+    // Group columns by table
+    const schema = {};
+    tablesResult.rows.forEach(row => {
+      if (!schema[row.table_name]) {
+        schema[row.table_name] = {
+          type: row.table_type,
+          columns: []
+        };
+      }
+      if (row.column_name) {
+        schema[row.table_name].columns.push({
+          column: row.column_name,
+          type: row.data_type,
+          nullable: row.is_nullable === 'YES',
+          default: row.column_default,
+          max_length: row.character_maximum_length,
+          precision: row.numeric_precision,
+          scale: row.numeric_scale
+        });
+      }
+    });
+    
+    res.json({
+      schema,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('Admin schema fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch database schema' });
+  }
+});
+
 module.exports = router;

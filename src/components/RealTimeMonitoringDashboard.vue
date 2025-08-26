@@ -195,9 +195,11 @@
         </div>
       </div>
 
-      <!-- Real-time Chart -->
-      <div class="mb-8">
-        <RealTimeChart :readings="recentReadings" />
+      <!-- Real-time Chart with Constrained Container -->
+      <div class="mb-8 chart-section">
+        <div class="chart-wrapper" style="max-height: 500px; overflow: hidden;">
+          <RealTimeChart :readings="recentReadings" />
+        </div>
       </div>
 
       <!-- Enhanced Real-time Notifications Panel -->
@@ -620,6 +622,36 @@ export default {
 /* Enhanced shadows */
 .shadow-xl {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Chart section constraints */
+.chart-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-wrapper {
+  position: relative;
+  max-height: 500px;
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+/* Ensure chart doesn't expand beyond container */
+.chart-wrapper :deep(.real-time-chart) {
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.chart-wrapper :deep(.chart-container) {
+  max-height: 400px !important;
+  height: 400px !important;
+  overflow: hidden;
+}
+
+.chart-wrapper :deep(.chart-canvas) {
+  max-height: 400px !important;
+  height: 400px !important;
 }
 
 /* Gradient text */

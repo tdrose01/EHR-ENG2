@@ -19,7 +19,16 @@
     "test:backup-locations": "node scripts/test-backup-locations.js",
     "test:server-status": "node scripts/test-server-status.js",
     "test:proxy": "node scripts/test-proxy.js",
-    "test:monitoring": "node scripts/test-monitoring.js"
+    "test:monitoring": "node scripts/test-monitoring.js",
+    "test:websocket": "node scripts/test-websocket-connection.js",
+    "test:websocket:integration": "node scripts/test-websocket-integration.js",
+    "test:chart-sizing": "node scripts/test-chart-sizing.js",
+    "test:alerts": "node scripts/test-alerts.js",
+    "debug:alerts": "node scripts/debug-alerts.js",
+    "test:dose-alerts": "node scripts/test-dose-alerts.js",
+    "setup:test-data": "node scripts/setup-test-data.js",
+    "generate:test-data": "node scripts/generate-test-data.js",
+    "test:data-structure": "node scripts/test-data-structure.js"
   },
   "dependencies": {
     "async-queue": "^0.1.0",

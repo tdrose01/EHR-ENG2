@@ -22,16 +22,17 @@
       </div>
     </div>
     
-    <!-- Chart Container -->
-    <div class="relative">
-      <!-- Chart Canvas -->
+    <!-- Chart Container with Fixed Height -->
+    <div class="relative chart-container" style="height: 400px; max-height: 400px; overflow: hidden;">
+      <!-- Chart Canvas with Constrained Dimensions -->
       <canvas 
         ref="chartCanvas" 
-        class="w-full h-64 bg-slate-900/30 rounded-lg border border-indigo-500/20"
+        class="chart-canvas"
+        style="width: 100% !important; height: 100% !important; max-height: 400px !important;"
       ></canvas>
       
       <!-- Chart Legend -->
-      <div class="flex justify-center space-x-6 mt-4">
+      <div class="flex justify-center space-x-6 mt-4 absolute bottom-0 left-0 right-0 bg-slate-800/80 backdrop-blur-sm py-2 rounded-t-lg">
         <div class="flex items-center space-x-2">
           <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
           <span class="text-sm text-blue-300">HP10 (mSv)</span>
@@ -47,7 +48,7 @@
       </div>
       
       <!-- Live Indicator -->
-      <div class="absolute top-2 right-2 flex items-center space-x-2">
+      <div class="absolute top-2 right-2 flex items-center space-x-2 bg-slate-800/80 backdrop-blur-sm px-2 py-1 rounded-lg">
         <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
         <span class="text-xs text-green-400 font-medium">LIVE</span>
       </div>
@@ -87,8 +88,17 @@ export default {
     const chart = ref(null)
     const isPaused = ref(false)
     const dataPoints = ref([])
+    const isChartReady = ref(false) // Add flag to track chart readiness
+    const debugMode = ref(true) // Enable debug mode for troubleshooting
     
-    // Chart configuration
+    // Debug logging function
+    const debugLog = (message, data = null) => {
+      if (debugMode.value) {
+        console.log(`[RealTimeChart] ${message}`, data)
+      }
+    }
+    
+    // Chart configuration with improved responsive settings
     const chartConfig = {
       type: 'line',
       data: {
@@ -100,8 +110,9 @@ export default {
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
             tension: 0.4,
-            pointRadius: 3,
-            pointHoverRadius: 6
+            pointRadius: 2,
+            pointHoverRadius: 5,
+            borderWidth: 2
           },
           {
             label: 'HP07 (mSv)',
@@ -109,8 +120,9 @@ export default {
             borderColor: '#06b6d4',
             backgroundColor: 'rgba(6, 182, 212, 0.1)',
             tension: 0.4,
-            pointRadius: 3,
-            pointHoverRadius: 6
+            pointRadius: 2,
+            pointHoverRadius: 5,
+            borderWidth: 2
           },
           {
             label: 'Rate (µSv/h)',
@@ -118,8 +130,9 @@ export default {
             borderColor: '#a855f7',
             backgroundColor: 'rgba(168, 85, 247, 0.1)',
             tension: 0.4,
-            pointRadius: 3,
-            pointHoverRadius: 6,
+            pointRadius: 2,
+            pointHoverRadius: 5,
+            borderWidth: 2,
             yAxisID: 'y1'
           }
         ]
@@ -128,12 +141,29 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
         animation: {
-          duration: 750,
-          easing: 'easeInOutQuart'
+          duration: 0, // Disable animations to prevent internal errors
+          easing: 'linear'
         },
         interaction: {
           intersect: false,
           mode: 'index'
+        },
+        layout: {
+          padding: {
+            top: 20,
+            right: 20,
+            bottom: 40,
+            left: 20
+          }
+        },
+        elements: {
+          point: {
+            radius: 2,
+            hoverRadius: 5
+          },
+          line: {
+            tension: 0.4
+          }
         },
         scales: {
           x: {
@@ -141,14 +171,21 @@ export default {
             title: {
               display: true,
               text: 'Time',
-              color: '#94a3b8'
+              color: '#94a3b8',
+              font: {
+                size: 12
+              }
             },
             grid: {
-              color: 'rgba(148, 163, 184, 0.1)'
+              color: 'rgba(148, 163, 184, 0.1)',
+              drawBorder: false
             },
             ticks: {
               color: '#94a3b8',
-              maxTicksLimit: 8
+              maxTicksLimit: 6,
+              font: {
+                size: 10
+              }
             }
           },
           y: {
@@ -158,13 +195,20 @@ export default {
             title: {
               display: true,
               text: 'Dose (mSv)',
-              color: '#94a3b8'
+              color: '#94a3b8',
+              font: {
+                size: 12
+              }
             },
             grid: {
-              color: 'rgba(148, 163, 184, 0.1)'
+              color: 'rgba(148, 163, 184, 0.1)',
+              drawBorder: false
             },
             ticks: {
-              color: '#94a3b8'
+              color: '#94a3b8',
+              font: {
+                size: 10
+              }
             }
           },
           y1: {
@@ -174,13 +218,20 @@ export default {
             title: {
               display: true,
               text: 'Rate (µSv/h)',
-              color: '#94a3b8'
+              color: '#94a3b8',
+              font: {
+                size: 12
+              }
             },
             grid: {
-              drawOnChartArea: false
+              drawOnChartArea: false,
+              drawBorder: false
             },
             ticks: {
-              color: '#94a3b8'
+              color: '#94a3b8',
+              font: {
+                size: 10
+              }
             }
           }
         },
@@ -189,13 +240,19 @@ export default {
             display: false
           },
           tooltip: {
-            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
             titleColor: '#e2e8f0',
             bodyColor: '#cbd5e1',
             borderColor: '#475569',
             borderWidth: 1,
             cornerRadius: 8,
-            displayColors: true
+            displayColors: true,
+            titleFont: {
+              size: 12
+            },
+            bodyFont: {
+              size: 11
+            }
           }
         }
       }
@@ -213,83 +270,330 @@ export default {
     })
     
     // Methods
-    const initChart = () => {
+    const initChart = async () => {
       if (!chartCanvas.value) return
       
-      const ctx = chartCanvas.value.getContext('2d')
-      chart.value = new Chart(ctx, chartConfig)
+      try {
+        debugLog('Initializing chart...')
+        const ctx = chartCanvas.value.getContext('2d')
+        
+        // Destroy existing chart if it exists
+        if (chart.value) {
+          debugLog('Destroying existing chart')
+          try {
+            chart.value.destroy()
+          } catch (destroyError) {
+            console.warn('Error destroying chart:', destroyError)
+          }
+        }
+        
+        // Create chart with error handling
+        try {
+          chart.value = new Chart(ctx, chartConfig)
+          debugLog('Chart created successfully', chart.value)
+        } catch (createError) {
+          console.error('Failed to create chart:', createError)
+          debugLog('Chart creation failed', createError)
+          
+          // Try with a simplified configuration
+          const simpleConfig = {
+            type: 'line',
+            data: {
+              labels: [],
+              datasets: [{
+                label: 'HP10 (mSv)',
+                data: [],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: false,
+              plugins: { legend: { display: false } }
+            }
+          }
+          
+          chart.value = new Chart(ctx, simpleConfig)
+          debugLog('Chart created with simplified config')
+        }
+        
+        // Force chart resize to fit container
+        setTimeout(() => {
+          if (chart.value) {
+            try {
+              chart.value.resize()
+              isChartReady.value = true // Mark chart as ready
+              debugLog('Chart marked as ready')
+            } catch (resizeError) {
+              console.warn('Chart resize failed:', resizeError)
+              // Still mark as ready even if resize fails
+              isChartReady.value = true
+              debugLog('Chart marked as ready (resize failed)')
+            }
+          }
+        }, 100)
+      } catch (error) {
+        console.error('Chart initialization error:', error)
+        isChartReady.value = false
+        debugLog('Chart initialization failed', error)
+      }
     }
     
     const updateChart = () => {
-      if (!chart.value || isPaused.value) return
+      // Add multiple safety checks
+      if (!chart.value || !isChartReady.value || isPaused.value) {
+        debugLog('Chart update skipped - not ready or paused', { 
+          hasChart: !!chart.value, 
+          isReady: isChartReady.value, 
+          isPaused: isPaused.value 
+        })
+        return
+      }
       
-      const labels = dataPoints.value.map((_, index) => {
-        const now = new Date()
-        const time = new Date(now.getTime() - (dataPoints.value.length - index - 1) * 1000)
-        return time.toLocaleTimeString()
-      })
-      
-      const hp10Data = dataPoints.value.map(p => p.hp10_msv)
-      const hp07Data = dataPoints.value.map(p => p.hp007_msv)
-      const rateData = dataPoints.value.map(p => p.rate_usv_h)
-      
-      chart.value.data.labels = labels
-      chart.value.data.datasets[0].data = hp10Data
-      chart.value.data.datasets[1].data = hp07Data
-      chart.value.data.datasets[2].data = rateData
-      
-      chart.value.update('none')
+      try {
+        // Ensure chart data structure exists
+        if (!chart.value.data || !chart.value.data.datasets || chart.value.data.datasets.length < 3) {
+          debugLog('Chart data structure not ready, skipping update')
+          return
+        }
+        
+        debugLog('Updating chart with data points', dataPoints.value.length)
+        
+        const labels = dataPoints.value.map((_, index) => {
+          const now = new Date()
+          const time = new Date(now.getTime() - (dataPoints.value.length - index - 1) * 1000)
+          return time.toLocaleTimeString()
+        })
+        
+        const hp10Data = dataPoints.value.map(p => p.hp10_msv)
+        const hp07Data = dataPoints.value.map(p => p.hp007_msv)
+        const rateData = dataPoints.value.map(p => p.rate_usv_h)
+        
+        // Ensure chart and data properties exist before updating
+        if (chart.value.data && chart.value.data.datasets && chart.value.data.datasets.length >= 3) {
+          // Use a safer update method that doesn't trigger internal Chart.js errors
+          try {
+            // Update data without triggering full chart redraw
+            chart.value.data.labels = labels
+            chart.value.data.datasets[0].data = hp10Data
+            chart.value.data.datasets[1].data = hp07Data
+            chart.value.data.datasets[2].data = rateData
+            
+            // Try multiple update methods to avoid internal errors
+            try {
+              // Method 1: Conservative update
+              chart.value.update('none', { duration: 0 })
+              debugLog('Chart updated successfully with conservative method')
+            } catch (method1Error) {
+              console.warn('Conservative update failed, trying alternative method:', method1Error)
+              
+              try {
+                // Method 2: Silent update
+                chart.value.update('none')
+                debugLog('Chart updated successfully with silent method')
+              } catch (method2Error) {
+                console.warn('Silent update failed, trying minimal update:', method2Error)
+                
+                try {
+                  // Method 3: Minimal update - just redraw
+                  chart.value.render()
+                  debugLog('Chart updated successfully with render method')
+                } catch (method3Error) {
+                  console.warn('All update methods failed, recreating chart:', method3Error)
+                  
+                  // If all methods fail, recreate the chart
+                  setTimeout(() => {
+                    try {
+                      initChart()
+                    } catch (recreateError) {
+                      console.error('Failed to recreate chart:', recreateError)
+                      debugLog('Chart recreation failed', recreateError)
+                    }
+                  }, 100)
+                }
+              }
+            }
+          } catch (updateError) {
+            // If the update fails, try to recreate the chart
+            console.warn('Chart update failed, attempting to recreate:', updateError)
+            debugLog('Chart update failed, recreating chart', updateError)
+            
+            // Recreate the chart
+            setTimeout(() => {
+              try {
+                initChart()
+              } catch (recreateError) {
+                console.error('Failed to recreate chart:', recreateError)
+                debugLog('Chart recreation failed', recreateError)
+              }
+            }, 100)
+          }
+        }
+      } catch (error) {
+        console.error('Chart update error:', error)
+        debugLog('Chart update failed', error)
+        
+        // If we get a critical error, try to recreate the chart
+        if (error.message && error.message.includes('fullSize')) {
+          console.warn('Critical chart error detected, recreating chart...')
+          setTimeout(() => {
+            try {
+              initChart()
+            } catch (recreateError) {
+              console.error('Failed to recreate chart after critical error:', recreateError)
+            }
+          }, 200)
+        }
+      }
     }
     
     const addDataPoint = (reading) => {
-      if (isPaused.value) return
-      
-      const dataPoint = {
-        timestamp: new Date(),
-        hp10_msv: reading.hp10_msv || 0,
-        hp007_msv: reading.hp007_msv || 0,
-        rate_usv_h: reading.rate_usv_h || 0
+      if (isPaused.value || !isChartReady.value) {
+        debugLog('Data point addition skipped', { isPaused: isPaused.value, isReady: isChartReady.value })
+        return
       }
       
-      dataPoints.value.push(dataPoint)
-      
-      // Keep only last 50 data points
-      if (dataPoints.value.length > 50) {
-        dataPoints.value = dataPoints.value.slice(-50)
+      try {
+        debugLog('Processing new reading', reading)
+        
+        // Convert string values to numbers and handle null/undefined values
+        const dataPoint = {
+          timestamp: new Date(),
+          hp10_msv: parseFloat(reading.hp10_msv) || 0,
+          hp007_msv: parseFloat(reading.hp007_msv) || 0,
+          rate_usv_h: parseFloat(reading.rate_usv_h) || 0
+        }
+        
+        // Validate the data point
+        if (isNaN(dataPoint.hp10_msv) || isNaN(dataPoint.hp007_msv) || isNaN(dataPoint.rate_usv_h)) {
+          console.warn('Invalid data point received:', reading, 'Processed:', dataPoint)
+          debugLog('Invalid data point, skipping', { original: reading, processed: dataPoint })
+          return
+        }
+        
+        debugLog('Adding valid data point', dataPoint)
+        dataPoints.value.push(dataPoint)
+        
+        // Keep only last 50 data points
+        if (dataPoints.value.length > 50) {
+          dataPoints.value = dataPoints.value.slice(-50)
+        }
+        
+        updateChart()
+      } catch (error) {
+        console.error('Error adding data point:', error, 'Reading:', reading)
+        debugLog('Error adding data point', error)
       }
-      
-      updateChart()
     }
     
     const clearChart = () => {
       dataPoints.value = []
-      updateChart()
+      if (isChartReady.value) {
+        updateChart()
+      }
     }
     
     const togglePause = () => {
       isPaused.value = !isPaused.value
     }
     
-    // Watch for new readings
+    // Handle window resize
+    const handleResize = () => {
+      if (chart.value && isChartReady.value) {
+        try {
+          chart.value.resize()
+        } catch (error) {
+          console.error('Chart resize error:', error)
+        }
+      }
+    }
+    
+    // Watch for new readings with better error handling
     watch(() => props.readings, (newReadings) => {
-      if (newReadings.length === 0) return
+      debugLog('Watch triggered with new readings', { 
+        count: newReadings?.length, 
+        isChartReady: isChartReady.value 
+      })
       
-      const latest = newReadings[0]
-      addDataPoint(latest)
+      if (!newReadings || newReadings.length === 0 || !isChartReady.value) {
+        debugLog('Watch skipped - no readings or chart not ready')
+        return
+      }
+      
+      try {
+        const latest = newReadings[0]
+        if (latest && typeof latest === 'object') {
+          // Validate that the reading has the required properties
+          if (latest.hasOwnProperty('hp10_msv') || latest.hasOwnProperty('hp007_msv') || latest.hasOwnProperty('rate_usv_h')) {
+            debugLog('Processing latest reading', latest)
+            addDataPoint(latest)
+          } else {
+            console.warn('Reading missing required properties:', latest)
+            debugLog('Reading missing required properties', latest)
+          }
+        } else {
+          console.warn('Invalid reading format:', latest)
+          debugLog('Invalid reading format', latest)
+        }
+      } catch (error) {
+        console.error('Error processing new readings:', error, 'Readings:', newReadings)
+        debugLog('Error processing readings', error)
+      }
     }, { deep: true })
     
     // Lifecycle
     onMounted(async () => {
-      // Import Chart.js dynamically
-      const { Chart } = await import('chart.js/auto')
-      // Make Chart available globally for this component
-      window.Chart = Chart
-      initChart()
+      try {
+        debugLog('Component mounting...')
+        // Import Chart.js dynamically
+        const { Chart } = await import('chart.js/auto')
+        
+        // Check Chart.js version for compatibility
+        if (Chart.version) {
+          debugLog('Chart.js version detected', Chart.version)
+          
+          // Check for known problematic versions
+          const version = Chart.version
+          if (version.startsWith('4.') && parseInt(version.split('.')[1]) < 4) {
+            console.warn('Chart.js version 4.0-4.3 may have compatibility issues. Consider upgrading to 4.4+')
+          }
+        } else {
+          debugLog('Chart.js version not detected - using fallback configuration')
+        }
+        
+        // Make Chart available globally for this component
+        window.Chart = Chart
+        debugLog('Chart.js imported successfully')
+        
+        await initChart()
+        debugLog('Chart initialization completed')
+        
+        // Add resize listener
+        window.addEventListener('resize', handleResize)
+        debugLog('Component mounted successfully')
+      } catch (error) {
+        console.error('Component mount error:', error)
+        isChartReady.value = false
+        debugLog('Component mount failed', error)
+      }
     })
     
     onUnmounted(() => {
-      if (chart.value) {
-        chart.value.destroy()
+      try {
+        debugLog('Component unmounting...')
+        if (chart.value) {
+          chart.value.destroy()
+          debugLog('Chart destroyed')
+        }
+        isChartReady.value = false
+        window.removeEventListener('resize', handleResize)
+        debugLog('Component unmounted successfully')
+      } catch (error) {
+        console.error('Component unmount error:', error)
+        debugLog('Component unmount failed', error)
       }
     })
     
@@ -311,9 +615,27 @@ export default {
   position: relative;
 }
 
-/* Chart container styling */
-canvas {
-  border-radius: 0.5rem;
+/* Chart container with strict height constraints */
+.chart-container {
+  position: relative;
+  height: 400px !important;
+  max-height: 400px !important;
+  min-height: 400px !important;
+  overflow: hidden;
+}
+
+/* Chart canvas with enforced dimensions */
+.chart-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 400px !important;
+  min-height: 400px !important;
+}
+
+/* Ensure chart doesn't expand beyond container */
+.chart-container canvas {
+  max-height: 400px !important;
+  height: 400px !important;
 }
 
 /* Live indicator animation */
@@ -350,5 +672,34 @@ canvas {
 /* Enhanced shadows */
 .shadow-xl {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 300px !important;
+    max-height: 300px !important;
+    min-height: 300px !important;
+  }
+  
+  .chart-canvas {
+    height: 300px !important;
+    max-height: 300px !important;
+    min-height: 300px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    height: 250px !important;
+    max-height: 250px !important;
+    min-height: 250px !important;
+  }
+  
+  .chart-canvas {
+    height: 250px !important;
+    max-height: 250px !important;
+    min-height: 250px !important;
+  }
 }
 </style>
