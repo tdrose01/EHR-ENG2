@@ -46,7 +46,7 @@
    ```
    - **Learning**: Follow principle of least privilege for database users
 
-2. **Schema Management
+2. **Schema Management**
    - **Challenge**: Maintaining database structure and API-schema synchronization
    - **Solution**: Implemented comprehensive migration system with proper column definitions
    - **Critical Learning**: Always ensure API expectations match database schema
@@ -711,6 +711,58 @@ A full troubleshooting pass on the backend Python microservices revealed several
 - **Code Splitting**: Lazy-loaded routes for better initial load
 - **Caching**: Implemented at multiple levels (browser, API, database)
 - **Database**: Proper indexing and query optimization
+
+## 📝 Manual Dose Entry System Implementation
+
+### **Offline Data Entry Solution**
+1. **Challenge**: Need for manual data entry when Bluetooth connectivity is unavailable
+   - **Solution**: Created comprehensive Vue.js form component with full validation
+   - **Learning**: Always design for offline scenarios in critical systems
+
+2. **Database Schema Enhancement**
+   - **Challenge**: Need to distinguish between manual and automated entries
+   - **Solution**: Added `data_source`, `entered_by`, and `notes` columns with proper constraints
+   ```sql
+   ALTER TABLE radiation_dose_readings 
+   ADD COLUMN data_source VARCHAR(20) DEFAULT 'AUTOMATED' CHECK (data_source IN ('AUTOMATED', 'MANUAL')),
+   ADD COLUMN entered_by VARCHAR(100),
+   ADD COLUMN notes TEXT;
+   ```
+   - **Learning**: Use CHECK constraints for data integrity and proper indexing for performance
+
+3. **Form Integration Challenges**
+   - **Challenge**: Device dropdown showing personnel data instead of device data
+   - **Root Cause**: Data structure mismatch between API response and form expectations
+   - **Solution**: Fixed computed properties to handle API data structure correctly
+   ```javascript
+   // Fixed device filtering and model name creation
+   availableDevices() {
+     return this.devices
+       .filter(device => device.retired_at === null)
+       .map(device => ({
+         ...device,
+         model_name: `${device.vendor} ${device.model}`,
+         assigned_personnel: assignedPersonnel ? 
+           `${assignedPersonnel.fname} ${assignedPersonnel.lname}` : null
+       }));
+   }
+   ```
+   - **Learning**: Always verify data structure compatibility between API and frontend
+
+4. **API Endpoint Enhancement**
+   - **Challenge**: Existing API didn't support new manual entry fields
+   - **Solution**: Updated INSERT statement to include new columns
+   ```javascript
+   INSERT INTO radiation_dose_readings 
+   (device_id, measured_ts, gateway_ts, hp10_mSv, hp007_mSv, rate_uSv_h, battery_pct, raw_json, payload_sig, sig_alg, gateway_id, data_source, entered_by, notes)
+   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+   ```
+   - **Learning**: Maintain backward compatibility while adding new features
+
+5. **Testing & Validation**
+   - **Challenge**: Ensuring form works correctly with real data
+   - **Solution**: Comprehensive integration testing with browser automation
+   - **Learning**: Test with real data flows, not just mock data
 
 ## 🔧 Development Environment Setup
 

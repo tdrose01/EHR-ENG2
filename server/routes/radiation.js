@@ -239,7 +239,10 @@ router.post('/ingest/readings', async (req, res) => {
       raw_json,
       gateway_id,
       payload_sig,
-      sig_alg
+      sig_alg,
+      data_source,
+      entered_by,
+      notes
     } = req.body;
 
     // Validate required fields
@@ -259,13 +262,13 @@ router.post('/ingest/readings', async (req, res) => {
 
     const deviceId = deviceResult.rows[0].id;
 
-    // Insert dose reading
+    // Insert dose reading with new manual entry fields
     const result = await pool.query(`
       INSERT INTO radiation_dose_readings 
-      (device_id, measured_ts, gateway_ts, hp10_mSv, hp007_mSv, rate_uSv_h, battery_pct, raw_json, payload_sig, sig_alg, gateway_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      (device_id, measured_ts, gateway_ts, hp10_mSv, hp007_mSv, rate_uSv_h, battery_pct, raw_json, payload_sig, sig_alg, gateway_id, data_source, entered_by, notes)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
       RETURNING id
-    `, [deviceId, measured_ts, new Date(), hp10_mSv, hp007_mSv, rate_uSv_h, battery_pct, raw_json, payload_sig, sig_alg, gateway_id]);
+    `, [deviceId, measured_ts, new Date(), hp10_mSv, hp007_mSv, rate_uSv_h, battery_pct, raw_json, payload_sig, sig_alg, gateway_id, data_source || 'AUTOMATED', entered_by, notes]);
 
     // Check for alerts (basic threshold checking)
     if (hp10_mSv > 0.1) { // 100 µSv threshold

@@ -41,13 +41,16 @@ npm run start:server # Backend (Express) - Port 3005
 ### Radiation Health (RH) Module  
 - **Radiation Monitoring**: Personnel exposure tracking
 - **Device Management**: Radiation device inventory and calibration
-- **Dose Readings**: Real-time dose measurement logging
+- **Dose Readings**: Real-time dose measurement logging with manual entry capability
+- **Manual Dose Entry**: Offline-capable manual dose reading form for Bluetooth-unavailable scenarios
 - **Real-Time Monitoring**: Live WebSocket-based dashboard with live updates
 - **Database Backup & Restore**: Admin-only secure backup system
 
 #### 🆕 **Recent Updates - Production Ready** ✅
 - **Enhanced Validation**: Comprehensive alert validation system (100% test pass rate)
 - **Database Schema Access**: Full metadata endpoint for testing and development
+- **Manual Dose Entry Form**: Complete offline data entry solution with validation and audit tracking
+- **Database Migration**: Enhanced schema with data_source, entered_by, and notes columns for better tracking
 - **29 API Endpoints**: Complete radiation health monitoring API
 - **Real-Time Alerts**: WebSocket-based alert system with notification service
 - **Performance Optimized**: Sub-200ms response times with enterprise-grade validation
@@ -89,6 +92,33 @@ npm run start:server # Backend (Express) - Port 3005
 - **Radiation Devices**: 9 devices
 - **Dose Readings**: 137+ readings
 - **Alerts**: 100+ alerts with proper validation
+
+## 📝 Manual Dose Entry System
+
+### **Offline Data Entry Solution** ✅
+The system now includes a comprehensive manual dose entry form for scenarios where Bluetooth connectivity is unavailable:
+
+#### **Features**
+- **Device Selection**: Dropdown with all active radiation devices
+- **Personnel Auto-Population**: Automatically shows assigned personnel for selected device
+- **Real-Time Validation**: Comprehensive form validation with error messages
+- **Draft Saving**: Local storage for saving incomplete entries
+- **Audit Tracking**: Full tracking of who entered what data and when
+- **Notes Support**: Rich text notes for additional context
+
+#### **Database Enhancement**
+- **New Columns**: `data_source`, `entered_by`, `notes` added to `radiation_dose_readings` table
+- **Data Integrity**: CHECK constraints ensure only valid data sources ('AUTOMATED' or 'MANUAL')
+- **Performance**: Indexed columns for fast querying and reporting
+- **Backward Compatibility**: Existing automated entries remain unchanged
+
+#### **Usage**
+1. Navigate to **Radiation Dashboard** → **Readings** tab
+2. Click **"Manual Entry"** button
+3. Select device from dropdown (shows device serial, model, and assigned personnel)
+4. Fill in dose readings with real-time validation
+5. Add notes for context
+6. Submit to save to database with full audit trail
 
 ## 🔐 Database Backup & Restore System
 
@@ -215,6 +245,6 @@ For technical support or questions:
 
 ---
 
-**Last Updated**: August 22, 2025  
-**Version**: 2.0.1  
-**Status**: ✅ **PRODUCTION READY** - All systems operational with enhanced UI consistency
+**Last Updated**: August 26, 2025  
+**Version**: 2.1.0  
+**Status**: ✅ **PRODUCTION READY** - All systems operational with comprehensive fixes and enhancements

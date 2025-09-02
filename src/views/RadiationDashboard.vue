@@ -457,6 +457,13 @@
                 >
                   <i class="fas fa-times mr-1"></i>Clear Filter
                 </button>
+                <button 
+                  @click="openManualDoseReadingModal"
+                  class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors"
+                  title="Add Manual Dose Reading"
+                >
+                  <i class="fas fa-plus mr-2"></i>Manual Entry
+                </button>
               </div>
             </div>
             
@@ -679,6 +686,22 @@
        @saved="onAssignmentSaved"
        @error="onAssignmentError"
      />
+
+     <!-- Manual Dose Reading Modal -->
+     <div v-if="showManualDoseReadingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+       <div class="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-gray-900">
+         <div class="mt-3">
+           <ManualDoseReadingForm
+             :devices="devices"
+             :personnel="personnel"
+             :currentUser="currentUser"
+             @close="closeManualDoseReadingModal"
+             @saved="onManualDoseReadingSaved"
+             @error="onManualDoseReadingError"
+           />
+         </div>
+       </div>
+     </div>
    </div>
  </template>
 
@@ -686,13 +709,15 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import AddRadiationPersonnelForm from '../components/AddRadiationPersonnelForm.vue'
 import DeviceAssignmentModal from '../components/DeviceAssignmentModal.vue'
+import ManualDoseReadingForm from '../components/ManualDoseReadingForm.vue'
 import { useRouter } from 'vue-router'
 
 export default {
   name: 'RadiationDashboard',
   components: {
     AddRadiationPersonnelForm,
-    DeviceAssignmentModal
+    DeviceAssignmentModal,
+    ManualDoseReadingForm
   },
   setup() {
     // Get router instance
@@ -719,6 +744,10 @@ export default {
     const editingPersonnel = ref(null)
     const showAssignmentModal = ref(false)
     const editingAssignment = ref(null)
+    const showManualDoseReadingModal = ref(false)
+    
+    // Current user (for manual entry tracking)
+    const currentUser = ref('System User') // TODO: Get from auth context
     
     // Error states
     const personnelError = ref('')
@@ -966,6 +995,27 @@ export default {
 
     const onAssignmentError = (error) => {
       console.error('Assignment save error:', error)
+      // You could add a toast notification here
+    }
+
+    // Manual dose reading modal control methods
+    const openManualDoseReadingModal = () => {
+      showManualDoseReadingModal.value = true
+    }
+
+    const closeManualDoseReadingModal = () => {
+      showManualDoseReadingModal.value = false
+    }
+
+    const onManualDoseReadingSaved = (result) => {
+      closeManualDoseReadingModal()
+      fetchReadings() // Refresh the readings list
+      fetchOverview() // Refresh overview counts
+      console.log('Manual dose reading saved:', result)
+    }
+
+    const onManualDoseReadingError = (error) => {
+      console.error('Manual dose reading error:', error)
       // You could add a toast notification here
     }
 
@@ -1341,6 +1391,8 @@ export default {
       editingPersonnel,
       showAssignmentModal,
       editingAssignment,
+      showManualDoseReadingModal,
+      currentUser,
       
       // Filters
       personnelSearch,
@@ -1372,6 +1424,10 @@ export default {
       closeAssignmentModal,
       onAssignmentSaved,
       onAssignmentError,
+      openManualDoseReadingModal,
+      closeManualDoseReadingModal,
+      onManualDoseReadingSaved,
+      onManualDoseReadingError,
       endAssignment,
       editPersonnel,
       deletePersonnel,
