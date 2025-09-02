@@ -176,6 +176,201 @@
         </div>
       </div>
 
+      <!-- Rollback Procedures Section -->
+      <div class="bg-gray-900 rounded-lg shadow-md p-6 mb-8 border border-gray-700">
+        <h2 class="text-xl font-semibold text-white mb-4">Rollback Procedures</h2>
+        <div class="space-y-4">
+          <!-- Rollback Type Selection -->
+          <div>
+            <label for="rollback-type" class="block text-sm font-medium text-gray-300 mb-2">
+              Rollback Type
+            </label>
+            <select
+              id="rollback-type"
+              v-model="selectedRollbackType"
+              class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Select rollback type...</option>
+              <option value="database">Database Rollback</option>
+              <option value="schema">Schema Rollback</option>
+              <option value="data">Data Rollback</option>
+              <option value="partial">Partial Rollback</option>
+            </select>
+          </div>
+
+          <!-- Rollback Target Selection -->
+          <div v-if="selectedRollbackType">
+            <label for="rollback-target" class="block text-sm font-medium text-gray-300 mb-2">
+              Rollback Target
+            </label>
+            <select
+              id="rollback-target"
+              v-model="selectedRollbackTarget"
+              class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Select target...</option>
+              <option v-for="backup in availableRollbackBackups" :key="backup.id" :value="backup.id">
+                {{ backup.description || backup.filename }} ({{ backup.created_at }})
+              </option>
+            </select>
+          </div>
+
+          <!-- Rollback Options -->
+          <div v-if="selectedRollbackType && selectedRollbackTarget" class="space-y-3">
+            <div class="bg-gray-800 rounded-lg p-4 border border-gray-600">
+              <h4 class="text-md font-medium text-white mb-3">Rollback Options</h4>
+              
+              <!-- Database Rollback Options -->
+              <div v-if="selectedRollbackType === 'database'" class="space-y-2">
+                <label class="flex items-center">
+                  <input
+                    v-model="rollbackOptions.dropExisting"
+                    type="checkbox"
+                    class="mr-2 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500"
+                  />
+                  <span class="text-sm text-gray-300">Drop existing database before restore</span>
+                </label>
+                <label class="flex items-center">
+                  <input
+                    v-model="rollbackOptions.cleanupAfter"
+                    type="checkbox"
+                    class="mr-2 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500"
+                  />
+                  <span class="text-sm text-gray-300">Clean up temporary files after rollback</span>
+                </label>
+              </div>
+
+              <!-- Schema Rollback Options -->
+              <div v-if="selectedRollbackType === 'schema'" class="space-y-2">
+                <label class="flex items-center">
+                  <input
+                    v-model="rollbackOptions.preserveData"
+                    type="checkbox"
+                    class="mr-2 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500"
+                />
+                  <span class="text-sm text-gray-300">Preserve existing data during schema rollback</span>
+                </label>
+                <label class="flex items-center">
+                  <input
+                    v-model="rollbackOptions.backupBeforeSchema"
+                    type="checkbox"
+                    class="mr-2 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500"
+                  />
+                  <span class="text-sm text-gray-300">Create backup before schema rollback</span>
+                </label>
+              </div>
+
+              <!-- Data Rollback Options -->
+              <div v-if="selectedRollbackType === 'data'" class="space-y-2">
+                <div>
+                  <label class="block text-sm font-medium text-gray-300 mb-1">Tables to rollback:</label>
+                  <input
+                    v-model="rollbackOptions.tablesToRollback"
+                    type="text"
+                    placeholder="e.g., users, patients, radiation_personnel (comma-separated)"
+                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <label class="flex items-center">
+                  <input
+                    v-model="rollbackOptions.validateDataIntegrity"
+                    type="checkbox"
+                    class="mr-2 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500"
+                  />
+                  <span class="text-sm text-gray-300">Validate data integrity after rollback</span>
+                </label>
+              </div>
+
+              <!-- Partial Rollback Options -->
+              <div v-if="selectedRollbackType === 'partial'" class="space-y-2">
+                <div>
+                  <label class="block text-sm font-medium text-gray-300 mb-1">Rollback scope:</label>
+                  <select
+                    v-model="rollbackOptions.partialScope"
+                    class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="recent_changes">Recent changes only</option>
+                    <option value="specific_period">Specific time period</option>
+                    <option value="specific_user">Specific user changes</option>
+                    <option value="specific_module">Specific module changes</option>
+                  </select>
+                </div>
+                <div v-if="rollbackOptions.partialScope === 'specific_period'">
+                  <label class="block text-sm font-medium text-gray-300 mb-1">Time period:</label>
+                  <div class="grid grid-cols-2 gap-2">
+                    <input
+                      v-model="rollbackOptions.startDate"
+                      type="datetime-local"
+                      class="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <input
+                      v-model="rollbackOptions.endDate"
+                      type="datetime-local"
+                      class="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rollback Actions -->
+          <div v-if="selectedRollbackType && selectedRollbackTarget" class="flex gap-3">
+            <button
+              @click="validateRollback"
+              :disabled="validatingRollback"
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+            >
+              <span v-if="validatingRollback">Validating...</span>
+              <span v-else>Validate Rollback</span>
+            </button>
+            <button
+              @click="executeRollback"
+              :disabled="executingRollback || !rollbackValidation.valid"
+              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+            >
+              <span v-if="executingRollback">Executing...</span>
+              <span v-else>Execute Rollback</span>
+            </button>
+            <button
+              @click="resetRollbackForm"
+              class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white font-medium rounded-lg transition-colors"
+            >
+              Reset
+            </button>
+          </div>
+
+          <!-- Rollback Validation Results -->
+          <div v-if="rollbackValidation.checked" class="bg-gray-800 rounded-lg p-4 border border-gray-600">
+            <h4 class="text-md font-medium text-white mb-3">Validation Results</h4>
+            <div v-if="rollbackValidation.valid" class="text-green-400">
+              <p>✅ Rollback validation passed</p>
+              <p class="text-sm text-gray-300 mt-1">{{ rollbackValidation.message }}</p>
+            </div>
+            <div v-else class="text-red-400">
+              <p>❌ Rollback validation failed</p>
+              <p class="text-sm text-gray-300 mt-1">{{ rollbackValidation.message }}</p>
+              <ul class="text-sm text-gray-300 mt-2 list-disc list-inside">
+                <li v-for="issue in rollbackValidation.issues" :key="issue">{{ issue }}</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Rollback Progress -->
+          <div v-if="rollbackProgress.active" class="bg-gray-800 rounded-lg p-4 border border-gray-600">
+            <h4 class="text-md font-medium text-white mb-3">Rollback Progress</h4>
+            <div class="w-full bg-gray-700 rounded-full h-2.5 mb-3">
+              <div 
+                class="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                :style="{ width: rollbackProgress.percentage + '%' }"
+              ></div>
+            </div>
+            <p class="text-sm text-gray-300">{{ rollbackProgress.currentStep }}</p>
+            <p class="text-sm text-gray-400">{{ rollbackProgress.percentage }}% complete</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Restore Confirmation Modal -->
       <div v-if="showRestoreModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-600">
@@ -234,11 +429,39 @@ export default {
       message: null,
       selectedBackupLocation: 'default',
       customBackupPath: '',
-      locationFilter: 'all' // New data property for location filter
+      locationFilter: 'all', // New data property for location filter
+      selectedRollbackType: '',
+      selectedRollbackTarget: '',
+      validatingRollback: false,
+      executingRollback: false,
+      rollbackOptions: {
+        dropExisting: false,
+        cleanupAfter: false,
+        preserveData: false,
+        backupBeforeSchema: false,
+        tablesToRollback: '',
+        validateDataIntegrity: false,
+        partialScope: 'recent_changes',
+        startDate: '',
+        endDate: ''
+      },
+      rollbackValidation: {
+        checked: false,
+        valid: false,
+        message: '',
+        issues: []
+      },
+      rollbackProgress: {
+        active: false,
+        currentStep: '',
+        percentage: 0
+      },
+      availableRollbackBackups: [] // New data property for available backups for rollback
     }
   },
   mounted() {
     this.refreshBackups()
+    this.fetchAvailableRollbackBackups()
   },
   computed: {
     filteredBackups() {
@@ -254,6 +477,15 @@ export default {
           return backup.location === this.locationFilter
         }
       })
+    }
+  },
+  watch: {
+    selectedRollbackType() {
+      // Reset rollback target when type changes
+      this.selectedRollbackTarget = ''
+      this.rollbackValidation.checked = false
+      this.rollbackValidation.valid = false
+      this.rollbackProgress.active = false
     }
   },
   methods: {
@@ -414,6 +646,192 @@ export default {
       const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
       const i = Math.floor(Math.log(bytes) / Math.log(k))
       return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+    },
+
+    // New methods for rollback procedures
+    async fetchAvailableRollbackBackups() {
+      try {
+        const response = await fetch('/api/admin/backup/list')
+        if (response.ok) {
+          this.availableRollbackBackups = await response.json()
+        } else {
+          this.message = { type: 'error', text: 'Failed to load available backups for rollback' }
+        }
+      } catch (error) {
+        this.message = { type: 'error', text: `Error: ${error.message}` }
+      }
+    },
+
+    async validateRollback() {
+      this.rollbackValidation.checked = false
+      this.rollbackValidation.valid = false
+      this.rollbackValidation.message = ''
+      this.rollbackValidation.issues = []
+      this.rollbackProgress.active = false
+      this.rollbackProgress.currentStep = ''
+      this.rollbackProgress.percentage = 0
+
+      if (!this.selectedRollbackType) {
+        this.rollbackValidation.message = 'Please select a rollback type.'
+        this.rollbackValidation.checked = true
+        return
+      }
+
+      if (!this.selectedRollbackTarget) {
+        this.rollbackValidation.message = 'Please select a backup target for rollback.'
+        this.rollbackValidation.checked = true
+        return
+      }
+
+      this.rollbackProgress.active = true
+      this.rollbackProgress.currentStep = 'Fetching backup details...'
+      this.rollbackProgress.percentage = 10
+
+      try {
+        const response = await fetch(`/api/admin/backup/details/${this.selectedRollbackTarget}`)
+        if (response.ok) {
+          const backup = await response.json()
+          this.selectedBackup = backup
+          this.rollbackValidation.message = 'Backup details fetched. Preparing for validation.'
+          this.rollbackProgress.percentage = 30
+        } else {
+          this.rollbackValidation.message = 'Failed to fetch backup details.'
+          this.rollbackValidation.checked = true
+          return
+        }
+      } catch (error) {
+        this.rollbackValidation.message = `Error fetching backup details: ${error.message}`
+        this.rollbackValidation.checked = true
+        return
+      }
+
+      this.rollbackProgress.currentStep = 'Validating rollback options...'
+      this.rollbackProgress.percentage = 50
+
+      try {
+        const validationResult = await this.performRollbackValidation()
+        this.rollbackValidation.valid = validationResult.valid
+        this.rollbackValidation.message = validationResult.message
+        this.rollbackValidation.issues = validationResult.issues
+        this.rollbackProgress.percentage = 70
+      } catch (error) {
+        this.rollbackValidation.message = `Rollback validation failed: ${error.message}`
+        this.rollbackValidation.checked = true
+        return
+      }
+
+      this.rollbackProgress.currentStep = 'Rollback validation complete.'
+      this.rollbackProgress.percentage = 100
+      this.rollbackValidation.checked = true
+    },
+
+    async performRollbackValidation() {
+      const issues = []
+      let message = 'Rollback validation passed.'
+
+      if (this.selectedRollbackType === 'database' && this.rollbackOptions.dropExisting) {
+        const confirmDrop = confirm('Are you sure you want to drop the existing database? This action cannot be undone.')
+        if (!confirmDrop) {
+          issues.push('User cancelled database drop.')
+          message = 'Rollback validation failed due to user cancellation.'
+          return { valid: false, message, issues }
+        }
+      }
+
+      if (this.selectedRollbackType === 'schema' && this.rollbackOptions.preserveData) {
+        const confirmPreserve = confirm('Are you sure you want to preserve existing data during schema rollback? This might lead to data loss if not handled carefully.')
+        if (!confirmPreserve) {
+          issues.push('User cancelled preserving data during schema rollback.')
+          message = 'Rollback validation failed due to user cancellation.'
+          return { valid: false, message, issues }
+        }
+      }
+
+      if (this.selectedRollbackType === 'data' && this.rollbackOptions.validateDataIntegrity) {
+        const confirmIntegrity = confirm('Are you sure you want to validate data integrity after rollback? This might take a long time and consume significant resources.')
+        if (!confirmIntegrity) {
+          issues.push('User cancelled data integrity validation.')
+          message = 'Rollback validation failed due to user cancellation.'
+          return { valid: false, message, issues }
+        }
+      }
+
+      if (this.selectedRollbackType === 'partial' && this.rollbackOptions.partialScope === 'specific_period') {
+        if (!this.rollbackOptions.startDate || !this.rollbackOptions.endDate) {
+          issues.push('Please select both start and end dates for specific time period rollback.')
+          message = 'Rollback validation failed due to missing dates.'
+          return { valid: false, message, issues }
+        }
+        if (new Date(this.rollbackOptions.startDate) >= new Date(this.rollbackOptions.endDate)) {
+          issues.push('Start date must be before end date for specific time period rollback.')
+          message = 'Rollback validation failed due to date range error.'
+          return { valid: false, message, issues }
+        }
+      }
+
+      return { valid: true, message, issues }
+    },
+
+    async executeRollback() {
+      if (this.executingRollback) return
+      
+      this.executingRollback = true
+      this.rollbackProgress.active = true
+      this.rollbackProgress.currentStep = 'Preparing rollback...'
+      this.rollbackProgress.percentage = 0
+
+      try {
+        const response = await fetch('/api/admin/backup/rollback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            backupId: this.selectedRollbackTarget,
+            type: this.selectedRollbackType,
+            options: this.rollbackOptions
+          })
+        })
+
+        if (response.ok) {
+          const result = await response.json()
+          this.message = { type: 'success', text: result.message }
+          this.refreshBackups() // Refresh backups to show new rollback status
+          this.resetRollbackForm()
+        } else {
+          const error = await response.text()
+          this.message = { type: 'error', text: `Failed to execute rollback: ${error}` }
+        }
+      } catch (error) {
+        this.message = { type: 'error', text: `Error: ${error.message}` }
+      } finally {
+        this.executingRollback = false
+        this.rollbackProgress.active = false
+      }
+    },
+
+    resetRollbackForm() {
+      this.selectedRollbackType = ''
+      this.selectedRollbackTarget = ''
+      this.rollbackOptions = {
+        dropExisting: false,
+        cleanupAfter: false,
+        preserveData: false,
+        backupBeforeSchema: false,
+        tablesToRollback: '',
+        validateDataIntegrity: false,
+        partialScope: 'recent_changes',
+        startDate: '',
+        endDate: ''
+      }
+      this.rollbackValidation.checked = false
+      this.rollbackValidation.valid = false
+      this.rollbackValidation.message = ''
+      this.rollbackValidation.issues = []
+      this.rollbackProgress.active = false
+      this.rollbackProgress.currentStep = ''
+      this.rollbackProgress.percentage = 0
+      this.availableRollbackBackups = [] // Clear available backups
     }
   }
 }

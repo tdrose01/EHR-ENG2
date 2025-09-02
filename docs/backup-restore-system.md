@@ -70,6 +70,80 @@ The Database Backup & Restore System provides secure, encrypted database backups
    - Decompression
    - Database restoration via `psql`
 
+### Rollback Procedures
+
+The system now supports advanced rollback procedures with multiple rollback types and comprehensive validation:
+
+#### Rollback Types
+
+1. **Database Rollback**
+   - Complete database restoration from backup
+   - Option to drop existing database before restore
+   - Automatic cleanup of temporary files
+   - **Use Case**: Complete system recovery after major issues
+
+2. **Schema Rollback**
+   - Restore database structure without losing data
+   - Option to preserve existing data during rollback
+   - Automatic backup creation before schema changes
+   - **Use Case**: Revert structural changes while preserving data
+
+3. **Data Rollback**
+   - Rollback specific tables or data sets
+   - Selective table restoration from backup
+   - Data integrity validation after rollback
+   - **Use Case**: Revert specific data changes without affecting structure
+
+4. **Partial Rollback**
+   - Time-based rollback (specific date ranges)
+   - User-specific changes rollback
+   - Module-specific changes rollback
+   - **Use Case**: Revert recent changes or specific user actions
+
+#### Rollback Process
+
+1. **Select Rollback Type**
+   - Choose from database, schema, data, or partial rollback
+   - System automatically shows relevant options
+
+2. **Choose Backup Target**
+   - Select from available backups in the system
+   - View backup details and creation timestamps
+
+3. **Configure Options**
+   - Set rollback-specific parameters
+   - Configure safety options (data preservation, validation)
+   - Set time ranges for partial rollbacks
+
+4. **Validate Rollback**
+   - System performs pre-execution validation
+   - Checks backup integrity and compatibility
+   - Confirms critical operations with user
+   - **Progress Tracking**: Real-time validation progress
+
+5. **Execute Rollback**
+   - System executes rollback with safety measures
+   - **Progress Tracking**: Step-by-step progress updates
+   - Automatic error handling and rollback on failure
+   - Completion notification with results
+
+#### Safety Features
+
+- **Pre-Execution Validation**: Comprehensive checks before rollback
+- **User Confirmations**: Critical operations require explicit user approval
+- **Progress Tracking**: Real-time updates during long operations
+- **Error Recovery**: Automatic cleanup on failed rollbacks
+- **Audit Logging**: Complete record of all rollback operations
+
+#### Rollback Options by Type
+
+| Rollback Type | Available Options | Safety Features |
+|---------------|-------------------|-----------------|
+| **Database** | Drop existing DB, Cleanup after | User confirmation for DB drop |
+| **Schema** | Preserve data, Backup before | Automatic pre-rollback backup |
+| **Data** | Table selection, Integrity validation | Data integrity checks |
+| **Partial** | Time range, User scope, Module scope | Date validation, Scope confirmation |
+
 ### Managing Backups
 
 - **View all backups** across all locations
@@ -104,6 +178,8 @@ The Database Backup & Restore System provides secure, encrypted database backups
 | `POST` | `/create` | Create new backup | `description`, `location`, `customPath` |
 | `GET` | `/list` | List all backups | None |
 | `POST` | `/restore` | Restore from backup | `backupId` |
+| `POST` | `/rollback` | Execute rollback procedure | `backupId`, `type`, `options` |
+| `GET` | `/details/:id` | Get backup details | `id` (URL param) |
 | `DELETE` | `/delete` | Delete backup | `backupId` |
 | `GET` | `/download/:id` | Download backup file | `id` (URL param) |
 | `GET` | `/locations` | Get available locations | None |
@@ -125,6 +201,59 @@ POST /api/admin/backup/create
 POST /api/admin/backup/restore
 {
   "backupId": "backup_2025-08-22T15-07-19-123Z_test_backup.sql.gz.enc"
+}
+```
+
+#### Execute Rollback
+```json
+POST /api/admin/backup/rollback
+{
+  "backupId": "backup_2025-08-22T15-07-19-123Z_test_backup.sql.gz.enc",
+  "type": "database",
+  "options": {
+    "dropExisting": true,
+    "cleanupAfter": true
+  }
+}
+```
+
+#### Schema Rollback Example
+```json
+POST /api/admin/backup/rollback
+{
+  "backupId": "backup_2025-08-22T15-07-19-123Z_test_backup.sql.gz.enc",
+  "type": "schema",
+  "options": {
+    "preserveData": true,
+    "backupBeforeSchema": true
+  }
+}
+```
+
+#### Data Rollback Example
+```json
+POST /api/admin/backup/rollback
+{
+  "backupId": "backup_2025-08-22T15-07-19-123Z_test_backup.sql.gz.enc",
+  "type": "data",
+  "options": {
+    "tablesToRollback": "users,patients,radiation_personnel",
+    "validateDataIntegrity": true
+  }
+}
+```
+
+#### Partial Rollback Example
+```json
+POST /api/admin/backup/rollback
+{
+  "backupId": "backup_2025-08-22T15-07-19-123Z_test_backup.sql.gz.enc",
+  "type": "partial",
+  "options": {
+    "partialScope": "specific_period",
+    "startDate": "2025-08-20T00:00:00Z",
+    "endDate": "2025-08-22T23:59:59Z"
+  }
 }
 ```
 
@@ -255,5 +384,5 @@ npm run start:server
 ---
 
 **Last Updated**: August 22, 2025  
-**Version**: 2.0  
-**Status**: ✅ **FULLY OPERATIONAL** - All issues resolved
+**Version**: 2.1  
+**Status**: ✅ **FULLY OPERATIONAL** - Rollback procedures added
