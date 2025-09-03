@@ -1,37 +1,39 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+  <div class="min-h-screen flex items-center justify-center bg-black text-white">
     <form
-      class="bg-white dark:bg-gray-700 p-6 rounded shadow w-full max-w-sm"
+      class="bg-gray-900 p-6 rounded shadow w-full max-w-sm border border-gray-700"
       @submit.prevent="handleSubmit"
     >
-      <h1 class="text-2xl font-bold mb-4 text-center">Login</h1>
+      <h1 class="text-2xl font-bold mb-4 text-center text-blue-400">Navy EHR System</h1>
       <div class="mb-4">
-        <label class="block text-gray-700 dark:text-gray-300 mb-2" for="email">Email</label>
+        <label class="block text-gray-300 mb-2" for="email">Email</label>
         <input
           id="email"
           v-model="email"
           type="email"
           required
-          class="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+          class="w-full px-3 py-2 bg-gray-800 border-gray-600 text-white placeholder-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Enter your email"
         />
       </div>
       <div class="mb-6">
-        <label class="block text-gray-700 dark:text-gray-300 mb-2" for="password">Password</label>
+        <label class="block text-gray-300 mb-2" for="password">Password</label>
         <input
           id="password"
           v-model="password"
           type="password"
           required
-          class="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+          class="w-full px-3 py-2 bg-gray-800 border-gray-600 text-white placeholder-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Enter your password"
         />
       </div>
       <button
         type="submit"
-        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded transition-colors"
       >
         Log In
       </button>
-      <p v-if="errorMessage" class="mt-4 text-red-600 text-center">{{ errorMessage }}</p>
+      <p v-if="errorMessage" class="mt-4 text-red-400 text-center bg-red-900/20 border border-red-800 rounded-md p-3">{{ errorMessage }}</p>
     </form>
   </div>
 </template>

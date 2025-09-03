@@ -1,4 +1,4 @@
-# Documentation Update Summary - August 26, 2025
+# Documentation Update Summary - September 3, 2025
 
 ## 🎯 **Overview**
 This document provides a comprehensive summary of all documentation updates made to reflect the current system status, fixes, and enhancements.
@@ -43,6 +43,39 @@ This document provides a comprehensive summary of all documentation updates made
 - **Agent Workflow**: Now marked as operational
 
 ## 🔧 **Major Fixes Documented**
+
+### **CORS Configuration Fix** ✅ NEW
+- **Issue**: Frontend requests blocked by CORS policy
+- **Root Cause**: Backend only allowed localhost origins, not IP addresses
+- **Solution**: Updated CORS configuration to include `http://172.31.24.38:5173`
+- **Files Modified**: 
+  - `server/index.js` - Added IP address to allowed origins
+  - `server/config/monitoring.config.js` - Updated monitoring CORS config
+- **Status**: ✅ **RESOLVED** - All frontend requests now working
+
+### **Database Column Mismatch Fix** ✅ NEW
+- **Issue**: Database queries failing with "column does not exist" errors
+- **Root Cause**: Code referenced `last_login_at` and `created_at` columns that don't exist
+- **Solution**: Updated all queries to use correct column names (`last_login`)
+- **Files Modified**:
+  - `server/models/userModel.js` - Fixed column references
+  - `server/index.js` - Updated login and profile queries
+  - `server/routes/users.js` - Fixed user listing queries
+- **Status**: ✅ **RESOLVED** - All database queries working correctly
+
+### **Login Screen UI/UX Enhancement** ✅ NEW
+- **Issue**: Login screen used light theme inconsistent with application
+- **Solution**: Updated login screen to match dark theme used throughout app
+- **Changes Applied**:
+  - Background: Changed to `bg-black` (matches main app)
+  - Cards: Updated to `bg-gray-900` with `border-gray-700`
+  - Text: Changed to `text-white` and `text-gray-300`
+  - Accents: Applied `text-blue-400` for titles
+  - Inputs: Dark theme with proper focus states
+- **Files Modified**:
+  - `src/components/Login.vue` - Main login component
+  - `src/components/LoginLanding.vue` - Alternative login component
+- **Status**: ✅ **COMPLETED** - Consistent dark theme across all pages
 
 ### **Radiation Health Monitoring System**
 - **Status**: Production Ready (100% test pass rate)
@@ -150,6 +183,6 @@ The documentation has been comprehensively updated to reflect the current state 
 
 ---
 
-**Documentation Update Date**: August 26, 2025  
-**System Version**: 2.1.0  
+**Documentation Update Date**: September 3, 2025  
+**System Version**: 2.1.1  
 **Status**: ✅ **COMPLETE** - All documentation updated and current

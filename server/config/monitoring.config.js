@@ -231,7 +231,12 @@ module.exports = {
     
     cors: {
       enabled: true,
-      origins: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173'],
+      origins: process.env.ALLOWED_ORIGINS?.split(',') || [
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://172.31.24.38:5173',
+        'http://172.31.24.38:5174'
+      ],
       credentials: true
     }
   },

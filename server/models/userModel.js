@@ -13,7 +13,7 @@ const User = {
   },
 
   async findAll() {
-    const { rows } = await db.query('SELECT id, email, role, last_login_at FROM users ORDER BY id DESC');
+    const { rows } = await db.query('SELECT id, email, role, last_login FROM users ORDER BY id DESC');
     return rows;
   },
 
