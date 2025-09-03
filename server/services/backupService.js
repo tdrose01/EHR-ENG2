@@ -51,9 +51,23 @@ class BackupService {
     }
 
     // Parse postgresql://username:password@host:port/database or postgres://username:password@host:port/database
-    const match = dbUrl.match(/postgres(ql)?:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/);
+    // Also handle postgresql://username@host:port/database (without password)
+    let match = dbUrl.match(/postgres(ql)?:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/);
+    
     if (!match) {
-      throw new Error('Invalid DATABASE_URL format');
+      // Try without password format: postgresql://username@host:port/database
+      match = dbUrl.match(/postgres(ql)?:\/\/([^@]+)@([^:]+):(\d+)\/(.+)/);
+      if (!match) {
+        throw new Error('Invalid DATABASE_URL format. Expected: postgresql://username[:password]@host:port/database');
+      }
+      
+      return {
+        username: match[2],
+        password: '', // No password
+        host: match[3],
+        port: match[4],
+        database: match[5]
+      };
     }
 
     return {
@@ -106,18 +120,24 @@ class BackupService {
       const filepath = path.join(backupDir, filename);
 
       // Create the backup using pg_dump
-      const dumpProcess = spawn('pg_dump', [
+      const dumpArgs = [
         '-h', dbConfig.host,
         '-p', dbConfig.port,
         '-U', dbConfig.username,
         '-d', dbConfig.database,
-        '--no-password', // We'll use environment variable
         '--verbose',
         '--clean',
         '--if-exists',
         '--create'
-      ], {
-        env: { ...process.env, PGPASSWORD: dbConfig.password },
+      ];
+
+      // Only add --no-password if there's no password configured
+      if (!dbConfig.password) {
+        dumpArgs.push('--no-password');
+      }
+
+      const dumpProcess = spawn('pg_dump', dumpArgs, {
+        env: { ...process.env, PGPASSWORD: dbConfig.password || '' },
         stdio: ['pipe', 'pipe', 'pipe']
       });
 
@@ -234,15 +254,21 @@ class BackupService {
       const dbConfig = this.parseDatabaseUrl();
       
       // Restore using psql
-      const restoreProcess = spawn('psql', [
+      const restoreArgs = [
         '-h', dbConfig.host,
         '-p', dbConfig.port,
         '-U', dbConfig.username,
         '-d', dbConfig.database,
-        '--no-password',
         '--verbose'
-      ], {
-        env: { ...process.env, PGPASSWORD: dbConfig.password },
+      ];
+
+      // Only add --no-password if there's no password configured
+      if (!dbConfig.password) {
+        restoreArgs.push('--no-password');
+      }
+
+      const restoreProcess = spawn('psql', restoreArgs, {
+        env: { ...process.env, PGPASSWORD: dbConfig.password || '' },
         stdio: ['pipe', 'pipe', 'pipe']
       });
 

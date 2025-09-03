@@ -20,6 +20,16 @@ The Database Backup & Restore System provides secure, encrypted database backups
 - **Database Permissions**: Admin user must have `SELECT` and `USAGE` on all tables and sequences
 - **Environment Variables**: `DATABASE_URL` and `BACKUP_ENCRYPTION_KEY` must be configured
 
+### DATABASE_URL Format Support
+
+The backup system supports multiple DATABASE_URL formats:
+
+- **With Password**: `postgresql://username:password@host:port/database`
+- **Without Password**: `postgresql://username@host:port/database`
+- **Default Format**: `postgresql://postgres@localhost:5432/ehr_eng2`
+
+The system automatically detects the format and configures the appropriate connection parameters.
+
 ## Access Points
 
 ### 1. Electronic Health (EH) Module

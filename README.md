@@ -41,12 +41,14 @@ npm run start:server # Backend (Express) - Port 3005
 ### Radiation Health (RH) Module  
 - **Radiation Monitoring**: Personnel exposure tracking
 - **Device Management**: Radiation device inventory and calibration
+- **Unit Management**: Organizational unit hierarchy with UIC codes and personnel assignment
 - **Dose Readings**: Real-time dose measurement logging with manual entry capability
 - **Manual Dose Entry**: Offline-capable manual dose reading form for Bluetooth-unavailable scenarios
 - **Real-Time Monitoring**: Live WebSocket-based dashboard with live updates
 - **Database Backup & Restore**: Admin-only secure backup system
 
 #### 🆕 **Recent Updates - Production Ready** ✅
+- **Unit Management System**: Complete organizational unit hierarchy with UIC codes, parent-child relationships, and personnel assignment tracking
 - **Enhanced Validation**: Comprehensive alert validation system (100% test pass rate)
 - **Database Schema Access**: Full metadata endpoint for testing and development
 - **Manual Dose Entry Form**: Complete offline data entry solution with validation and audit tracking

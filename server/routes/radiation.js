@@ -313,11 +313,15 @@ router.put('/alerts/:id/ack', async (req, res) => {
   }
 });
 
-// 9. Get units for personnel form
+// 9. Get units for personnel form and unit management
 router.get('/units', async (req, res) => {
   try {
     const pool = require('../db');
-    const result = await pool.query('SELECT id, name FROM radiation_units ORDER BY name');
+    const result = await pool.query(`
+      SELECT id, uic, name, parent_uic, created_at 
+      FROM radiation_units 
+      ORDER BY name
+    `);
     res.json(result.rows);
   } catch (error) {
     console.error('Units fetch error:', error);
@@ -822,6 +826,49 @@ router.put('/units/:id', async (req, res) => {
   } catch (error) {
     console.error('Update unit error:', error);
     res.status(500).json({ error: 'Failed to update unit' });
+  }
+});
+
+// DELETE unit endpoint
+router.delete('/units/:id', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { id } = req.params;
+
+    // Check if unit has child units
+    const childUnitsResult = await pool.query(`
+      SELECT COUNT(*) as count 
+      FROM radiation_units 
+      WHERE parent_uic = (SELECT uic FROM radiation_units WHERE id = $1)
+    `, [id]);
+
+    if (childUnitsResult.rows[0].count > 0) {
+      return res.status(400).json({ 
+        error: 'Cannot delete unit with child units. Please delete or reassign child units first.' 
+      });
+    }
+
+    // Check if unit has assigned personnel
+    const personnelResult = await pool.query(`
+      SELECT COUNT(*) as count 
+      FROM radiation_personnel 
+      WHERE unit_id = $1
+    `, [id]);
+
+    if (personnelResult.rows[0].count > 0) {
+      return res.status(400).json({ 
+        error: 'Cannot delete unit with assigned personnel. Please reassign personnel first.' 
+      });
+    }
+
+    // Delete the unit
+    await pool.query('DELETE FROM radiation_units WHERE id = $1', [id]);
+
+    res.json({ success: true, message: 'Unit deleted successfully' });
+
+  } catch (error) {
+    console.error('Delete unit error:', error);
+    res.status(500).json({ error: 'Failed to delete unit' });
   }
 });
 

@@ -336,6 +336,138 @@
             </div>
           </div>
 
+          <!-- Units Tab -->
+          <div v-if="activeTab === 'units'" class="space-y-4">
+            <!-- Units Header -->
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-semibold text-white">Unit Management</h3>
+                <p class="text-gray-400 text-sm">Manage organizational units and hierarchy</p>
+              </div>
+              <button
+                @click="openAddUnitModal"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center"
+              >
+                <i class="fas fa-plus mr-2"></i>
+                Add Unit
+              </button>
+            </div>
+
+            <!-- Units Table -->
+            <div class="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-600">
+                  <thead class="bg-gray-800">
+                    <tr>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        UIC Code
+                      </th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Unit Name
+                      </th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Parent Unit
+                      </th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Personnel Count
+                      </th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Created
+                      </th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody v-if="units.length > 0" class="divide-y divide-gray-600">
+                    <tr v-for="unit in units" :key="unit.id" class="hover:bg-gray-800 transition-colors">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                          <i class="fas fa-building text-blue-400 mr-2"></i>
+                          <span class="text-sm font-medium text-white">{{ unit.uic }}</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <div class="text-sm text-gray-300">{{ unit.name }}</div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-300">
+                          <span v-if="unit.parent_uic" class="flex items-center">
+                            <i class="fas fa-level-up-alt text-gray-500 mr-1 transform rotate-90"></i>
+                            {{ unit.parent_uic }}
+                          </span>
+                          <span v-else class="text-gray-500">Root Unit</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-900 text-blue-300">
+                          {{ getPersonnelCountForUnit(unit.id) }} personnel
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        {{ formatDate(unit.created_at) }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex space-x-2">
+                          <button
+                            @click="editUnit(unit)"
+                            class="text-blue-400 hover:text-blue-300 transition-colors"
+                            :title="`Edit ${unit.name}`"
+                          >
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button
+                            @click="viewUnitPersonnel(unit)"
+                            class="text-green-400 hover:text-green-300 transition-colors"
+                            :title="`View personnel in ${unit.name}`"
+                          >
+                            <i class="fas fa-users"></i>
+                          </button>
+                          <button
+                            @click="deleteUnit(unit)"
+                            class="text-red-400 hover:text-red-300 transition-colors"
+                            :title="`Delete ${unit.name}`"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tbody v-else>
+                    <tr>
+                      <td colspan="6" class="px-6 py-12 text-center">
+                        <div class="text-gray-400">
+                          <i class="fas fa-building text-4xl mb-4"></i>
+                          <p class="text-lg">No units found</p>
+                          <p class="text-sm">Create your first unit to get started</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Unit Hierarchy Visualization -->
+            <div v-if="units.length > 0" class="mt-8">
+              <h3 class="text-lg font-semibold text-white mb-4">Unit Hierarchy</h3>
+              <div class="bg-gray-900 rounded-lg border border-gray-700 p-6">
+                <div class="space-y-2">
+                  <div v-for="rootUnit in rootUnits" :key="rootUnit.id" class="unit-hierarchy-item">
+                    <UnitHierarchyNode 
+                      :unit="rootUnit" 
+                      :units="units" 
+                      :personnel="personnel"
+                      @edit="editUnit"
+                      @view-personnel="viewUnitPersonnel"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Assignments Tab -->
           <div v-if="activeTab === 'assignments'" class="space-y-4">
             <div class="flex justify-between items-center mb-4">
@@ -702,6 +834,16 @@
          </div>
        </div>
      </div>
+
+     <!-- Unit Management Modal -->
+     <UnitManagementModal
+       :show="showUnitModal"
+       :editing-unit="editingUnit"
+       :units="units"
+       @saved="onUnitSaved"
+       @cancel="closeUnitModal"
+       @error="onUnitError"
+     />
    </div>
  </template>
 
@@ -710,6 +852,8 @@ import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import AddRadiationPersonnelForm from '../components/AddRadiationPersonnelForm.vue'
 import DeviceAssignmentModal from '../components/DeviceAssignmentModal.vue'
 import ManualDoseReadingForm from '../components/ManualDoseReadingForm.vue'
+import UnitManagementModal from '../components/UnitManagementModal.vue'
+import UnitHierarchyNode from '../components/UnitHierarchyNode.vue'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -717,7 +861,9 @@ export default {
   components: {
     AddRadiationPersonnelForm,
     DeviceAssignmentModal,
-    ManualDoseReadingForm
+    ManualDoseReadingForm,
+    UnitManagementModal,
+    UnitHierarchyNode
   },
   setup() {
     // Get router instance
@@ -745,6 +891,8 @@ export default {
     const showAssignmentModal = ref(false)
     const editingAssignment = ref(null)
     const showManualDoseReadingModal = ref(false)
+    const showUnitModal = ref(false)
+    const editingUnit = ref(null)
     
     // Current user (for manual entry tracking)
     const currentUser = ref('System User') // TODO: Get from auth context
@@ -756,6 +904,7 @@ export default {
     const alertsError = ref('')
     const reconciliationsError = ref('')
     const assignmentsError = ref('')
+    const unitError = ref('')
     
     // Filters
     const personnelSearch = ref('')
@@ -776,6 +925,11 @@ export default {
       return assignments.value.filter(assignment => assignment.personnel_id === assignmentsPersonnelFilter.value)
     })
 
+    // Unit management computed properties
+    const rootUnits = computed(() => {
+      return units.value.filter(unit => !unit.parent_uic)
+    })
+
     // Add assignmentsPersonnelFilter variable
     const assignmentsPersonnelFilter = ref('')
 
@@ -783,6 +937,7 @@ export default {
     const tabs = [
       { id: 'personnel', name: 'Personnel', icon: 'fas fa-users' },
       { id: 'devices', name: 'Devices', icon: 'fas fa-microchip' },
+      { id: 'units', name: 'Units', icon: 'fas fa-building' },
       { id: 'assignments', name: 'Assignments', icon: 'fas fa-link' },
       { id: 'readings', name: 'Readings', icon: 'fas fa-chart-line' },
       { id: 'alerts', name: 'Alerts', icon: 'fas fa-exclamation-triangle' },
@@ -847,9 +1002,13 @@ export default {
         const response = await fetch('/api/radiation/units')
         if (response.ok) {
           units.value = await response.json()
+        } else {
+          const errorData = await response.json()
+          unitError.value = errorData.error || 'Failed to load units data'
         }
       } catch (error) {
         console.error('Failed to fetch units:', error)
+        unitError.value = 'Network error loading units data'
       }
     }
 
@@ -1017,6 +1176,78 @@ export default {
     const onManualDoseReadingError = (error) => {
       console.error('Manual dose reading error:', error)
       // You could add a toast notification here
+    }
+
+    // Unit management modal control methods
+    const openAddUnitModal = () => {
+      editingUnit.value = null
+      showUnitModal.value = true
+    }
+
+    const closeUnitModal = () => {
+      showUnitModal.value = false
+      editingUnit.value = null
+      unitError.value = ''
+    }
+
+    const editUnit = (unit) => {
+      editingUnit.value = { ...unit }
+      showUnitModal.value = true
+    }
+
+    const onUnitSaved = () => {
+      closeUnitModal()
+      fetchUnits()
+      fetchPersonnel() // Refresh personnel to update unit assignments
+    }
+
+    const onUnitError = (error) => {
+      unitError.value = error
+    }
+
+    const deleteUnit = async (unit) => {
+      const confirmed = confirm(
+        `⚠️ DELETE UNIT\n\n` +
+        `Are you sure you want to delete:\n` +
+        `• UIC: ${unit.uic}\n` +
+        `• Name: ${unit.name}\n\n` +
+        `This action will:\n` +
+        `• Remove the unit from the system\n` +
+        `• Unassign personnel from this unit\n` +
+        `• Cannot be undone\n\n` +
+        `Click OK to proceed with deletion.`
+      )
+      
+      if (!confirmed) return
+
+      try {
+        const response = await fetch(`/api/radiation/units/${unit.id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        })
+
+        if (response.ok) {
+          await fetchUnits()
+          await fetchPersonnel() // Refresh personnel to update unit assignments
+          alert(`Unit ${unit.name} has been successfully deleted.`)
+        } else {
+          const errorData = await response.json()
+          alert(`Failed to delete unit: ${errorData.error}`)
+        }
+      } catch (error) {
+        console.error('Failed to delete unit:', error)
+        alert('An error occurred while deleting unit. Please try again.')
+      }
+    }
+
+    const getPersonnelCountForUnit = (unitId) => {
+      return personnel.value.filter(p => p.unit_id === unitId).length
+    }
+
+    const viewUnitPersonnel = (unit) => {
+      // Filter personnel to show only this unit's personnel
+      personnelSearch.value = unit.name
+      activeTab.value = 'personnel'
     }
 
     const endAssignment = async (assignmentId) => {
@@ -1385,6 +1616,7 @@ export default {
       reconciliationsError,
       assignmentsError,
       overviewError,
+      unitError,
       
       // Modal state
       showPersonnelModal,
@@ -1392,6 +1624,8 @@ export default {
       showAssignmentModal,
       editingAssignment,
       showManualDoseReadingModal,
+      showUnitModal,
+      editingUnit,
       currentUser,
       
       // Filters
@@ -1410,6 +1644,7 @@ export default {
       filteredPersonnel,
       filteredReadings,
       filteredAssignments,
+      rootUnits,
       isAdmin, // Add isAdmin to the returned object
       
       // Methods
@@ -1428,6 +1663,14 @@ export default {
       closeManualDoseReadingModal,
       onManualDoseReadingSaved,
       onManualDoseReadingError,
+      openAddUnitModal,
+      closeUnitModal,
+      onUnitSaved,
+      onUnitError,
+      editUnit,
+      deleteUnit,
+      getPersonnelCountForUnit,
+      viewUnitPersonnel,
       endAssignment,
       editPersonnel,
       deletePersonnel,
