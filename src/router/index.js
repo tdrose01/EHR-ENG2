@@ -12,6 +12,7 @@ import SystemStatus from '../components/SystemStatus.vue'
 import Settings from '../components/Settings.vue'
 import UserManagement from '../components/UserManagement.vue'
 import RealTimeMonitoringDashboard from '../components/RealTimeMonitoringDashboard.vue'
+import NavMedTestPage from '../views/NavMedTestPage.vue'
 
 const routes = [
   {
@@ -77,6 +78,12 @@ const routes = [
     path: '/real-time-monitoring',
     name: 'RealTimeMonitoringDashboard',
     component: RealTimeMonitoringDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/navmed-test',
+    name: 'NavMedTestPage',
+    component: NavMedTestPage,
     meta: { requiresAuth: true }
   }
 ]

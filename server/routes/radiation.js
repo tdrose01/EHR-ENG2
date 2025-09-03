@@ -1434,4 +1434,192 @@ router.post('/test-alerts', async (req, res) => {
   }
 });
 
+// NAVMED 6470/1 - Exposure to Ionizing Radiation Report
+router.post('/reports/6470-1', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const {
+      report_type,
+      personnel_id,
+      period_start,
+      period_end,
+      calendar_year,
+      deep_dose_msv,
+      shallow_dose_msv,
+      extremity_dose_msv,
+      internal_dose_msv,
+      limit_exceeded,
+      discovery_date,
+      exposure_circumstances,
+      prepared_by,
+      date_prepared,
+      rso_signature,
+      command_signature,
+      comments
+    } = req.body;
+
+    // Validation
+    if (!report_type || !personnel_id || !period_start || !period_end || !prepared_by || !date_prepared) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: report_type, personnel_id, period_start, period_end, prepared_by, date_prepared are required' 
+      });
+    }
+
+    // Validate report type
+    const validReportTypes = ['ANNUAL', 'SITUATIONAL', 'OVER_LIMIT'];
+    if (!validReportTypes.includes(report_type)) {
+      return res.status(400).json({ 
+        error: `Invalid report type. Must be one of: ${validReportTypes.join(', ')}` 
+      });
+    }
+
+    // Validate personnel exists
+    const personnelCheck = await pool.query('SELECT id FROM radiation_personnel WHERE id = $1 AND active = true', [personnel_id]);
+    if (personnelCheck.rows.length === 0) {
+      return res.status(400).json({ error: 'Invalid personnel ID or personnel is inactive' });
+    }
+
+    // Validate dates
+    const startDate = new Date(period_start);
+    const endDate = new Date(period_end);
+    if (startDate >= endDate) {
+      return res.status(400).json({ error: 'Period end date must be after start date' });
+    }
+
+    // Over-limit specific validation
+    if (report_type === 'OVER_LIMIT') {
+      if (!limit_exceeded || !discovery_date || !exposure_circumstances) {
+        return res.status(400).json({ 
+          error: 'Over-limit reports require: limit_exceeded, discovery_date, exposure_circumstances' 
+        });
+      }
+    }
+
+    // Insert the report
+    const insertQuery = `
+      INSERT INTO radiation_navmed_reports (
+        report_type, personnel_id, period_start, period_end, calendar_year,
+        deep_dose_msv, shallow_dose_msv, extremity_dose_msv, internal_dose_msv,
+        limit_exceeded, discovery_date, exposure_circumstances,
+        prepared_by, date_prepared, rso_signature, command_signature, comments,
+        created_at
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW()
+      ) RETURNING id
+    `;
+
+    // Debug: Log the incoming data
+    console.log('NAVMED 6470/1 submission data:', {
+      report_type,
+      personnel_id,
+      period_start,
+      period_end,
+      discovery_date,
+      date_prepared,
+      limit_exceeded,
+      exposure_circumstances
+    });
+
+    // Handle empty date strings - convert to null for PostgreSQL
+    const processedDiscoveryDate = discovery_date && discovery_date.trim() !== '' ? discovery_date : null;
+    const processedDatePrepared = date_prepared && date_prepared.trim() !== '' ? date_prepared : null;
+    const processedPeriodStart = period_start && period_start.trim() !== '' ? period_start : null;
+    const processedPeriodEnd = period_end && period_end.trim() !== '' ? period_end : null;
+
+    console.log('Processed dates:', {
+      processedDiscoveryDate,
+      processedDatePrepared,
+      processedPeriodStart,
+      processedPeriodEnd
+    });
+
+    const result = await pool.query(insertQuery, [
+      report_type, personnel_id, processedPeriodStart, processedPeriodEnd, calendar_year,
+      deep_dose_msv || 0, shallow_dose_msv || 0, extremity_dose_msv || 0, internal_dose_msv || 0,
+      limit_exceeded, processedDiscoveryDate, exposure_circumstances,
+      prepared_by, processedDatePrepared, rso_signature, command_signature, comments
+    ]);
+
+    // If over-limit, create an alert
+    if (report_type === 'OVER_LIMIT') {
+      await pool.query(`
+        INSERT INTO radiation_alerts (
+          type, severity, threshold, value, personnel_id, measured_ts, details, created_ts
+        ) VALUES (
+          'DOSE_THRESHOLD', 'CRITICAL', 20, $1, $2, $3, $4, NOW()
+        )
+      `, [
+        deep_dose_msv || 0,
+        personnel_id,
+        processedDiscoveryDate,
+        JSON.stringify({
+          report_type: 'NAVMED_6470_1',
+          limit_exceeded,
+          exposure_circumstances,
+          report_id: result.rows[0].id
+        })
+      ]);
+    }
+
+    res.status(201).json({
+      success: true,
+      report_id: result.rows[0].id,
+      message: 'NAVMED 6470/1 report submitted successfully'
+    });
+
+  } catch (error) {
+    console.error('NAVMED 6470/1 submission error:', error);
+    res.status(500).json({ error: 'Failed to submit NAVMED 6470/1 report' });
+  }
+});
+
+// Get NAVMED 6470/1 reports
+router.get('/reports/6470-1', async (req, res) => {
+  try {
+    const pool = require('../db');
+    const { personnel_id, report_type, limit = 50, offset = 0 } = req.query;
+
+    let whereClause = '';
+    let paramCount = 0;
+    const params = [];
+
+    if (personnel_id) {
+      whereClause += ` WHERE r.personnel_id = $${++paramCount}`;
+      params.push(personnel_id);
+    }
+
+    if (report_type) {
+      whereClause += whereClause ? ` AND r.report_type = $${++paramCount}` : ` WHERE r.report_type = $${++paramCount}`;
+      params.push(report_type);
+    }
+
+    const query = `
+      SELECT 
+        r.*,
+        p.rank_rate, p.lname, p.fname, p.edipi,
+        u.name as unit_name
+      FROM radiation_navmed_reports r
+      LEFT JOIN radiation_personnel p ON r.personnel_id = p.id
+      LEFT JOIN radiation_units u ON p.unit_id = u.id
+      ${whereClause}
+      ORDER BY r.created_at DESC
+      LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}
+    `;
+
+    params.push(limit, offset);
+    const result = await pool.query(query, params);
+
+    res.json({
+      reports: result.rows,
+      count: result.rows.length,
+      limit: parseInt(limit),
+      offset: parseInt(offset)
+    });
+
+  } catch (error) {
+    console.error('NAVMED 6470/1 fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch NAVMED 6470/1 reports' });
+  }
+});
+
 module.exports = router;

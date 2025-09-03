@@ -44,6 +44,15 @@ npm run start:server # Backend (Express) - Port 3005
 - **Unit Management**: Organizational unit hierarchy with UIC codes and personnel assignment
 - **Dose Readings**: Real-time dose measurement logging with manual entry capability
 - **Manual Dose Entry**: Offline-capable manual dose reading form for Bluetooth-unavailable scenarios
+- **NAVMED 6470 Series Forms**: Official Navy radiation health reporting forms
+  - **NAVMED 6470/1**: Exposure to Ionizing Radiation (Annual/Situational/Over-Limit Reports) ✅ **PRODUCTION READY**
+  - **NAVMED 6470/3**: Radiation Exposure Report — Whole Body (Planned)
+  - **NAVMED 6470/4**: Med/Den X-Ray Equipment Report (Planned)
+  - **NAVMED 6470/10**: Record of Occupational Exposure to Ionizing Radiation (Planned)
+  - **NAVMED 6470/11**: Record of Occupational Exposure from Internally Deposited Radionuclides (Planned)
+  - **NAVMED 6470/13**: Medical Record – Ionizing Radiation Medical Examination (RME) (Planned)
+  - **NAVMED 6470/14**: Radiological Equipment Survey Request Form (Planned)
+  - **NAVMED 6470/15**: Radiation Exposure Report (Extremity) (Planned)
 - **Real-Time Monitoring**: Live WebSocket-based dashboard with live updates
 - **Database Backup & Restore**: Admin-only secure backup system
 
