@@ -7,6 +7,7 @@
     "lint": "eslint .",
     "preview": "node node_modules/vite/bin/vite.js preview",
     "start:server": "node server/index.js",
+    "start:optimized": "node scripts/start-optimized-server.js",
     "stop:server": "npx kill-port 3000",
     "test:login": "node scripts/test-login.js",
     "test:patients": "node scripts/test-patients.js",
