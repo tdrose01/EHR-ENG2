@@ -312,10 +312,18 @@
                   </div>
                 </div>
                 <div class="flex space-x-2 mt-4">
-                  <button class="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm transition-colors">
+                  <button 
+                    @click="openDeviceEditModal(device)"
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm transition-colors"
+                    :title="`Edit device ${device.serial}`"
+                  >
                     <i class="fas fa-edit mr-1"></i>Edit
                   </button>
-                  <button class="flex-1 bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-sm transition-colors">
+                  <button 
+                    @click="openDeviceReadingsModal(device)"
+                    class="flex-1 bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-sm transition-colors"
+                    :title="`View readings for device ${device.serial}`"
+                  >
                     <i class="fas fa-chart-line mr-1"></i>Readings
                   </button>
                   <button 
@@ -836,21 +844,43 @@
      </div>
 
      <!-- Unit Management Modal -->
-     <UnitManagementModal
-       :show="showUnitModal"
-       :editing-unit="editingUnit"
-       :units="units"
-       @saved="onUnitSaved"
-       @cancel="closeUnitModal"
-       @error="onUnitError"
-     />
-   </div>
- </template>
+         <UnitManagementModal
+      :show="showUnitModal"
+      :editing-unit="editingUnit"
+      :units="units"
+      @saved="onUnitSaved"
+      @cancel="closeUnitModal"
+      @error="onUnitError"
+    />
+
+    <!-- Device Edit Modal -->
+    <DeviceEditModal
+      v-if="showDeviceEditModal"
+      :device="editingDevice"
+      :device-models="deviceModels"
+      :visible="showDeviceEditModal"
+      @close="closeDeviceEditModal"
+      @saved="onDeviceSaved"
+      @error="onDeviceError"
+    />
+
+    <!-- Device Readings Modal -->
+    <DeviceReadingsModal
+      v-if="showDeviceReadingsModal"
+      :device="editingDevice"
+      :personnel="personnel"
+      :visible="showDeviceReadingsModal"
+      @close="closeDeviceReadingsModal"
+    />
+  </div>
+</template>
 
 <script>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import AddRadiationPersonnelForm from '../components/AddRadiationPersonnelForm.vue'
 import DeviceAssignmentModal from '../components/DeviceAssignmentModal.vue'
+import DeviceEditModal from '../components/DeviceEditModal.vue'
+import DeviceReadingsModal from '../components/DeviceReadingsModal.vue'
 import ManualDoseReadingForm from '../components/ManualDoseReadingForm.vue'
 import UnitManagementModal from '../components/UnitManagementModal.vue'
 import UnitHierarchyNode from '../components/UnitHierarchyNode.vue'
@@ -861,6 +891,8 @@ export default {
   components: {
     AddRadiationPersonnelForm,
     DeviceAssignmentModal,
+    DeviceEditModal,
+    DeviceReadingsModal,
     ManualDoseReadingForm,
     UnitManagementModal,
     UnitHierarchyNode
@@ -893,6 +925,12 @@ export default {
     const showManualDoseReadingModal = ref(false)
     const showUnitModal = ref(false)
     const editingUnit = ref(null)
+    
+    // Device modal state
+    const showDeviceEditModal = ref(false)
+    const showDeviceReadingsModal = ref(false)
+    const editingDevice = ref(null)
+    const deviceModels = ref([])
     
     // Current user (for manual entry tracking)
     const currentUser = ref('System User') // TODO: Get from auth context
@@ -1583,9 +1621,56 @@ export default {
       return 'bg-green-600 bg-opacity-20 text-green-400 border border-green-600'
     }
 
+    // Device modal control methods
+    const openDeviceEditModal = (device = null) => {
+      editingDevice.value = device
+      showDeviceEditModal.value = true
+    }
+
+    const closeDeviceEditModal = () => {
+      showDeviceEditModal.value = false
+      editingDevice.value = null
+    }
+
+    const openDeviceReadingsModal = (device) => {
+      editingDevice.value = device
+      showDeviceReadingsModal.value = true
+    }
+
+    const closeDeviceReadingsModal = () => {
+      showDeviceReadingsModal.value = false
+      editingDevice.value = null
+    }
+
+    const onDeviceSaved = () => {
+      closeDeviceEditModal()
+      fetchDevices() // Refresh the devices list
+      fetchOverview() // Refresh overview counts
+    }
+
+    const onDeviceError = (error) => {
+      console.error('Device save error:', error)
+      // You could add a toast notification here
+    }
+
+    const fetchDeviceModels = async () => {
+      try {
+        const response = await fetch('/api/radiation/device-models')
+        if (response.ok) {
+          const data = await response.json()
+          deviceModels.value = data
+        } else {
+          console.error('Failed to fetch device models')
+        }
+      } catch (error) {
+        console.error('Error fetching device models:', error)
+      }
+    }
+
     // Lifecycle
     onMounted(() => {
       refreshData()
+      fetchDeviceModels() // Add this line
       
       // Auto-refresh every 5 minutes
       const autoRefreshInterval = setInterval(refreshData, 5 * 60 * 1000)
@@ -1626,6 +1711,10 @@ export default {
       showManualDoseReadingModal,
       showUnitModal,
       editingUnit,
+      showDeviceEditModal,
+      showDeviceReadingsModal,
+      editingDevice,
+      deviceModels,
       currentUser,
       
       // Filters
@@ -1698,7 +1787,14 @@ export default {
       getReconciliationStatusClass,
       getAssignmentStatus,
       getAssignmentStatusClass,
-      navigateToBackup // Add navigateToBackup to the returned object
+      navigateToBackup, // Add navigateToBackup to the returned object
+      openDeviceEditModal,
+      closeDeviceEditModal,
+      openDeviceReadingsModal,
+      closeDeviceReadingsModal,
+      onDeviceSaved,
+      onDeviceError,
+      fetchDeviceModels
     }
   }
 }

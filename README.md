@@ -40,7 +40,12 @@ npm run start:server # Backend (Express) - Port 3005
 
 ### Radiation Health (RH) Module  
 - **Radiation Monitoring**: Personnel exposure tracking
-- **Device Management**: Radiation device inventory and calibration
+- **Device Management**: Complete radiation device inventory and calibration system
+  - **Device CRUD Operations**: Full create, read, update, and delete functionality for devices
+  - **Device Editing**: Comprehensive device editing with model selection, serial numbers, BLE MAC addresses, firmware versions, calibration due dates, and RF policy settings
+  - **Device Readings Viewer**: Advanced device readings display with filtering by date range and personnel
+  - **Real-time Status Monitoring**: Color-coded status indicators for dose rates (High/Medium/Normal)
+  - **Device Model Management**: Integration with device model database for proper device configuration
 - **Unit Management**: Organizational unit hierarchy with UIC codes and personnel assignment
 - **Dose Readings**: Real-time dose measurement logging with manual entry capability
 - **Manual Dose Entry**: Offline-capable manual dose reading form for Bluetooth-unavailable scenarios

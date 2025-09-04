@@ -2,6 +2,53 @@
 
 All notable changes to the EHR ENG2 project will be documented in this file.
 
+## [2.2.0] - 2025-01-27
+
+### Added
+- **Device Edit Functionality**: Complete device editing capabilities for Radiation Health module
+  - Full device editing form with all device properties (model, serial, BLE MAC, firmware, calibration due, RF policy)
+  - Device model selection dropdown with vendor and model information
+  - Form validation with required field indicators
+  - Create and edit modes with proper form population
+  - Unsaved changes warning when closing modal
+  - API integration with existing backend endpoints
+
+- **Device Readings Modal**: Comprehensive device readings viewer with advanced filtering
+  - Device information card showing firmware, calibration due, RF policy, and total readings
+  - Advanced filtering by date range and personnel
+  - Paginated table displaying readings with dose rates, cumulative doses, and status indicators
+  - Status color coding (High/Medium/Normal based on dose rates)
+  - Real-time data fetching from the API
+  - Responsive design with proper dark theme styling
+
+### Fixed
+- **Modal Visibility Issue**: Fixed DeviceEditModal appearing automatically and blocking interface
+  - Added proper `v-if` conditions to control modal visibility
+  - DeviceEditModal now only renders when `showDeviceEditModal` is true
+  - DeviceReadingsModal updated to use consistent `v-if` condition
+  - Interface no longer blocked by automatically appearing modals
+
+### Technical Changes
+- **New Components**:
+  - `src/components/DeviceEditModal.vue`: Modal component for device CRUD operations
+  - `src/components/DeviceReadingsModal.vue`: Modal component for viewing device readings
+- **Updated Components**:
+  - `src/views/RadiationDashboard.vue`: Added device edit and readings functionality
+  - Enhanced device buttons with proper click handlers and tooltips
+  - Added modal state management and control methods
+  - Integrated device model fetching on component initialization
+- **Backend Integration**:
+  - Full integration with existing device CRUD endpoints (`/api/radiation/devices`)
+  - Device model fetching from `/api/radiation/device-models`
+  - Device readings fetching from `/api/radiation/readings`
+- **User Experience Enhancements**:
+  - Tooltips on device buttons showing device serial numbers
+  - Loading states with spinners
+  - Error handling with console logging (ready for toast notifications)
+  - Form validation with required field indicators
+  - Responsive design that works on different screen sizes
+  - Consistent styling with existing dark theme
+
 ## [2.1.0] - 2025-09-03
 
 ### Added
