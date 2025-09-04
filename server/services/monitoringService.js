@@ -12,10 +12,13 @@ class MonitoringService {
       databaseConnections: 0,
       activeAlerts: 0,
       criticalAlerts: 0,
-      apiResponseTime: [],
+      apiResponseTime: [], // Limited to last 100 entries
       errorCount: 0,
       lastError: null
     };
+    
+    // Memory optimization: Limit response time array size
+    this.maxResponseTimeEntries = 100;
     
     this.alertThresholds = {
       criticalAlerts: 5,
@@ -32,25 +35,25 @@ class MonitoringService {
 
   // Start continuous monitoring
   startMonitoring() {
-    // System health check every 30 seconds
-    setInterval(() => {
+    // System health check every 60 seconds (reduced from 30s)
+    this.healthCheckInterval = setInterval(() => {
       this.checkSystemHealth();
-    }, 30000);
-
-    // Database health check every minute
-    setInterval(() => {
-      this.checkDatabaseHealth();
     }, 60000);
 
-    // Performance metrics every 5 minutes
-    setInterval(() => {
-      this.collectPerformanceMetrics();
-    }, 300000);
+    // Database health check every 2 minutes (reduced from 1 minute)
+    this.dbCheckInterval = setInterval(() => {
+      this.checkDatabaseHealth();
+    }, 120000);
 
-    // Cleanup old alerts every hour
-    setInterval(() => {
+    // Performance metrics every 10 minutes (reduced from 5 minutes)
+    this.perfCheckInterval = setInterval(() => {
+      this.collectPerformanceMetrics();
+    }, 600000);
+
+    // Cleanup old alerts every 30 minutes (reduced from 1 hour)
+    this.cleanupInterval = setInterval(() => {
       this.cleanupOldAlerts();
-    }, 3600000);
+    }, 1800000);
   }
 
   // Check overall system health
@@ -381,7 +384,29 @@ class MonitoringService {
   // Cleanup old alerts
   cleanupOldAlerts() {
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const beforeCount = this.alerts.length;
+    
+    // Remove old alerts
     this.alerts = this.alerts.filter(alert => alert.timestamp > oneDayAgo);
+    
+    // Limit alerts to maximum 1000 entries
+    if (this.alerts.length > 1000) {
+      this.alerts = this.alerts
+        .sort((a, b) => b.timestamp - a.timestamp)
+        .slice(0, 1000);
+    }
+    
+    // Limit response time array
+    if (this.metrics.apiResponseTime.length > this.maxResponseTimeEntries) {
+      this.metrics.apiResponseTime = this.metrics.apiResponseTime
+        .sort((a, b) => b.timestamp - a.timestamp)
+        .slice(0, this.maxResponseTimeEntries);
+    }
+    
+    const afterCount = this.alerts.length;
+    if (beforeCount !== afterCount) {
+      console.log(`🧹 Cleaned up ${beforeCount - afterCount} old alerts. Current: ${afterCount}`);
+    }
   }
 
   // Get current metrics
@@ -419,6 +444,20 @@ class MonitoringService {
     this.metrics.errorCount = 0;
     this.metrics.lastError = null;
     this.metrics.apiResponseTime = [];
+  }
+
+  // Cleanup method for graceful shutdown
+  cleanup() {
+    if (this.healthCheckInterval) clearInterval(this.healthCheckInterval);
+    if (this.dbCheckInterval) clearInterval(this.dbCheckInterval);
+    if (this.perfCheckInterval) clearInterval(this.perfCheckInterval);
+    if (this.cleanupInterval) clearInterval(this.cleanupInterval);
+    
+    // Clear arrays to free memory
+    this.alerts = [];
+    this.metrics.apiResponseTime = [];
+    
+    console.log('🧹 Monitoring service cleaned up');
   }
 }
 

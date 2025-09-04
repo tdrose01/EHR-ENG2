@@ -343,6 +343,7 @@ if (require.main === module) {
   const WebSocketService = require('./services/websocketService');
   const NotificationService = require('./services/notificationService');
   const DatabaseListenerService = require('./services/databaseListenerService');
+  const MemoryManager = require('./services/memoryManager');
 
   // Initialize real-time services
   const wsService = new WebSocketService(server);
@@ -358,8 +359,23 @@ if (require.main === module) {
   app.set('wsService', wsService);
   app.set('notificationService', notificationService);
   app.set('dbListenerService', dbListenerService);
+  app.set('memoryManager', MemoryManager);
+
+  // Set up memory monitoring event handlers
+  MemoryManager.on('memoryWarning', (memoryInfo) => {
+    console.log(`⚠️ Memory warning: ${memoryInfo.system.percent}% used`);
+  });
+
+  MemoryManager.on('memoryCritical', (memoryInfo) => {
+    console.log(`🚨 Memory critical: ${memoryInfo.system.percent}% used`);
+  });
+
+  MemoryManager.on('cleanupPerformed', (type) => {
+    console.log(`🧹 Memory cleanup performed: ${type}`);
+  });
 
   console.log('🔌 Real-time monitoring services initialized');
+  console.log('🧠 Memory management system active');
   console.log('📡 WebSocket endpoint: ws://localhost:' + PORT + '/ws');
   console.log('📊 Real-time status: http://localhost:' + PORT + '/api/realtime/status');
 }

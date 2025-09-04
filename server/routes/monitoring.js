@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const monitoringService = require('../services/monitoringService');
+const MemoryManager = require('../services/memoryManager');
 
 // Health check endpoint
 router.get('/health', async (req, res) => {
@@ -270,6 +271,98 @@ router.post('/test-alert', (req, res) => {
     res.status(500).json({
       status: 'error',
       message: 'Failed to generate test alert',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Memory management endpoints
+router.get('/memory', (req, res) => {
+  try {
+    const memoryStats = MemoryManager.getMemoryStats();
+    res.json({
+      status: 'success',
+      data: memoryStats,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Memory stats error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to get memory statistics',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Force memory cleanup
+router.post('/memory/cleanup', (req, res) => {
+  try {
+    const { type = 'standard' } = req.body;
+    
+    switch (type) {
+      case 'standard':
+        MemoryManager.performStandardCleanup();
+        break;
+      case 'aggressive':
+        MemoryManager.performAggressiveCleanup();
+        break;
+      case 'emergency':
+        MemoryManager.performEmergencyCleanup();
+        break;
+      default:
+        return res.status(400).json({
+          status: 'error',
+          message: 'Invalid cleanup type. Use: standard, aggressive, or emergency'
+        });
+    }
+    
+    const memoryStats = MemoryManager.getMemoryStats();
+    
+    res.json({
+      status: 'success',
+      message: `Memory cleanup performed: ${type}`,
+      data: memoryStats,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Memory cleanup error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to perform memory cleanup',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Set memory thresholds
+router.post('/memory/thresholds', (req, res) => {
+  try {
+    const { warning, critical, max } = req.body;
+    
+    if (!warning || !critical || !max) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing required parameters: warning, critical, max'
+      });
+    }
+    
+    MemoryManager.setThresholds(warning, critical, max);
+    
+    res.json({
+      status: 'success',
+      message: 'Memory thresholds updated',
+      thresholds: { warning, critical, max },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Memory thresholds error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to update memory thresholds',
       error: error.message,
       timestamp: new Date().toISOString()
     });

@@ -12,18 +12,21 @@ class WebSocketService extends EventEmitter {
       server,
       path: '/ws',
       clientTracking: true,
-      maxPayload: 16 * 1024 * 1024, // 16MB max payload
+      maxPayload: 4 * 1024 * 1024, // Reduced from 16MB to 4MB
       compression: 'deflate'
     });
     
     this.clients = new Map(); // Enhanced client tracking with metadata
     this.rooms = new Map(); // Room-based subscriptions
     this.messageQueue = new Map(); // Message queuing for offline clients
-    this.heartbeatInterval = 30000; // 30 seconds
+    this.heartbeatInterval = 60000; // Increased from 30s to 60s
     this.connectionId = 0;
+    this.maxClients = 100; // Maximum number of concurrent clients
+    this.maxMessageQueueSize = 50; // Maximum messages per client queue
     
     this.setupWebSocket();
     this.startHeartbeat();
+    this.startCleanup();
     
     console.log('🔌 WebSocket Service initialized with enterprise features');
   }
@@ -500,6 +503,61 @@ class WebSocketService extends EventEmitter {
     });
 
     console.log('🔌 WebSocket service shutdown complete');
+  }
+
+  // Start periodic cleanup
+  startCleanup() {
+    // Cleanup every 5 minutes
+    this.cleanupInterval = setInterval(() => {
+      this.cleanupInactiveClients();
+      this.cleanupMessageQueues();
+    }, 300000);
+  }
+
+  // Cleanup inactive clients
+  cleanupInactiveClients() {
+    const now = new Date();
+    const inactiveThreshold = 10 * 60 * 1000; // 10 minutes
+    
+    for (const [ws, client] of this.clients.entries()) {
+      if (now - client.lastPing > inactiveThreshold) {
+        console.log(`🔌 Cleaning up inactive client: ${client.id}`);
+        this.removeClient(ws);
+      }
+    }
+  }
+
+  // Cleanup message queues
+  cleanupMessageQueues() {
+    for (const [clientId, queue] of this.messageQueue.entries()) {
+      if (queue.length > this.maxMessageQueueSize) {
+        // Keep only the most recent messages
+        this.messageQueue.set(clientId, queue.slice(-this.maxMessageQueueSize));
+        console.log(`🧹 Cleaned up message queue for client ${clientId}`);
+      }
+    }
+  }
+
+  // Remove client and cleanup
+  removeClient(ws) {
+    const client = this.clients.get(ws);
+    if (client) {
+      // Remove from rooms
+      for (const room of client.rooms) {
+        this.leaveRoom(ws, { room });
+      }
+      
+      // Remove from subscriptions
+      client.subscriptions.clear();
+      
+      // Remove from clients map
+      this.clients.delete(ws);
+      
+      // Remove message queue
+      this.messageQueue.delete(client.id);
+      
+      console.log(`🔌 Client ${client.id} removed and cleaned up`);
+    }
   }
 }
 
