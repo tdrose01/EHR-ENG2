@@ -573,8 +573,11 @@
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-xl font-semibold">
                 Dose Readings
-                <span v-if="readingsPersonnelFilter" class="text-sm text-blue-400 ml-2">
-                  (Filtered by Personnel)
+                <span class="text-sm text-gray-400 ml-2">
+                  ({{ filteredReadings.length }} of {{ readings.length }} entries)
+                </span>
+                <span v-if="readingsPersonnelFilter || readingsDateFilter" class="text-sm text-blue-400 ml-2">
+                  (Filtered{{ readingsPersonnelFilter ? ' by Personnel' : '' }}{{ readingsPersonnelFilter && readingsDateFilter ? ' and' : '' }}{{ readingsDateFilter ? ' by Date' : '' }})
                 </span>
               </h3>
               <div class="flex space-x-2">
@@ -590,12 +593,12 @@
                   </option>
                 </select>
                 <button 
-                  v-if="readingsPersonnelFilter"
+                  v-if="readingsPersonnelFilter || readingsDateFilter"
                   @click="clearReadingsFilter"
                   class="bg-gray-600 hover:bg-gray-500 px-3 py-2 rounded-lg transition-colors text-sm"
-                  title="Clear Personnel Filter"
+                  title="Clear All Filters"
                 >
-                  <i class="fas fa-times mr-1"></i>Clear Filter
+                  <i class="fas fa-times mr-1"></i>Clear Filters
                 </button>
                 <button 
                   @click="openManualDoseReadingModal"
@@ -621,9 +624,24 @@
                   </tr>
                 </thead>
                 <tbody v-if="filteredReadings.length > 0" class="divide-y divide-gray-600">
-                  <tr v-for="reading in filteredReadings" :key="reading.id" class="hover:bg-gray-600 transition-colors">
-                    <td class="px-4 py-3 text-gray-300">{{ formatDateTime(reading.measured_ts) }}</td>
-                    <td class="px-4 py-3 text-gray-300">{{ reading.rank_rate }} {{ reading.lname }}</td>
+                  <tr 
+                    v-for="(reading, index) in filteredReadings" 
+                    :key="`${reading.id}-${reading.measured_ts}-${index}`" 
+                    :class="[
+                      'hover:bg-gray-600 transition-colors',
+                      reading.data_source === 'MANUAL' ? 'bg-green-900 bg-opacity-30 border-l-4 border-green-500' : ''
+                    ]"
+                  >
+                    <td class="px-4 py-3 text-gray-300">
+                      {{ formatDateTime(reading.measured_ts) }}
+                      <span v-if="reading.data_source === 'MANUAL'" class="ml-2 text-xs text-green-400">
+                        <i class="fas fa-keyboard"></i> Manual
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-gray-300">
+                      <span v-if="reading.lname">{{ reading.rank_rate }} {{ reading.lname }}</span>
+                      <span v-else class="text-gray-500 italic">No personnel assigned</span>
+                    </td>
                     <td class="px-4 py-3 text-gray-300">{{ reading.device_serial }}</td>
                     <td class="px-4 py-3 text-white font-mono">{{ formatDose(reading.hp10_mSv) }}</td>
                     <td class="px-4 py-3 text-white font-mono">{{ formatDose(reading.hp007_mSv) }}</td>
@@ -954,8 +972,33 @@ export default {
 
     // Computed properties for filtered data
     const filteredReadings = computed(() => {
-      if (!readingsPersonnelFilter.value) return readings.value
-      return readings.value.filter(reading => reading.personnel_id === readingsPersonnelFilter.value)
+      let filtered = readings.value
+
+      // Apply date filter if set
+      if (readingsDateFilter.value) {
+        const filterDate = new Date(readingsDateFilter.value)
+        const startOfDay = new Date(filterDate.getFullYear(), filterDate.getMonth(), filterDate.getDate())
+        const endOfDay = new Date(filterDate.getFullYear(), filterDate.getMonth(), filterDate.getDate() + 1)
+        
+        filtered = filtered.filter(reading => {
+          const readingDate = new Date(reading.measured_ts)
+          return readingDate >= startOfDay && readingDate < endOfDay
+        })
+      }
+
+      // Apply personnel filter if set
+      if (readingsPersonnelFilter.value) {
+        filtered = filtered.filter(reading => {
+          // If no personnel info (manual entries), don't show them when filtering by personnel
+          if (!reading.lname && !reading.fname) {
+            return false
+          }
+          // For entries with personnel, filter by personnel_id if available
+          return reading.personnel_id === readingsPersonnelFilter.value
+        })
+      }
+
+      return filtered
     })
 
     const filteredAssignments = computed(() => {
@@ -1069,9 +1112,16 @@ export default {
       try {
         const response = await fetch('/api/radiation/readings?limit=50')
         if (response.ok) {
-          readings.value = await response.json()
+          const data = await response.json()
+          
+          // Remove duplicates based on ID to prevent Vue key warnings
+          const uniqueReadings = data.filter((reading, index, self) => 
+            index === self.findIndex(r => r.id === reading.id)
+          )
+          readings.value = uniqueReadings
         } else {
           const errorData = await response.json()
+          console.error('Failed to fetch readings:', errorData)
           readingsError.value = errorData.error || 'Failed to load readings data'
         }
       } catch (error) {
@@ -1204,11 +1254,14 @@ export default {
       showManualDoseReadingModal.value = false
     }
 
-    const onManualDoseReadingSaved = (result) => {
+    const onManualDoseReadingSaved = async (result) => {
       closeManualDoseReadingModal()
-      fetchReadings() // Refresh the readings list
-      fetchOverview() // Refresh overview counts
-      console.log('Manual dose reading saved:', result)
+      
+      // Show success message
+      alert(`Manual entry submitted successfully! Reading ID: ${result.reading_id}`)
+      
+      // Force refresh all data
+      await refreshData()
     }
 
     const onManualDoseReadingError = (error) => {
@@ -1426,6 +1479,7 @@ export default {
 
     const clearReadingsFilter = () => {
       readingsPersonnelFilter.value = ''
+      readingsDateFilter.value = ''
       assignmentsPersonnelFilter.value = ''
       activeTab.value = 'readings'
     }
@@ -1438,6 +1492,7 @@ export default {
     // Clear all personnel filters
     const clearAllPersonnelFilters = () => {
       readingsPersonnelFilter.value = ''
+      readingsDateFilter.value = ''
       assignmentsPersonnelFilter.value = ''
     }
 

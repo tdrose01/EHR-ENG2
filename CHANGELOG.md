@@ -2,6 +2,35 @@
 
 All notable changes to the EHR ENG2 project will be documented in this file.
 
+## [2.2.1] - 2025-09-09
+
+### Fixed
+- **Manual Entry Data Display Issue**: Fixed manual dose readings showing "N/A" for dose values
+  - Resolved case sensitivity mismatch between database column names and frontend expectations
+  - Updated SQL query in `/api/radiation/readings` to explicitly select columns with correct case
+  - Fixed `hp10_mSv`, `hp007_mSv`, and `rate_uSv_h` values now displaying correctly
+  - Manual entries now appear immediately after submission with proper dose values
+  - Added visual indicators to distinguish manual vs automated entries
+  - Enhanced UI with green styling and "Manual" labels for manual entries
+  - Added success alerts when manual entries are submitted
+  - Implemented proper data refresh to ensure table updates automatically
+
+### Technical Changes
+- **Backend API Fix**:
+  - Modified SQL query in `server/routes/radiation.js` to use explicit column aliases
+  - Added `DISTINCT ON (dr.id)` to prevent duplicate entries from JOINs
+  - Improved time-based filtering for radiation assignments
+- **Frontend Enhancements**:
+  - Updated `src/views/RadiationDashboard.vue` with proper data handling
+  - Added deduplication logic to prevent Vue duplicate key warnings
+  - Enhanced `v-for` keys to be more unique
+  - Improved `filteredReadings` logic to handle manual entries correctly
+  - Added visual styling for manual entries with green background and labels
+- **Data Flow Improvements**:
+  - Fixed data flow from manual entry form → API → database → frontend display
+  - Ensured proper case sensitivity handling throughout the data pipeline
+  - Added comprehensive error handling and debugging capabilities
+
 ## [2.2.0] - 2025-01-27
 
 ### Added

@@ -48,6 +48,10 @@ npm run start:server # Backend (Express) - Port 3005
   - **Device Model Management**: Integration with device model database for proper device configuration
 - **Unit Management**: Organizational unit hierarchy with UIC codes and personnel assignment
 - **Dose Readings**: Real-time dose measurement logging with manual entry capability
+  - **Manual Entry System**: Complete manual dose reading entry with immediate display
+  - **Visual Indicators**: Green styling and "Manual" labels to distinguish manual vs automated entries
+  - **Data Validation**: Proper dose value formatting and display (HP(10) mSv, HP(0.07) mSv, Rate µSv/h)
+  - **Success Feedback**: User alerts confirming successful manual entry submission
 - **Manual Dose Entry**: Offline-capable manual dose reading form for Bluetooth-unavailable scenarios
 - **NAVMED 6470 Series Forms**: Official Navy radiation health reporting forms
   - **NAVMED 6470/1**: Exposure to Ionizing Radiation (Annual/Situational/Over-Limit Reports) ✅ **PRODUCTION READY**

@@ -134,15 +134,21 @@ router.get('/readings', async (req, res) => {
     }
 
     const result = await pool.query(`
-      SELECT dr.*, d.serial as device_serial, dm.vendor, dm.model,
-             p.lname, p.fname, p.rank_rate
+      SELECT DISTINCT ON (dr.id) 
+        dr.id, dr.device_id, dr.measured_ts, dr.gateway_ts, dr.created_at,
+        dr.hp10_mSv, dr.hp007_mSv, dr.rate_uSv_h, 
+        dr.battery_pct, dr.raw_json, dr.payload_sig, dr.sig_alg, dr.gateway_id, 
+        dr.data_source, dr.entered_by, dr.notes,
+        d.serial as device_serial, dm.vendor, dm.model,
+        p.lname, p.fname, p.rank_rate
       FROM radiation_dose_readings dr
       LEFT JOIN radiation_devices d ON dr.device_id = d.id
       LEFT JOIN radiation_device_models dm ON d.model_id = dm.id
-      LEFT JOIN radiation_assignments a ON d.id = a.device_id
+      LEFT JOIN radiation_assignments a ON d.id = a.device_id 
+        AND dr.measured_ts BETWEEN a.start_ts AND COALESCE(a.end_ts, NOW())
       LEFT JOIN radiation_personnel p ON a.personnel_id = p.id
       ${whereClause}
-      ORDER BY dr.measured_ts DESC
+      ORDER BY dr.id, dr.measured_ts DESC
       LIMIT $${paramCount + 1}
     `, [...params, parseInt(limit)]);
     
