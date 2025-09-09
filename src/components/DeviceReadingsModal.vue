@@ -99,8 +99,9 @@
                 <tr>
                   <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date/Time</th>
                   <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Personnel</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Dose Rate (mR/h)</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Cumulative (mR)</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">HP(10) mSv</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">HP(0.07) mSv</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Rate µSv/h</th>
                   <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
                 </tr>
               </thead>
@@ -114,13 +115,17 @@
                     {{ formatDateTime(reading.measured_ts) }}
                   </td>
                   <td class="px-4 py-3 text-sm text-white">
-                    {{ reading.rank_rate }} {{ reading.lname }}, {{ reading.fname }}
+                    <span v-if="reading.lname">{{ reading.rank_rate }} {{ reading.lname }}{{ reading.fname ? `, ${reading.fname}` : '' }}</span>
+                    <span v-else class="text-gray-500 italic">No personnel assigned</span>
                   </td>
-                  <td class="px-4 py-3 text-sm text-white">
-                    {{ reading.dose_rate?.toFixed(3) || 'N/A' }}
+                  <td class="px-4 py-3 text-sm text-white font-mono">
+                    {{ formatDose(reading.hp10_mSv) }}
                   </td>
-                  <td class="px-4 py-3 text-sm text-white">
-                    {{ reading.cumulative_dose?.toFixed(3) || 'N/A' }}
+                  <td class="px-4 py-3 text-sm text-white font-mono">
+                    {{ formatDose(reading.hp007_mSv) }}
+                  </td>
+                  <td class="px-4 py-3 text-sm text-white font-mono">
+                    {{ formatRate(reading.rate_uSv_h) }}
                   </td>
                   <td class="px-4 py-3 text-sm">
                     <span 
@@ -221,7 +226,20 @@ export default {
       }
 
       if (filters.value.personnelId) {
-        filtered = filtered.filter(reading => reading.personnel_id === parseInt(filters.value.personnelId))
+        // Find the personnel record to get the name for matching
+        const selectedPersonnel = props.personnel.find(p => p.id === parseInt(filters.value.personnelId))
+        if (selectedPersonnel) {
+          const personnelName = `${selectedPersonnel.rank_rate} ${selectedPersonnel.lname}`
+          filtered = filtered.filter(reading => {
+            // If no personnel info (manual entries), don't show them when filtering by personnel
+            if (!reading.lname && !reading.fname) {
+              return false
+            }
+            // Match by personnel name since personnel_id is not available in readings
+            const readingName = `${reading.rank_rate} ${reading.lname}`
+            return readingName === personnelName
+          })
+        }
       }
 
       return filtered.sort((a, b) => new Date(b.measured_ts) - new Date(a.measured_ts))
@@ -269,15 +287,29 @@ export default {
       return new Date(dateString).toLocaleDateString()
     }
 
+    const formatDose = (value) => {
+      if (value === null || value === undefined) return 'N/A'
+      return parseFloat(value).toFixed(6)
+    }
+
+    const formatRate = (value) => {
+      if (value === null || value === undefined) return 'N/A'
+      return parseFloat(value).toFixed(2)
+    }
+
     const getStatusClass = (reading) => {
-      if (reading.dose_rate > 100) return 'bg-red-600 text-white' // High dose rate
-      if (reading.dose_rate > 50) return 'bg-yellow-600 text-white' // Medium dose rate
+      // Use HP(10) mSv for status determination (convert to mR: 1 mSv = 100 mR)
+      const doseRate = parseFloat(reading.hp10_mSv) * 100 // Convert mSv to mR
+      if (doseRate > 100) return 'bg-red-600 text-white' // High dose rate
+      if (doseRate > 50) return 'bg-yellow-600 text-white' // Medium dose rate
       return 'bg-green-600 text-white' // Normal dose rate
     }
 
     const getStatusText = (reading) => {
-      if (reading.dose_rate > 100) return 'High'
-      if (reading.dose_rate > 50) return 'Medium'
+      // Use HP(10) mSv for status determination (convert to mR: 1 mSv = 100 mR)
+      const doseRate = parseFloat(reading.hp10_mSv) * 100 // Convert mSv to mR
+      if (doseRate > 100) return 'High'
+      if (doseRate > 50) return 'Medium'
       return 'Normal'
     }
 
@@ -319,6 +351,8 @@ export default {
       applyFilters,
       formatDateTime,
       formatDate,
+      formatDose,
+      formatRate,
       getStatusClass,
       getStatusText,
       handleClose

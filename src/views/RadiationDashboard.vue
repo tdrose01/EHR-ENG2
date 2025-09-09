@@ -581,11 +581,28 @@
                 </span>
               </h3>
               <div class="flex space-x-2">
-                <input
-                  v-model="readingsDateFilter"
-                  type="date"
-                  class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
-                >
+                <div class="relative">
+                  <input
+                    v-model="readingsDateFilter"
+                    type="date"
+                    :min="availableDates[availableDates.length - 1]"
+                    :max="availableDates[0]"
+                    class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white pr-8"
+                    :title="`Available dates: ${availableDates.slice(0, 3).join(', ')}${availableDates.length > 3 ? '...' : ''}`"
+                    @change="onDateFilterChange"
+                  >
+                  <select 
+                    v-if="availableDates.length > 0"
+                    @change="selectAvailableDate"
+                    class="absolute right-1 top-1/2 transform -translate-y-1/2 bg-gray-600 border border-gray-500 rounded px-2 py-1 text-xs text-white"
+                    title="Quick select available date"
+                  >
+                    <option value="">Quick select</option>
+                    <option v-for="date in availableDates.slice(0, 5)" :key="date" :value="date">
+                      {{ new Date(date).toLocaleDateString() }}
+                    </option>
+                  </select>
+                </div>
                 <select v-model="readingsPersonnelFilter" class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
                   <option value="">All Personnel</option>
                   <option v-for="person in personnel" :key="person.id" :value="person.id">
@@ -664,7 +681,25 @@
                   <tr>
                     <td colspan="7" class="px-4 py-8 text-center text-gray-400">
                       <i class="fas fa-chart-line text-4xl mb-4"></i>
-                      <div>No readings available</div>
+                      <div v-if="readingsError">No readings available</div>
+                      <div v-else-if="readingsDateFilter || readingsPersonnelFilter">
+                        No readings match the current filters
+                        <div class="text-sm mt-2">
+                          <span v-if="readingsDateFilter">Date: {{ readingsDateFilter }}</span>
+                          <span v-if="readingsPersonnelFilter && readingsDateFilter"> • </span>
+                          <span v-if="readingsPersonnelFilter">Personnel: {{ personnel.find(p => p.id == readingsPersonnelFilter)?.rank_rate }} {{ personnel.find(p => p.id == readingsPersonnelFilter)?.lname }}</span>
+                        </div>
+                        <div class="text-xs mt-2 text-gray-500">
+                          <div v-if="readingsDateFilter && !availableDates.includes(readingsDateFilter)">
+                            No data available for {{ readingsDateFilter }}. 
+                            <br>Available dates: {{ availableDates.slice(0, 3).join(', ') }}{{ availableDates.length > 3 ? '...' : '' }}
+                          </div>
+                          <div v-else>
+                            Try selecting a different date or personnel, or clear filters to see all data
+                          </div>
+                        </div>
+                      </div>
+                      <div v-else>No readings available</div>
                       <div class="text-sm">{{ readingsError || 'Loading...' }}</div>
                     </td>
                   </tr>
@@ -971,8 +1006,30 @@ export default {
     const reconciliationPeriodFilter = ref('')
 
     // Computed properties for filtered data
+    const availableDates = computed(() => {
+      const dates = readings.value.map(r => {
+        const date = new Date(r.measured_ts)
+        return date.toISOString().split('T')[0] // YYYY-MM-DD format
+      })
+      return [...new Set(dates)].sort().reverse() // Unique dates, newest first
+    })
+
     const filteredReadings = computed(() => {
       let filtered = readings.value
+
+      // Debug logging (can be removed in production)
+      if (readingsDateFilter.value || readingsPersonnelFilter.value) {
+        console.log('🔍 Filtering readings:', {
+          totalReadings: readings.value.length,
+          dateFilter: readingsDateFilter.value,
+          personnelFilter: readingsPersonnelFilter.value,
+          sampleDates: readings.value.slice(0, 3).map(r => ({
+            id: r.id,
+            date: r.measured_ts,
+            formatted: new Date(r.measured_ts).toLocaleDateString()
+          }))
+        })
+      }
 
       // Apply date filter if set
       if (readingsDateFilter.value) {
@@ -980,24 +1037,80 @@ export default {
         const startOfDay = new Date(filterDate.getFullYear(), filterDate.getMonth(), filterDate.getDate())
         const endOfDay = new Date(filterDate.getFullYear(), filterDate.getMonth(), filterDate.getDate() + 1)
         
+        console.log('Date filter debug:', {
+          filterValue: readingsDateFilter.value,
+          filterDate,
+          startOfDay,
+          endOfDay,
+          sampleReadingDate: readings.value[0] ? new Date(readings.value[0].measured_ts) : null
+        })
+        
         filtered = filtered.filter(reading => {
           const readingDate = new Date(reading.measured_ts)
-          return readingDate >= startOfDay && readingDate < endOfDay
+          const isInRange = readingDate >= startOfDay && readingDate < endOfDay
+          
+          console.log('Date check:', {
+            readingId: reading.id,
+            readingDate,
+            readingDateString: reading.measured_ts,
+            isInRange
+          })
+          
+          return isInRange
         })
+        
+        console.log('After date filter:', filtered.length, 'entries')
       }
 
       // Apply personnel filter if set
       if (readingsPersonnelFilter.value) {
+        // Check if personnel data is loaded
+        if (!personnel.value || personnel.value.length === 0) {
+          console.log('Personnel data not loaded yet, skipping personnel filter')
+          return filtered
+        }
+        
+        // Find the personnel record to get the name for matching
+        const selectedPersonnel = personnel.value.find(p => p.id == readingsPersonnelFilter.value)
+        const personnelName = selectedPersonnel ? `${selectedPersonnel.rank_rate} ${selectedPersonnel.lname}` : null
+        
+        console.log('Personnel filter debug:', {
+          filterValue: readingsPersonnelFilter.value,
+          selectedPersonnel,
+          personnelName,
+          personnelCount: personnel.value.length,
+          samplePersonnel: personnel.value[0],
+          allPersonnelIds: personnel.value.map(p => ({ id: p.id, name: `${p.rank_rate} ${p.lname}` }))
+        })
+        
+        if (!selectedPersonnel) {
+          console.log('Selected personnel not found, clearing filter')
+          readingsPersonnelFilter.value = ''
+          return filtered
+        }
+        
         filtered = filtered.filter(reading => {
           // If no personnel info (manual entries), don't show them when filtering by personnel
           if (!reading.lname && !reading.fname) {
             return false
           }
-          // For entries with personnel, filter by personnel_id if available
-          return reading.personnel_id === readingsPersonnelFilter.value
+          
+          // Match by personnel name since personnel_id is not available in readings
+          const readingName = `${reading.rank_rate} ${reading.lname}`
+          const matches = readingName === personnelName
+          
+          console.log('Personnel match check:', {
+            readingId: reading.id,
+            readingName,
+            personnelName,
+            matches
+          })
+          
+          return matches
         })
+        
+        console.log('After personnel filter:', filtered.length, 'entries')
       }
-
       return filtered
     })
 
@@ -1496,6 +1609,27 @@ export default {
       assignmentsPersonnelFilter.value = ''
     }
 
+    const onDateFilterChange = () => {
+      // Check if the selected date has any data
+      if (readingsDateFilter.value) {
+        const selectedDate = readingsDateFilter.value
+        const hasDataForDate = availableDates.value.includes(selectedDate)
+        
+        if (!hasDataForDate) {
+          // Show a helpful message
+          console.log(`No data available for ${selectedDate}. Available dates: ${availableDates.value.join(', ')}`)
+        }
+      }
+    }
+
+    const selectAvailableDate = (event) => {
+      if (event.target.value) {
+        readingsDateFilter.value = event.target.value
+        // Reset the select to show placeholder
+        event.target.value = ''
+      }
+    }
+
     // Update tab switching to clear filters when switching between tabs
     const switchTab = (tabName) => {
       // Clear personnel filters when switching away from readings or assignments tabs
@@ -1789,6 +1923,7 @@ export default {
       filteredReadings,
       filteredAssignments,
       rootUnits,
+      availableDates,
       isAdmin, // Add isAdmin to the returned object
       
       // Methods
@@ -1823,6 +1958,8 @@ export default {
       clearReadingsFilter,
       clearAssignmentsFilter,
       clearAllPersonnelFilters,
+      onDateFilterChange,
+      selectAvailableDate,
       switchTab,
       drillDownToTab,
       formatDate,
