@@ -22,7 +22,7 @@ class MonitoringService {
     
     this.alertThresholds = {
       criticalAlerts: 5,
-      memoryUsagePercent: 80,
+      memoryUsagePercent: 85,  // Increased from 80% to 85% for process memory
       cpuUsagePercent: 70,
       databaseConnections: 20,
       apiResponseTimeMs: 5000,
@@ -35,22 +35,22 @@ class MonitoringService {
 
   // Start continuous monitoring
   startMonitoring() {
-    // System health check every 60 seconds (reduced from 30s)
+    // System health check every 2 minutes (reduced from 60s to reduce overhead)
     this.healthCheckInterval = setInterval(() => {
       this.checkSystemHealth();
-    }, 60000);
-
-    // Database health check every 2 minutes (reduced from 1 minute)
-    this.dbCheckInterval = setInterval(() => {
-      this.checkDatabaseHealth();
     }, 120000);
 
-    // Performance metrics every 10 minutes (reduced from 5 minutes)
+    // Database health check every 5 minutes (reduced from 2 minutes)
+    this.dbCheckInterval = setInterval(() => {
+      this.checkDatabaseHealth();
+    }, 300000);
+
+    // Performance metrics every 15 minutes (reduced from 10 minutes)
     this.perfCheckInterval = setInterval(() => {
       this.collectPerformanceMetrics();
-    }, 600000);
+    }, 900000);
 
-    // Cleanup old alerts every 30 minutes (reduced from 1 hour)
+    // Cleanup old alerts every 30 minutes (unchanged)
     this.cleanupInterval = setInterval(() => {
       this.cleanupOldAlerts();
     }, 1800000);
@@ -143,10 +143,13 @@ class MonitoringService {
     
     this.metrics.memoryUsage = memUsage;
     
+    // Only alert if process memory usage is high (not system-wide)
     if (memoryPercent > this.alertThresholds.memoryUsagePercent) {
-      this.generateAlert('MEMORY_USAGE', 'WARNING', 'High memory usage detected', {
+      this.generateAlert('MEMORY_USAGE', 'WARNING', 'High process memory usage detected', {
         usage: memoryPercent.toFixed(2) + '%',
         threshold: this.alertThresholds.memoryUsagePercent + '%',
+        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + 'MB',
+        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + 'MB',
         timestamp: new Date()
       });
     }
@@ -154,7 +157,12 @@ class MonitoringService {
     return {
       status: memoryPercent < this.alertThresholds.memoryUsagePercent ? 'healthy' : 'degraded',
       usage: memoryPercent.toFixed(2) + '%',
-      details: memUsage
+      details: {
+        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
+        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024),
+        rss: Math.round(memUsage.rss / 1024 / 1024),
+        external: Math.round(memUsage.external / 1024 / 1024)
+      }
     };
   }
 

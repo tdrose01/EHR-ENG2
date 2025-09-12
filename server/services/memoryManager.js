@@ -61,7 +61,10 @@ class MemoryManager extends EventEmitter {
     const totalMemory = require('os').totalmem();
     const freeMemory = require('os').freemem();
     const usedMemory = totalMemory - freeMemory;
-    const memoryPercent = (usedMemory / totalMemory) * 100;
+    
+    // Calculate PROCESS memory usage (not system-wide)
+    const processMemoryPercent = (memUsage.heapUsed / memUsage.heapTotal) * 100;
+    const systemMemoryPercent = (usedMemory / totalMemory) * 100;
     
     const heapUsedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
     const heapTotalMB = Math.round(memUsage.heapTotal / 1024 / 1024);
@@ -72,28 +75,36 @@ class MemoryManager extends EventEmitter {
         total: Math.round(totalMemory / 1024 / 1024),
         used: Math.round(usedMemory / 1024 / 1024),
         free: Math.round(freeMemory / 1024 / 1024),
-        percent: Math.round(memoryPercent * 100) / 100
+        percent: Math.round(systemMemoryPercent * 100) / 100
       },
       process: {
         heapUsed: heapUsedMB,
         heapTotal: heapTotalMB,
         external: externalMB,
         rss: Math.round(memUsage.rss / 1024 / 1024),
-        arrayBuffers: Math.round(memUsage.arrayBuffers / 1024 / 1024)
+        arrayBuffers: Math.round(memUsage.arrayBuffers / 1024 / 1024),
+        percent: Math.round(processMemoryPercent * 100) / 100
       }
     };
 
     // Emit memory status
     this.emit('memoryStatus', memoryInfo);
 
-    // Check thresholds
-    if (memoryPercent >= this.memoryThresholds.max) {
+    // Check thresholds based on PROCESS memory usage (not system-wide)
+    // Use more reasonable thresholds for Node.js process memory
+    const processThresholds = {
+      warning: 70,   // 70% of heap used
+      critical: 85,  // 85% of heap used  
+      max: 95        // 95% of heap used
+    };
+    
+    if (processMemoryPercent >= processThresholds.max) {
       this.emit('memoryCritical', memoryInfo);
       this.performEmergencyCleanup();
-    } else if (memoryPercent >= this.memoryThresholds.critical) {
+    } else if (processMemoryPercent >= processThresholds.critical) {
       this.emit('memoryCritical', memoryInfo);
       this.performAggressiveCleanup();
-    } else if (memoryPercent >= this.memoryThresholds.warning) {
+    } else if (processMemoryPercent >= processThresholds.warning) {
       this.emit('memoryWarning', memoryInfo);
       this.performStandardCleanup();
     }

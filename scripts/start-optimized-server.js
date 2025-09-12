@@ -2,47 +2,38 @@
 
 /**
  * Optimized Server Startup Script
- * Starts the server with memory optimization flags and monitoring
+ * Starts the server with memory optimization flags and proper configuration
  */
 
 const { spawn } = require('child_process');
 const path = require('path');
 
-console.log('🚀 Starting EHR-ENG2 Server with Memory Optimization...\n');
+console.log('🚀 Starting optimized EHR-ENG2 server...');
+console.log('📊 Memory optimization enabled');
+console.log('🗑️ Garbage collection enabled');
+console.log('⚡ Performance optimizations active');
 
-// Set environment variables
-process.env.DATABASE_URL = 'postgresql://postgres@localhost:5432/ehr_eng2';
-process.env.NODE_ENV = 'development';
-
-// Node.js optimization flags
-const nodeFlags = [
+// Start the server with optimization flags
+const serverProcess = spawn('node', [
   '--expose-gc',                    // Enable garbage collection
   '--max-old-space-size=2048',      // Limit heap size to 2GB
   '--optimize-for-size',            // Optimize for memory usage
   '--gc-interval=100',              // More frequent garbage collection
-  '--max-semi-space-size=64'        // Limit semi-space size
-];
-
-// Server script path
-const serverScript = path.join(__dirname, '..', 'server', 'index.js');
-
-// Start the server with optimization flags
-const serverProcess = spawn('node', [...nodeFlags, serverScript], {
+  path.join(__dirname, '..', 'server', 'index.js')
+], {
   stdio: 'inherit',
-  env: process.env
+  cwd: path.join(__dirname, '..')
 });
 
 // Handle process events
 serverProcess.on('error', (error) => {
-  console.error('❌ Failed to start server:', error.message);
+  console.error('❌ Failed to start server:', error);
   process.exit(1);
 });
 
 serverProcess.on('exit', (code) => {
-  if (code !== 0) {
-    console.error(`❌ Server exited with code ${code}`);
-    process.exit(code);
-  }
+  console.log(`🛑 Server exited with code ${code}`);
+  process.exit(code);
 });
 
 // Handle graceful shutdown
@@ -56,8 +47,9 @@ process.on('SIGTERM', () => {
   serverProcess.kill('SIGTERM');
 });
 
-console.log('✅ Server started with memory optimization flags');
-console.log('📊 Memory monitoring active');
-console.log('🧠 Garbage collection enabled');
-console.log('🔧 Heap size limited to 2GB');
-console.log('\nPress Ctrl+C to stop the server\n');
+console.log('✅ Server started successfully');
+console.log('🌐 Frontend: http://localhost:5173');
+console.log('🔧 Backend: http://localhost:3005');
+console.log('📊 Monitoring: http://localhost:3005/api/monitoring/status');
+console.log('💾 Memory stats: http://localhost:3005/api/monitoring/memory');
+console.log('\nPress Ctrl+C to stop the server');

@@ -581,28 +581,15 @@
                 </span>
               </h3>
               <div class="flex space-x-2">
-                <div class="relative">
-                  <input
-                    v-model="readingsDateFilter"
-                    type="date"
-                    :min="availableDates[availableDates.length - 1]"
-                    :max="availableDates[0]"
-                    class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white pr-8"
-                    :title="`Available dates: ${availableDates.slice(0, 3).join(', ')}${availableDates.length > 3 ? '...' : ''}`"
-                    @change="onDateFilterChange"
-                  >
-                  <select 
-                    v-if="availableDates.length > 0"
-                    @change="selectAvailableDate"
-                    class="absolute right-1 top-1/2 transform -translate-y-1/2 bg-gray-600 border border-gray-500 rounded px-2 py-1 text-xs text-white"
-                    title="Quick select available date"
-                  >
-                    <option value="">Quick select</option>
-                    <option v-for="date in availableDates.slice(0, 5)" :key="date" :value="date">
-                      {{ new Date(date).toLocaleDateString() }}
-                    </option>
-                  </select>
-                </div>
+                <input
+                  v-model="readingsDateFilter"
+                  type="date"
+                  :min="availableDates.length > 0 ? availableDates[availableDates.length - 1] : ''"
+                  :max="availableDates.length > 0 ? availableDates[0] : ''"
+                  class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                  :title="availableDates.length > 0 ? `Available dates: ${availableDates.slice(0, 3).join(', ')}${availableDates.length > 3 ? '...' : ''}` : 'No dates available'"
+                  @change="onDateFilterChange"
+                >
                 <select v-model="readingsPersonnelFilter" class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
                   <option value="">All Personnel</option>
                   <option v-for="person in personnel" :key="person.id" :value="person.id">
@@ -660,9 +647,9 @@
                       <span v-else class="text-gray-500 italic">No personnel assigned</span>
                     </td>
                     <td class="px-4 py-3 text-gray-300">{{ reading.device_serial }}</td>
-                    <td class="px-4 py-3 text-white font-mono">{{ formatDose(reading.hp10_mSv) }}</td>
-                    <td class="px-4 py-3 text-white font-mono">{{ formatDose(reading.hp007_mSv) }}</td>
-                    <td class="px-4 py-3 text-white font-mono">{{ formatRate(reading.rate_uSv_h) }}</td>
+                    <td class="px-4 py-3 text-white font-mono">{{ formatDose(reading.hp10_msv) }}</td>
+                    <td class="px-4 py-3 text-white font-mono">{{ formatDose(reading.hp007_msv) }}</td>
+                    <td class="px-4 py-3 text-white font-mono">{{ formatRate(reading.rate_usv_h) }}</td>
                     <td class="px-4 py-3">
                       <div class="flex items-center">
                         <div class="w-16 bg-gray-600 rounded-full h-2 mr-2">
@@ -1622,13 +1609,6 @@ export default {
       }
     }
 
-    const selectAvailableDate = (event) => {
-      if (event.target.value) {
-        readingsDateFilter.value = event.target.value
-        // Reset the select to show placeholder
-        event.target.value = ''
-      }
-    }
 
     // Update tab switching to clear filters when switching between tabs
     const switchTab = (tabName) => {
@@ -1704,13 +1684,17 @@ export default {
     }
 
     const formatDose = (value) => {
-      if (value === null || value === undefined) return 'N/A'
-      return parseFloat(value).toFixed(6)
+      if (value === null || value === undefined || value === '' || value === 'N/A') return 'N/A'
+      const numValue = parseFloat(value)
+      if (isNaN(numValue)) return 'N/A'
+      return numValue.toFixed(6)
     }
 
     const formatRate = (value) => {
-      if (value === null || value === undefined) return 'N/A'
-      return parseFloat(value).toFixed(2)
+      if (value === null || value === undefined || value === '' || value === 'N/A') return 'N/A'
+      const numValue = parseFloat(value)
+      if (isNaN(numValue)) return 'N/A'
+      return numValue.toFixed(2)
     }
 
     const formatVariance = (value) => {
@@ -1959,7 +1943,6 @@ export default {
       clearAssignmentsFilter,
       clearAllPersonnelFilters,
       onDateFilterChange,
-      selectAvailableDate,
       switchTab,
       drillDownToTab,
       formatDate,

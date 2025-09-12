@@ -45,6 +45,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/radiation',
+    name: 'Radiation',
+    component: RadiationDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/admin/backup-restore',
     name: 'AdminBackupRestore',
     component: AdminBackupRestore,
