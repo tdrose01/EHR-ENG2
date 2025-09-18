@@ -37,3 +37,4 @@ data class NearestLegal(
     val route_summary: String? = null,
     val last_updated_utc: String
 ) : Parcelable
+

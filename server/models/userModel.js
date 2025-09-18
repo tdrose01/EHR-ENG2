@@ -47,6 +47,14 @@ const User = {
   async getRoles() {
     const { rows } = await db.query("SELECT DISTINCT role FROM users ORDER BY role");
     return rows.map(row => row.role);
+  },
+
+  async updateLastLogin(id) {
+    const { rowCount } = await db.query(
+      'UPDATE users SET last_login = NOW() WHERE id = $1',
+      [id]
+    );
+    return rowCount;
   }
 };
 

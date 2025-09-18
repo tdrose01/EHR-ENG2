@@ -6,35 +6,28 @@ const backupService = require('../services/backupService');
 const { spawn } = require('child_process');
 const fs = require('fs').promises;
 const path = require('path');
+const { verifyToken, requireAdmin, login } = require('../middleware/auth');
 
-// Simple admin check middleware (for backup operations)
+// JWT-based admin authentication for backup operations
 const checkAdminSimple = (req, res, next) => {
   console.log('Admin middleware called for:', req.method, req.path);
-  // For now, allow all requests to backup endpoints
-  // In production, you should implement proper session-based authentication
-  next();
+  // Use JWT authentication for backup endpoints
+  verifyToken(req, res, (err) => {
+    if (err) return;
+    requireAdmin(req, res, next);
+  });
 };
 
-// Middleware to check for admin credentials (for user management)
-const checkAdmin = async (req, res, next) => {
-  const { adminEmail, adminPassword } = req.body;
-
-  if (!adminEmail || !adminPassword) {
-    return res.status(401).json({ error: 'Admin credentials are required' });
-  }
-
-  const adminUser = await User.findByEmail(adminEmail);
-  if (!adminUser || adminUser.role !== 'admin') {
-    return res.status(403).json({ error: 'Forbidden' });
-  }
-
-  const isMatch = await bcrypt.compare(adminPassword, adminUser.password_hash);
-  if (!isMatch) {
-    return res.status(401).json({ error: 'Invalid admin credentials' });
-  }
-
-  next();
+// JWT-based admin authentication for user management
+const checkAdmin = (req, res, next) => {
+  verifyToken(req, res, (err) => {
+    if (err) return;
+    requireAdmin(req, res, next);
+  });
 };
+
+// POST /api/admin/login - Admin login endpoint
+router.post('/login', login);
 
 // POST /api/admin/users/list (for fetching users with credentials in body)
 router.post('/users/list', checkAdmin, async (req, res) => {

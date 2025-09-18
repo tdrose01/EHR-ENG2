@@ -47,7 +47,7 @@ async function getExposures(filters = {}) {
 
   if (metric_type) {
     queryParams.push(metric_type);
-    whereClauses.push(`e.metric_type = ${queryParams.length}`);
+    whereClauses.push(`e.metric_type = $${queryParams.length}`);
   }
 
   if (location_code) {

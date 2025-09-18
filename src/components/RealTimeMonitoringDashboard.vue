@@ -45,83 +45,83 @@
     </div>
 
     <!-- Main Dashboard Content -->
-    <div class="max-w-7xl mx-auto p-6">
+    <div class="max-w-full mx-auto p-4 sm:p-6">
       <!-- Enhanced Real-time Status Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <!-- Connection Status Card -->
-        <div class="bg-gradient-to-br from-slate-800/80 to-blue-800/80 rounded-xl p-6 border border-blue-500/30 shadow-xl backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-slate-800/80 to-blue-800/80 rounded-xl p-4 sm:p-6 border border-blue-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <div>
+            <div class="flex-1">
               <p class="text-blue-200 text-sm font-medium">Connection</p>
-              <p class="text-2xl font-bold text-cyan-400">{{ connectionStatus }}</p>
+              <p class="text-xl sm:text-2xl font-bold text-cyan-400">{{ connectionStatus }}</p>
             </div>
-            <div class="text-4xl">🔌</div>
+            <div class="text-3xl sm:text-4xl ml-2">🔌</div>
           </div>
-          <div class="mt-4 text-xs text-blue-300">
+          <div class="mt-3 text-xs text-blue-300">
             Reconnects: {{ reconnectAttempts }}
           </div>
         </div>
 
         <!-- Active Alerts Card -->
-        <div class="bg-gradient-to-br from-red-900/80 to-orange-800/80 rounded-xl p-6 border border-red-500/30 shadow-xl backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-red-900/80 to-orange-800/80 rounded-xl p-4 sm:p-6 border border-red-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <div>
+            <div class="flex-1">
               <p class="text-red-200 text-sm font-medium">Active Alerts</p>
-              <p class="text-2xl font-bold text-red-400">{{ alertsCount }}</p>
+              <p class="text-xl sm:text-2xl font-bold text-red-400">{{ alertsCount }}</p>
             </div>
-            <div class="text-4xl">🚨</div>
+            <div class="text-3xl sm:text-4xl ml-2">🚨</div>
           </div>
-          <div class="mt-4 text-xs text-red-300">
+          <div class="mt-3 text-xs text-red-300">
             Critical: {{ criticalAlertsCount }}
           </div>
         </div>
 
         <!-- Notifications Card -->
-        <div class="bg-gradient-to-br from-blue-900/80 to-cyan-800/80 rounded-xl p-6 border border-cyan-500/30 shadow-xl backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-blue-900/80 to-cyan-800/80 rounded-xl p-4 sm:p-6 border border-cyan-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <div>
+            <div class="flex-1">
               <p class="text-cyan-200 text-sm font-medium">Notifications</p>
-              <p class="text-2xl font-bold text-cyan-400">{{ unreadNotifications }}</p>
+              <p class="text-xl sm:text-2xl font-bold text-cyan-400">{{ unreadNotifications }}</p>
             </div>
-            <div class="text-4xl">📱</div>
+            <div class="text-3xl sm:text-4xl ml-2">📱</div>
           </div>
-          <div class="mt-4 text-xs text-cyan-300">
+          <div class="mt-3 text-xs text-cyan-300">
             Total: {{ notifications.length }}
           </div>
         </div>
 
         <!-- Recent Updates Card -->
-        <div class="bg-gradient-to-br from-purple-900/80 to-pink-800/80 rounded-xl p-6 border border-purple-500/30 shadow-xl backdrop-blur-sm">
+        <div class="bg-gradient-to-br from-purple-900/80 to-pink-800/80 rounded-xl p-4 sm:p-6 border border-purple-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <div>
+            <div class="flex-1">
               <p class="text-purple-200 text-sm font-medium">Recent Updates</p>
-              <p class="text-2xl font-bold text-purple-400">{{ recentUpdates.length }}</p>
+              <p class="text-xl sm:text-2xl font-bold text-purple-400">{{ recentUpdates.length }}</p>
             </div>
-            <div class="text-4xl">📊</div>
+            <div class="text-3xl sm:text-4xl ml-2">📊</div>
           </div>
-          <div class="mt-4 text-xs text-purple-300">
+          <div class="mt-3 text-xs text-purple-300">
             Last: {{ lastUpdateTime }}
           </div>
         </div>
       </div>
 
       <!-- Real-time Data Streams with Enhanced Layout -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <!-- Enhanced Live Alerts Stream -->
-        <div class="bg-gradient-to-br from-slate-800/80 to-red-900/80 rounded-xl p-6 border border-red-500/30 shadow-xl backdrop-blur-sm">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-semibold text-red-400 flex items-center">
+        <div class="bg-gradient-to-br from-slate-800/80 to-red-900/80 rounded-xl p-4 sm:p-6 border border-red-500/30 shadow-xl backdrop-blur-sm min-h-[400px] flex flex-col">
+          <div class="flex items-center justify-between mb-4 sm:mb-6">
+            <h3 class="text-lg sm:text-xl font-semibold text-red-400 flex items-center">
               🚨 Live Alerts
-              <span class="ml-2 text-sm bg-red-500/20 px-2 py-1 rounded-full">{{ recentAlerts.length }}</span>
+              <span class="ml-2 text-xs sm:text-sm bg-red-500/20 px-2 py-1 rounded-full">{{ recentAlerts.length }}</span>
             </h3>
             <button 
               @click="clearAlerts"
-              class="text-xs bg-red-600/30 hover:bg-red-600/50 px-3 py-1 rounded-lg transition-colors border border-red-500/30"
+              class="text-xs bg-red-600/30 hover:bg-red-600/50 px-2 sm:px-3 py-1 rounded-lg transition-colors border border-red-500/30"
             >
               Clear
             </button>
           </div>
-          <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar">
+          <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar flex-1">
             <div 
               v-for="alert in recentAlerts" 
               :key="alert.id"
@@ -149,20 +149,20 @@
         </div>
 
         <!-- Enhanced Live Dose Readings Stream -->
-        <div class="bg-gradient-to-br from-slate-800/80 to-blue-900/80 rounded-xl p-6 border border-blue-500/30 shadow-xl backdrop-blur-sm">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-semibold text-blue-400 flex items-center">
+        <div class="bg-gradient-to-br from-slate-800/80 to-blue-900/80 rounded-xl p-4 sm:p-6 border border-blue-500/30 shadow-xl backdrop-blur-sm min-h-[400px] flex flex-col">
+          <div class="flex items-center justify-between mb-4 sm:mb-6">
+            <h3 class="text-lg sm:text-xl font-semibold text-blue-400 flex items-center">
               📊 Live Dose Readings
-              <span class="ml-2 text-sm bg-blue-500/20 px-2 py-1 rounded-full">{{ recentReadings.length }}</span>
+              <span class="ml-2 text-xs sm:text-sm bg-blue-500/20 px-2 py-1 rounded-full">{{ recentReadings.length }}</span>
             </h3>
             <button 
               @click="clearReadings"
-              class="text-xs bg-blue-600/30 hover:bg-blue-600/50 px-3 py-1 rounded-lg transition-colors border border-blue-500/30"
+              class="text-xs bg-blue-600/30 hover:bg-blue-600/50 px-2 sm:px-3 py-1 rounded-lg transition-colors border border-blue-500/30"
             >
               Clear
             </button>
           </div>
-          <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar">
+          <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar flex-1">
             <div 
               v-for="reading in recentReadings" 
               :key="reading.id"
@@ -196,29 +196,29 @@
       </div>
 
       <!-- Real-time Chart with Constrained Container -->
-      <div class="mb-8 chart-section">
-        <div class="chart-wrapper" style="max-height: 500px; overflow: hidden;">
+      <div class="mb-6 sm:mb-8 chart-section">
+        <div class="chart-wrapper bg-slate-800/50 rounded-xl p-4 sm:p-6 border border-slate-600/30" style="max-height: 500px; overflow: hidden;">
           <RealTimeChart :readings="recentReadings" />
         </div>
       </div>
 
       <!-- Enhanced Real-time Notifications Panel -->
-      <div class="bg-gradient-to-br from-slate-800/80 to-green-900/80 rounded-xl p-6 border border-green-500/30 shadow-xl backdrop-blur-sm mb-8">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-xl font-semibold text-green-400 flex items-center">
+      <div class="bg-gradient-to-br from-slate-800/80 to-green-900/80 rounded-xl p-4 sm:p-6 border border-green-500/30 shadow-xl backdrop-blur-sm mb-6 sm:mb-8">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+          <h3 class="text-lg sm:text-xl font-semibold text-green-400 flex items-center">
             📱 Real-time Notifications
-            <span class="ml-2 text-sm bg-green-500/20 px-2 py-1 rounded-full">{{ notifications.length }}</span>
+            <span class="ml-2 text-xs sm:text-sm bg-green-500/20 px-2 py-1 rounded-full">{{ notifications.length }}</span>
           </h3>
-          <div class="flex space-x-3">
+          <div class="flex space-x-2 sm:space-x-3">
             <button 
               @click="markAllAsRead"
-              class="text-xs bg-green-600/30 hover:bg-green-600/50 px-3 py-1 rounded-lg transition-colors border border-green-500/30"
+              class="text-xs bg-green-600/30 hover:bg-green-600/50 px-2 sm:px-3 py-1 rounded-lg transition-colors border border-green-500/30"
             >
               Mark All Read
             </button>
             <button 
               @click="clearNotifications"
-              class="text-xs bg-slate-600/30 hover:bg-slate-600/50 px-3 py-1 rounded-lg transition-colors border border-slate-500/30"
+              class="text-xs bg-slate-600/30 hover:bg-slate-600/50 px-2 sm:px-3 py-1 rounded-lg transition-colors border border-slate-500/30"
             >
               Clear
             </button>
@@ -278,12 +278,12 @@
       </div>
 
       <!-- Enhanced System Health Status -->
-      <div class="bg-gradient-to-br from-slate-800/80 to-yellow-900/80 rounded-xl p-6 border border-yellow-500/30 shadow-xl backdrop-blur-sm mb-8">
-        <h3 class="text-xl font-semibold text-yellow-400 mb-6 flex items-center">
+      <div class="bg-gradient-to-br from-slate-800/80 to-yellow-900/80 rounded-xl p-4 sm:p-6 border border-yellow-500/30 shadow-xl backdrop-blur-sm mb-6 sm:mb-8">
+        <h3 class="text-lg sm:text-xl font-semibold text-yellow-400 mb-4 sm:mb-6 flex items-center">
           🏥 System Health
-          <span class="ml-2 text-sm bg-yellow-500/20 px-2 py-1 rounded-full">Live</span>
+          <span class="ml-2 text-xs sm:text-sm bg-yellow-500/20 px-2 py-1 rounded-full">Live</span>
         </h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           <div class="text-center bg-slate-800/50 rounded-lg p-4 border border-slate-600/30">
             <div class="text-3xl mb-3">🔌</div>
             <p class="text-sm text-yellow-200">WebSocket</p>
@@ -303,21 +303,21 @@
       </div>
 
       <!-- Enhanced Debug Information (Collapsible) -->
-      <div class="bg-gradient-to-br from-slate-800/80 to-purple-900/80 rounded-xl p-6 border border-purple-500/30 shadow-xl backdrop-blur-sm">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-xl font-semibold text-purple-400 flex items-center">
+      <div class="bg-gradient-to-br from-slate-800/80 to-purple-900/80 rounded-xl p-4 sm:p-6 border border-purple-500/30 shadow-xl backdrop-blur-sm">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+          <h3 class="text-lg sm:text-xl font-semibold text-purple-400 flex items-center">
             🔧 Debug Information
-            <span class="ml-2 text-sm bg-purple-500/20 px-2 py-1 rounded-full">Developer</span>
+            <span class="ml-2 text-xs sm:text-sm bg-purple-500/20 px-2 py-1 rounded-full">Developer</span>
           </h3>
           <button 
             @click="showDebug = !showDebug"
-            class="text-sm bg-purple-600/30 hover:bg-purple-600/50 px-4 py-2 rounded-lg transition-colors border border-purple-500/30"
+            class="text-xs sm:text-sm bg-purple-600/30 hover:bg-purple-600/50 px-3 sm:px-4 py-2 rounded-lg transition-colors border border-purple-500/30"
           >
             {{ showDebug ? 'Hide' : 'Show' }}
           </button>
         </div>
         <div v-if="showDebug" class="space-y-4 text-sm font-mono bg-slate-900/50 rounded-lg p-4 border border-slate-600/30">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div class="space-y-2">
               <p><strong class="text-purple-400">Connection ID:</strong> <span class="text-cyan-300">{{ connectionId || 'None' }}</span></p>
               <p><strong class="text-purple-400">Server Info:</strong> <span class="text-cyan-300">{{ serverInfo ? 'Connected' : 'None' }}</span></p>
@@ -469,6 +469,18 @@ export default {
       console.log('Real-time notification received:', notification)
     }
     
+    const handleRealtimeAlert = (event) => {
+      const { alert, timestamp } = event.detail
+      console.log('🚨 Real-time alert received:', alert)
+      addAlert({ alert, timestamp })
+    }
+    
+    const handleRealtimeReading = (event) => {
+      const { reading, timestamp } = event.detail
+      console.log('📊 Real-time reading received:', reading)
+      addReading({ reading, timestamp })
+    }
+    
          const requestNotificationPermission = async () => {
        if ('Notification' in window && Notification.permission === 'default') {
          const permission = await Notification.requestPermission()
@@ -507,6 +519,8 @@ export default {
       // Listen for real-time events
       window.addEventListener('realtime-update', handleRealtimeUpdate)
       window.addEventListener('realtime-notification', handleRealtimeNotification)
+      window.addEventListener('realtime-alert', handleRealtimeAlert)
+      window.addEventListener('realtime-reading', handleRealtimeReading)
       
       // Request notification permissions
       requestNotificationPermission()
@@ -515,6 +529,8 @@ export default {
     onUnmounted(() => {
       window.removeEventListener('realtime-update', handleRealtimeUpdate)
       window.removeEventListener('realtime-notification', handleRealtimeNotification)
+      window.removeEventListener('realtime-alert', handleRealtimeAlert)
+      window.removeEventListener('realtime-reading', handleRealtimeReading)
     })
     
         return {
@@ -530,17 +546,19 @@ export default {
       dbStatus,
       notifStatus,
       lastUpdateTime,
-             addAlert,
-       addReading,
-       formatTime,
-       handleRealtimeUpdate,
-       handleRealtimeNotification,
-       requestNotificationPermission,
-       clearAlerts,
-       clearReadings,
-       markAllAsRead,
-       clearNotifications,
-       markAsRead
+      addAlert,
+      addReading,
+      formatTime,
+      handleRealtimeUpdate,
+      handleRealtimeNotification,
+      handleRealtimeAlert,
+      handleRealtimeReading,
+      requestNotificationPermission,
+      clearAlerts,
+      clearReadings,
+      markAllAsRead,
+      clearNotifications,
+      markAsRead
     }
   }
 }

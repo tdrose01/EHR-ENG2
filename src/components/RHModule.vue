@@ -71,7 +71,7 @@
               Live radiation health data, alerts, and real-time notifications.
             </p>
             <router-link 
-              to="/realtime-monitoring"
+              to="/real-time-monitoring"
               class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
             >
               Open Real-Time Dashboard

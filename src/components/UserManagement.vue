@@ -74,7 +74,10 @@
         
         <div v-else-if="error" class="p-8 text-center">
           <p class="text-red-400">{{ error }}</p>
-          <button @click="fetchUsers" class="mt-2 text-blue-400 hover:text-blue-300 hover:underline">Retry</button>
+          <div class="mt-4 space-x-4">
+            <button @click="fetchUsers" class="text-blue-400 hover:text-blue-300 hover:underline">Retry</button>
+            <button @click="goToLogin" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Go to Login</button>
+          </div>
         </div>
         
         <div v-else class="overflow-x-auto">
@@ -230,23 +233,43 @@ const fetchUsers = async () => {
   error.value = null
   
   try {
-    const adminEmail = localStorage.getItem('userEmail')
-    const adminPassword = localStorage.getItem('adminPassword') || prompt('Enter admin password:')
+    const token = localStorage.getItem('authToken')
+    const isAuthenticated = localStorage.getItem('isAuthenticated')
+    const userRole = localStorage.getItem('userRole')
     
-    if (!adminPassword) return
+    if (!token || !isAuthenticated || userRole !== 'admin') {
+      error.value = 'Authentication required. Please log in again.'
+      // Clear any invalid auth data
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('isAuthenticated')
+      localStorage.removeItem('userRole')
+      localStorage.removeItem('userEmail')
+      localStorage.removeItem('userId')
+      return
+    }
     
     const response = await fetch('/api/admin/users/list', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminEmail, adminPassword })
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
     })
     
     if (response.ok) {
       users.value = await response.json()
-      localStorage.setItem('adminPassword', adminPassword)
     } else {
       const data = await response.json()
-      error.value = data.error || 'Failed to fetch users'
+      if (response.status === 401 || response.status === 403) {
+        error.value = 'Authentication failed. Please log in again.'
+        // Clear invalid token
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('isAuthenticated')
+        localStorage.removeItem('userRole')
+        localStorage.removeItem('userEmail')
+      } else {
+        error.value = data.error || 'Failed to fetch users'
+      }
     }
   } catch (err) {
     error.value = 'Network error while fetching users'
@@ -260,20 +283,28 @@ const createUser = async () => {
   isCreating.value = true
   
   try {
-    const adminEmail = localStorage.getItem('userEmail')
-    const adminPassword = localStorage.getItem('adminPassword')
+    const token = localStorage.getItem('authToken')
+    const isAuthenticated = localStorage.getItem('isAuthenticated')
+    const userRole = localStorage.getItem('userRole')
     
-    if (!adminPassword) {
-      showMessage('Admin password required', 'error')
+    if (!token || !isAuthenticated || userRole !== 'admin') {
+      showMessage('Authentication required. Please log in again.', 'error')
+      // Clear any invalid auth data
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('isAuthenticated')
+      localStorage.removeItem('userRole')
+      localStorage.removeItem('userEmail')
+      localStorage.removeItem('userId')
       return
     }
     
     const response = await fetch('/api/admin/users', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
-        adminEmail,
-        adminPassword,
         email: newUser.value.email,
         password: newUser.value.password,
         role: newUser.value.role
@@ -286,7 +317,16 @@ const createUser = async () => {
       await fetchUsers()
     } else {
       const data = await response.json()
-      showMessage(data.error || 'Failed to create user', 'error')
+      if (response.status === 401 || response.status === 403) {
+        showMessage('Authentication failed. Please log in again.', 'error')
+        // Clear invalid token
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('isAuthenticated')
+        localStorage.removeItem('userRole')
+        localStorage.removeItem('userEmail')
+      } else {
+        showMessage(data.error || 'Failed to create user', 'error')
+      }
     }
   } catch (err) {
     showMessage('Network error while creating user', 'error')
@@ -305,15 +345,20 @@ const updateUser = async () => {
   isUpdating.value = true
   
   try {
-    const adminEmail = localStorage.getItem('userEmail')
-    const adminPassword = localStorage.getItem('adminPassword')
+    const token = localStorage.getItem('authToken')
+    
+    if (!token) {
+      showMessage('Authentication required. Please log in again.', 'error')
+      return
+    }
     
     const response = await fetch(`/api/admin/users/${editingUser.value.id}/role`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
-        adminEmail,
-        adminPassword,
         newRole: editingUser.value.role
       })
     })
@@ -324,7 +369,16 @@ const updateUser = async () => {
       await fetchUsers()
     } else {
       const data = await response.json()
-      showMessage(data.error || 'Failed to update user', 'error')
+      if (response.status === 401 || response.status === 403) {
+        showMessage('Authentication failed. Please log in again.', 'error')
+        // Clear invalid token
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('isAuthenticated')
+        localStorage.removeItem('userRole')
+        localStorage.removeItem('userEmail')
+      } else {
+        showMessage(data.error || 'Failed to update user', 'error')
+      }
     }
   } catch (err) {
     showMessage('Network error while updating user', 'error')
@@ -340,13 +394,19 @@ const deleteUser = async (userId) => {
   }
   
   try {
-    const adminEmail = localStorage.getItem('userEmail')
-    const adminPassword = localStorage.getItem('adminPassword')
+    const token = localStorage.getItem('authToken')
+    
+    if (!token) {
+      showMessage('Authentication required. Please log in again.', 'error')
+      return
+    }
     
     const response = await fetch(`/api/admin/users/${userId}`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ adminEmail, adminPassword })
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
     })
     
     if (response.ok) {
@@ -354,7 +414,16 @@ const deleteUser = async (userId) => {
       await fetchUsers()
     } else {
       const data = await response.json()
-      showMessage(data.error || 'Failed to delete user', 'error')
+      if (response.status === 401 || response.status === 403) {
+        showMessage('Authentication failed. Please log in again.', 'error')
+        // Clear invalid token
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('isAuthenticated')
+        localStorage.removeItem('userRole')
+        localStorage.removeItem('userEmail')
+      } else {
+        showMessage(data.error || 'Failed to delete user', 'error')
+      }
     }
   } catch (err) {
     showMessage('Network error while deleting user', 'error')
@@ -362,7 +431,27 @@ const deleteUser = async (userId) => {
   }
 }
 
+const goToLogin = () => {
+  // Clear any existing auth data
+  localStorage.removeItem('authToken')
+  localStorage.removeItem('isAuthenticated')
+  localStorage.removeItem('userRole')
+  localStorage.removeItem('userEmail')
+  localStorage.removeItem('userId')
+  
+  // Navigate to login
+  window.location.href = '/'
+}
+
 onMounted(() => {
+  // Check if user is admin before proceeding
+  const userRole = localStorage.getItem('userRole')
+  if (userRole !== 'admin') {
+    // Redirect non-admin users to module selection
+    window.location.href = '/select-module'
+    return
+  }
+  
   fetchUsers()
 })
 </script>

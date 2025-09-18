@@ -9,7 +9,10 @@ const express = require('express')
 const { Pool } = require('pg')
 const bcrypt = require('bcryptjs')
 const cors = require('cors')
+const helmet = require('helmet')
 const pool = require('./db')
+const { limiter, sanitizeInput, errorHandler } = require('./middleware/security')
+const { login, verifyToken } = require('./middleware/auth')
 
 if (!process.env.DATABASE_URL) {
   console.warn('DATABASE_URL not set, using default')
@@ -41,6 +44,9 @@ app.use(cors({
 }))
 
 app.use(express.json())
+app.use(helmet())
+app.use(limiter)
+app.use(sanitizeInput)
 
 // Logging middleware
 app.use((req, res, next) => {
@@ -91,83 +97,8 @@ app.get('/api/debug/routes', (req, res) => {
   res.json({ routes });
 });
 
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body
-  console.log('Login attempt:', { email, password })
-  try {
-    const result = await pool.query(
-      'SELECT id, password_hash, role FROM users WHERE email = $1',
-      [email]
-    )
-    console.log('Database result:', result.rows)
-    if (result.rows.length === 0) {
-      console.log('No user found with email:', email)
-      await pool.query('INSERT INTO login_audit (action) VALUES ($1)', ['login_failed'])
-      return res.status(401).json({ success: false, message: 'Invalid credentials' })
-    }
-    const user = result.rows[0]
-    
-    // Generate a new hash for comparison
-    const newHash = await bcrypt.hash(password, 10)
-    console.log('Generated hash:', newHash)
-    
-    // Compare the password with both the stored hash and a new hash
-    const validStored = await bcrypt.compare(password, user.password_hash)
-    const validNew = await bcrypt.compare(password, newHash)
-    console.log('Password comparison results:', { validStored, validNew })
-    
-    // If either comparison works, consider it valid
-    const valid = validStored || validNew
-    console.log('Final validation result:', valid)
-    
-    const action = valid ? 'login_success' : 'login_failed'
-    await pool.query('INSERT INTO login_audit (user_id, action) VALUES ($1, $2)', [user.id, action])
-    
-    if (valid) {
-      // Update the stored hash if it's not working but the new one is
-      if (!validStored && validNew) {
-        await pool.query(
-          'UPDATE users SET password_hash = $1 WHERE id = $2',
-          [newHash, user.id]
-        )
-        console.log('Updated password hash for user')
-      }
-      try {
-        // Fetch the current last_login
-        const prev = await pool.query(
-          'SELECT last_login FROM users WHERE id = $1',
-          [user.id]
-        );
-        const previousLogin = prev.rows[0]?.last_login || null;
-
-        // Update last_login to NOW()
-        await pool.query(
-          'UPDATE users SET last_login = NOW() WHERE id = $1',
-          [user.id]
-        );
-
-        res.json({
-          success: true,
-          role: user.role,
-          userId: user.id,
-          lastLogin: previousLogin
-        });
-      } catch (err) {
-        res.json({
-          success: true,
-          role: user.role,
-          userId: user.id,
-          lastLogin: null
-        });
-      }
-    } else {
-      res.status(401).json({ success: false, message: 'Invalid credentials' })
-    }
-  } catch (error) {
-    console.error('Login error:', error)
-    res.status(500).json({ success: false })
-  }
-})
+// Use JWT-based login
+app.post('/api/login', login)
 
 // Endpoint to fetch a user's profile
 app.get('/api/users/:id', async (req, res) => {
@@ -379,5 +310,8 @@ if (require.main === module) {
   console.log('📡 WebSocket endpoint: ws://localhost:' + PORT + '/ws');
   console.log('📊 Real-time status: http://localhost:' + PORT + '/api/realtime/status');
 }
+
+// Error handling middleware (must be last)
+app.use(errorHandler);
 
 module.exports = app

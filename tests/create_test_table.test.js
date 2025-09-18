@@ -1,15 +1,14 @@
 const request = require('supertest');
 const assert = require('assert');
-const { initializeApp } = require('../src/api/server');
+const express = require('express');
+const createTestTableRouter = require('../src/api/create_test_table');
 
 describe('create test table', () => {
   let app;
-  let db;
 
-  before(async () => {
-    const initialized = await initializeApp();
-    app = initialized.app;
-    db = initialized.db;
+  beforeAll(() => {
+    app = express();
+    app.use('/api', createTestTableRouter);
   });
 
   it('should return 200 from the create_test_table endpoint', (done) => {

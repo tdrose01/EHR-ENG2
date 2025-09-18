@@ -25,152 +25,152 @@
     </div>
 
     <!-- Overview Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 px-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 mb-6 px-4 sm:px-6">
       <!-- Personnel Monitored Card -->
       <div 
         @click="drillDownToTab('personnel')"
-        class="bg-gray-900 rounded-lg p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 group"
+        class="bg-gray-900 rounded-lg p-4 sm:p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 group min-h-[140px] flex flex-col justify-between"
       >
         <div class="flex items-center">
           <div class="p-3 rounded-full bg-blue-600 bg-opacity-20 group-hover:bg-blue-500 group-hover:bg-opacity-30 transition-colors">
-            <i class="fas fa-users text-blue-400 text-xl group-hover:text-blue-300"></i>
+            <i class="fas fa-users text-blue-400 text-lg sm:text-xl group-hover:text-blue-300"></i>
           </div>
-          <div class="ml-4">
+          <div class="ml-4 flex-1">
             <h3 class="text-gray-400 text-sm group-hover:text-blue-300 transition-colors">Personnel Monitored</h3>
-            <p class="text-2xl font-bold text-white group-hover:text-blue-200 transition-colors">
+            <p class="text-xl sm:text-2xl font-bold text-white group-hover:text-blue-200 transition-colors">
               <span v-if="loading" class="animate-pulse">...</span>
               <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
               <span v-else>{{ overview.personnelMonitored || '0' }}</span>
             </p>
             <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
-            <p class="text-xs text-blue-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <i class="fas fa-arrow-right mr-1"></i>Click to view details
-            </p>
           </div>
         </div>
+        <p class="text-xs text-blue-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <i class="fas fa-arrow-right mr-1"></i>Click to view details
+        </p>
       </div>
 
       <!-- Active Devices Card -->
       <div 
         @click="drillDownToTab('devices')"
-        class="bg-gray-900 rounded-lg p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-green-500 hover:shadow-lg hover:shadow-green-500/20 group"
+        class="bg-gray-900 rounded-lg p-4 sm:p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-green-500 hover:shadow-lg hover:shadow-green-500/20 group min-h-[140px] flex flex-col justify-between"
       >
         <div class="flex items-center">
           <div class="p-3 rounded-full bg-green-600 bg-opacity-20 group-hover:bg-green-500 group-hover:bg-opacity-30 transition-colors">
-            <i class="fas fa-microchip text-green-400 text-xl group-hover:text-green-300"></i>
+            <i class="fas fa-microchip text-green-400 text-lg sm:text-xl group-hover:text-green-300"></i>
           </div>
-          <div class="ml-4">
+          <div class="ml-4 flex-1">
             <h3 class="text-gray-400 text-sm group-hover:text-green-300 transition-colors">Active Devices</h3>
-            <p class="text-2xl font-bold text-white group-hover:text-green-200 transition-colors">
+            <p class="text-xl sm:text-2xl font-bold text-white group-hover:text-green-200 transition-colors">
               <span v-if="loading" class="animate-pulse">...</span>
               <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
               <span v-else>{{ overview.activeDevices || '0' }}</span>
             </p>
             <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
-            <p class="text-xs text-green-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <i class="fas fa-arrow-right mr-1"></i>Click to view details
-            </p>
           </div>
         </div>
+        <p class="text-xs text-green-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <i class="fas fa-arrow-right mr-1"></i>Click to view details
+        </p>
       </div>
 
       <!-- Pending Alerts Card -->
       <div 
         @click="drillDownToTab('alerts')"
-        class="bg-gray-900 rounded-lg p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-red-500 hover:shadow-lg hover:shadow-red-500/20 group"
+        class="bg-gray-900 rounded-lg p-4 sm:p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-red-500 hover:shadow-lg hover:shadow-red-500/20 group min-h-[140px] flex flex-col justify-between"
       >
         <div class="flex items-center">
           <div class="p-3 rounded-full bg-red-600 bg-opacity-20 group-hover:bg-red-500 group-hover:bg-opacity-30 transition-colors">
-            <i class="fas fa-exclamation-triangle text-red-400 text-xl group-hover:text-red-300"></i>
+            <i class="fas fa-exclamation-triangle text-red-400 text-lg sm:text-xl group-hover:text-red-300"></i>
           </div>
-          <div class="ml-4">
+          <div class="ml-4 flex-1">
             <h3 class="text-gray-400 text-sm group-hover:text-red-300 transition-colors">Pending Alerts</h3>
-            <p class="text-2xl font-bold text-white group-hover:text-red-200 transition-colors">
+            <p class="text-xl sm:text-2xl font-bold text-white group-hover:text-red-200 transition-colors">
               <span v-if="loading" class="animate-pulse">...</span>
               <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
               <span v-else>{{ overview.pendingAlerts || '0' }}</span>
             </p>
             <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
-            <p class="text-xs text-red-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <i class="fas fa-arrow-right mr-1"></i>Click to view details
-            </p>
           </div>
         </div>
+        <p class="text-xs text-red-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <i class="fas fa-arrow-right mr-1"></i>Click to view details
+        </p>
       </div>
 
       <!-- Readings (24h) Card -->
       <div 
         @click="drillDownToTab('readings')"
-        class="bg-gray-900 rounded-lg p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/20 group"
+        class="bg-gray-900 rounded-lg p-4 sm:p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/20 group min-h-[140px] flex flex-col justify-between"
       >
         <div class="flex items-center">
           <div class="p-3 rounded-full bg-purple-600 bg-opacity-20 group-hover:bg-purple-500 group-hover:bg-opacity-30 transition-colors">
-            <i class="fas fa-chart-line text-purple-400 text-xl group-hover:text-purple-300"></i>
+            <i class="fas fa-chart-line text-purple-400 text-lg sm:text-xl group-hover:text-purple-300"></i>
           </div>
-          <div class="ml-4">
+          <div class="ml-4 flex-1">
             <h3 class="text-gray-400 text-sm group-hover:text-purple-300 transition-colors">Readings (24h)</h3>
-            <p class="text-2xl font-bold text-white group-hover:text-purple-200 transition-colors">
+            <p class="text-xl sm:text-2xl font-bold text-white group-hover:text-purple-200 transition-colors">
               <span v-if="loading" class="animate-pulse">...</span>
               <span v-else-if="overviewError" class="text-red-400 text-lg">Error</span>
               <span v-else>{{ overview.readingsLast24h || '0' }}</span>
             </p>
             <p v-if="overviewError" class="text-xs text-red-400 mt-1">{{ overviewError }}</p>
-            <p class="text-xs text-purple-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <i class="fas fa-arrow-right mr-1"></i>Click to view details
-            </p>
           </div>
         </div>
+        <p class="text-xs text-purple-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <i class="fas fa-arrow-right mr-1"></i>Click to view details
+        </p>
       </div>
 
       <!-- Database Backup & Restore Card (Admin Only) -->
       <div 
         v-if="isAdmin"
         @click="navigateToBackup"
-        class="bg-gray-900 rounded-lg p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 group"
+        class="bg-gray-900 rounded-lg p-4 sm:p-6 border border-gray-700 cursor-pointer transform transition-all hover:scale-105 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 group min-h-[140px] flex flex-col justify-between"
       >
         <div class="flex items-center">
           <div class="p-3 rounded-full bg-yellow-600 bg-opacity-20 group-hover:bg-yellow-500 group-hover:bg-opacity-30 transition-colors">
-            <i class="fas fa-database text-yellow-400 text-xl group-hover:text-yellow-300"></i>
+            <i class="fas fa-database text-yellow-400 text-lg sm:text-xl group-hover:text-yellow-300"></i>
           </div>
-          <div class="ml-4">
+          <div class="ml-4 flex-1">
             <h3 class="text-gray-400 text-sm group-hover:text-yellow-300 transition-colors">Database Backup & Restore</h3>
             <p class="text-lg font-bold text-white group-hover:text-yellow-200 transition-colors">
               <i class="fas fa-shield-alt mr-2"></i>Secure
             </p>
-            <p class="text-xs text-yellow-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <i class="fas fa-arrow-right mr-1"></i>Click to access backup system
-            </p>
           </div>
         </div>
+        <p class="text-xs text-yellow-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <i class="fas fa-arrow-right mr-1"></i>Click to access backup system
+        </p>
       </div>
     </div>
 
     <!-- Main Content -->
-    <div class="px-6">
+    <div class="px-4 sm:px-6">
       <!-- Tab Navigation -->
       <div class="bg-gray-900 rounded-lg border border-gray-700">
         <div class="border-b border-gray-700">
-          <nav class="flex space-x-0">
+          <nav class="flex space-x-0 overflow-x-auto">
             <button
               v-for="tab in tabs"
               :key="tab.id"
               :data-tab="tab.id"
               @click="switchTab(tab.id)"
               :class="[
-                'px-6 py-4 text-sm font-medium transition-colors',
+                'px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
                 activeTab === tab.id
                   ? 'text-blue-400 border-b-2 border-blue-400 bg-gray-800'
                   : 'text-gray-400 hover:text-white hover:bg-gray-800'
               ]"
             >
-              <i :class="tab.icon" class="mr-2"></i>
+              <i :class="tab.icon" class="mr-1 sm:mr-2"></i>
               {{ tab.name }}
             </button>
           </nav>
         </div>
 
         <!-- Tab Content -->
-        <div class="p-6 bg-gray-900">
+        <div class="p-4 sm:p-6 bg-gray-900">
           <!-- Personnel Tab -->
           <div v-if="activeTab === 'personnel'" class="space-y-4">
             <div class="flex justify-between items-center mb-4">

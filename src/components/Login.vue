@@ -84,20 +84,11 @@ export default {
         if (data.success) {
           // Store authentication state
           localStorage.setItem('isAuthenticated', 'true')
-          localStorage.setItem('userRole', data.role)
-          localStorage.setItem('userEmail', this.email)
-          if (data.userId) {
-            localStorage.setItem('userId', data.userId)
-          }
-          if (data.lastLoginAt) {
-            localStorage.setItem('lastLoginAt', data.lastLoginAt)
-          }
-          if (data.lastLogin) {
-            localStorage.setItem('lastLogin', data.lastLogin)
-          }
-          if (data.role === 'admin') {
-            localStorage.setItem('adminPassword', this.password)
-          }
+          localStorage.setItem('authToken', data.token)
+          localStorage.setItem('userRole', data.user.role)
+          localStorage.setItem('userEmail', data.user.email)
+          localStorage.setItem('userId', data.user.id)
+          
           // Clear any existing error
           this.error = ''
           // Redirect to module selection

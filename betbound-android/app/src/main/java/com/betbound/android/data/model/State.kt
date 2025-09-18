@@ -63,3 +63,4 @@ data class StateSummary(
     val age_minimum: Int,
     val last_updated_utc: String
 ) : Parcelable
+

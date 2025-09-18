@@ -254,6 +254,13 @@ export default {
               size: 11
             }
           }
+        },
+        // Add error handling for plugins
+        onHover: (event, activeElements) => {
+          // Prevent plugin errors
+        },
+        onClick: (event, activeElements) => {
+          // Prevent plugin errors
         }
       }
     }
@@ -269,6 +276,69 @@ export default {
       return Math.max(...dataPoints.value.map(p => p.rate_usv_h))
     })
     
+    // Safe chart update method to handle fullSize and includes errors
+    const safeChartUpdate = () => {
+      if (!chart.value) return false
+      
+      try {
+        // Check if chart is properly initialized
+        if (!chart.value.update || !chart.value.data) {
+          throw new Error('Chart not properly initialized')
+        }
+        
+        // Try to update with error handling for fullSize and includes
+        chart.value.update('none', { duration: 0 })
+        return true
+      } catch (error) {
+        // Handle specific fullSize error
+        if (error.message && error.message.includes('fullSize')) {
+          console.warn('fullSize error detected, recreating chart...')
+          recreateChart()
+          return false
+        }
+        
+        // Handle includes error
+        if (error.message && error.message.includes('includes')) {
+          console.warn('includes error detected, recreating chart...')
+          recreateChart()
+          return false
+        }
+        
+        // Handle other Chart.js errors
+        if (error.message && (error.message.includes('Chart') || error.message.includes('plugin'))) {
+          console.warn('Chart.js error detected, recreating chart...', error.message)
+          recreateChart()
+          return false
+        }
+        
+        // Handle other errors
+        console.warn('Chart update error:', error)
+        return false
+      }
+    }
+
+    // Helper function to recreate chart
+    const recreateChart = () => {
+      // Destroy the problematic chart first
+      if (chart.value) {
+        try {
+          chart.value.destroy()
+        } catch (destroyError) {
+          console.warn('Error destroying chart:', destroyError)
+        }
+        chart.value = null
+      }
+      
+      // Recreate the chart after a short delay
+      setTimeout(() => {
+        try {
+          initChart()
+        } catch (recreateError) {
+          console.error('Failed to recreate chart:', recreateError)
+        }
+      }, 100)
+    }
+
     // Methods
     const initChart = async () => {
       if (!chartCanvas.value) return
@@ -287,9 +357,54 @@ export default {
           }
         }
         
-        // Create chart with error handling
+        // Create chart with error handling and plugin safety
         try {
-          chart.value = new Chart(ctx, chartConfig)
+          // Ensure Chart.js is properly loaded
+          if (typeof Chart === 'undefined') {
+            throw new Error('Chart.js not loaded')
+          }
+          
+          // Create a safe configuration that prevents includes errors
+          const safeConfig = {
+            ...chartConfig,
+            options: {
+              ...chartConfig.options,
+              // Ensure all arrays are defined to prevent includes errors
+              plugins: {
+                legend: {
+                  display: false
+                },
+                tooltip: {
+                  backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                  titleColor: '#e2e8f0',
+                  bodyColor: '#cbd5e1',
+                  borderColor: '#475569',
+                  borderWidth: 1,
+                  cornerRadius: 8,
+                  displayColors: true,
+                  titleFont: {
+                    size: 12
+                  },
+                  bodyFont: {
+                    size: 11
+                  }
+                }
+              },
+              // Disable animations that might cause issues
+              animation: {
+                duration: 0
+              },
+              // Add event handlers that prevent errors
+              onHover: (event, activeElements) => {
+                // Prevent plugin errors
+              },
+              onClick: (event, activeElements) => {
+                // Prevent plugin errors
+              }
+            }
+          }
+          
+          chart.value = new Chart(ctx, safeConfig)
           debugLog('Chart created successfully', chart.value)
         } catch (createError) {
           console.error('Failed to create chart:', createError)
@@ -382,39 +497,12 @@ export default {
             chart.value.data.datasets[1].data = hp07Data
             chart.value.data.datasets[2].data = rateData
             
-            // Try multiple update methods to avoid internal errors
-            try {
-              // Method 1: Conservative update
-              chart.value.update('none', { duration: 0 })
-              debugLog('Chart updated successfully with conservative method')
-            } catch (method1Error) {
-              console.warn('Conservative update failed, trying alternative method:', method1Error)
-              
-              try {
-                // Method 2: Silent update
-                chart.value.update('none')
-                debugLog('Chart updated successfully with silent method')
-              } catch (method2Error) {
-                console.warn('Silent update failed, trying minimal update:', method2Error)
-                
-                try {
-                  // Method 3: Minimal update - just redraw
-                  chart.value.render()
-                  debugLog('Chart updated successfully with render method')
-                } catch (method3Error) {
-                  console.warn('All update methods failed, recreating chart:', method3Error)
-                  
-                  // If all methods fail, recreate the chart
-                  setTimeout(() => {
-                    try {
-                      initChart()
-                    } catch (recreateError) {
-                      console.error('Failed to recreate chart:', recreateError)
-                      debugLog('Chart recreation failed', recreateError)
-                    }
-                  }, 100)
-                }
-              }
+            // Use safe chart update method
+            const updateSuccess = safeChartUpdate()
+            if (updateSuccess) {
+              debugLog('Chart updated successfully')
+            } else {
+              debugLog('Chart update failed, will retry on next update')
             }
           } catch (updateError) {
             // If the update fails, try to recreate the chart
@@ -544,10 +632,22 @@ export default {
       }
     }, { deep: true })
     
+    // Global error handler for Chart.js
+    const handleChartError = (error) => {
+      console.warn('Chart.js error caught:', error)
+      if (error.message && (error.message.includes('includes') || error.message.includes('fullSize'))) {
+        recreateChart()
+      }
+    }
+
     // Lifecycle
     onMounted(async () => {
       try {
         debugLog('Component mounting...')
+        
+        // Add global error handler
+        window.addEventListener('error', handleChartError)
+        
         // Import Chart.js dynamically
         const { Chart } = await import('chart.js/auto')
         
@@ -584,6 +684,10 @@ export default {
     onUnmounted(() => {
       try {
         debugLog('Component unmounting...')
+        
+        // Remove global error handler
+        window.removeEventListener('error', handleChartError)
+        
         if (chart.value) {
           chart.value.destroy()
           debugLog('Chart destroyed')

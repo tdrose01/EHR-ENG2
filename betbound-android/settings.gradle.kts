@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "BetBound"
 include(":app")
+

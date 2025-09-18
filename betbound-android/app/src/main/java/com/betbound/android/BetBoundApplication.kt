@@ -18,3 +18,4 @@ class BetBoundApplication : Application() {
         // This is where you'd set up Firebase, Crashlytics, etc.
     }
 }
+

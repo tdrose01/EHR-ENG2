@@ -494,10 +494,18 @@ export default {
       
       this.creatingBackup = true
       try {
+        const token = localStorage.getItem('authToken')
+        
+        if (!token) {
+          this.message = { type: 'error', text: 'Authentication required. Please log in again.' }
+          return
+        }
+        
         const response = await fetch('/api/admin/backup/create', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             description: this.backupDescription,
@@ -525,7 +533,18 @@ export default {
     async refreshBackups() {
       this.refreshing = true
       try {
-        const response = await fetch('/api/admin/backup/list')
+        const token = localStorage.getItem('authToken')
+        
+        if (!token) {
+          this.message = { type: 'error', text: 'Authentication required. Please log in again.' }
+          return
+        }
+        
+        const response = await fetch('/api/admin/backup/list', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
         if (response.ok) {
           this.backups = await response.json()
         } else {
@@ -543,10 +562,18 @@ export default {
       
       this.restoring = true
       try {
+        const token = localStorage.getItem('authToken')
+        
+        if (!token) {
+          this.message = { type: 'error', text: 'Authentication required. Please log in again.' }
+          return
+        }
+        
         const response = await fetch('/api/admin/backup/restore', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ backupId: backup.id })
         })
@@ -571,10 +598,18 @@ export default {
       }
 
       try {
+        const token = localStorage.getItem('authToken')
+        
+        if (!token) {
+          this.message = { type: 'error', text: 'Authentication required. Please log in again.' }
+          return
+        }
+        
         const response = await fetch('/api/admin/backup/delete', {
           method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ backupId: backup.id })
         })
@@ -651,7 +686,18 @@ export default {
     // New methods for rollback procedures
     async fetchAvailableRollbackBackups() {
       try {
-        const response = await fetch('/api/admin/backup/list')
+        const token = localStorage.getItem('authToken')
+        
+        if (!token) {
+          this.message = { type: 'error', text: 'Authentication required. Please log in again.' }
+          return
+        }
+        
+        const response = await fetch('/api/admin/backup/list', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
         if (response.ok) {
           this.availableRollbackBackups = await response.json()
         } else {
@@ -688,7 +734,19 @@ export default {
       this.rollbackProgress.percentage = 10
 
       try {
-        const response = await fetch(`/api/admin/backup/details/${this.selectedRollbackTarget}`)
+        const token = localStorage.getItem('authToken')
+        
+        if (!token) {
+          this.rollbackValidation.message = 'Authentication required. Please log in again.'
+          this.rollbackValidation.checked = true
+          return
+        }
+        
+        const response = await fetch(`/api/admin/backup/details/${this.selectedRollbackTarget}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
         if (response.ok) {
           const backup = await response.json()
           this.selectedBackup = backup
@@ -781,10 +839,18 @@ export default {
       this.rollbackProgress.percentage = 0
 
       try {
+        const token = localStorage.getItem('authToken')
+        
+        if (!token) {
+          this.message = { type: 'error', text: 'Authentication required. Please log in again.' }
+          return
+        }
+        
         const response = await fetch('/api/admin/backup/rollback', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             backupId: this.selectedRollbackTarget,

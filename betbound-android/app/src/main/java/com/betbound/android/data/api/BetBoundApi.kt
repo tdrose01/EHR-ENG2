@@ -37,3 +37,4 @@ interface BetBoundApi {
     @GET("operators")
     suspend fun getOperators(): OperatorCatalog
 }
+

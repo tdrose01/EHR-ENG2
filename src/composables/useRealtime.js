@@ -200,6 +200,8 @@ export function useRealtime() {
   const handleBroadcast = (message) => {
     const { channel, data } = message;
     
+    console.log('🔔 Broadcast received:', { channel, type: data.type, data });
+    
     // Add to recent updates
     addRecentUpdate({
       id: `${channel}_${data.type}_${Date.now()}`,
@@ -213,17 +215,23 @@ export function useRealtime() {
     // Handle specific broadcast types
     switch (data.type) {
       case 'ALERT_UPDATE':
+        console.log('🚨 Processing ALERT_UPDATE:', data);
         handleAlertUpdate(data);
         break;
       case 'READING_UPDATE':
+        console.log('📊 Processing READING_UPDATE:', data);
         handleReadingUpdate(data);
         break;
       case 'PERSONNEL_UPDATE':
+        console.log('👤 Processing PERSONNEL_UPDATE:', data);
         handlePersonnelUpdate(data);
         break;
       case 'DEVICE_UPDATE':
+        console.log('📱 Processing DEVICE_UPDATE:', data);
         handleDeviceUpdate(data);
         break;
+      default:
+        console.log('❓ Unknown broadcast type:', data.type);
     }
 
     // Emit custom events for components to listen to
@@ -271,24 +279,48 @@ export function useRealtime() {
 
   // Specific update handlers
   const handleAlertUpdate = (data) => {
-    if (data.alert && data.alert.severity === 'CRITICAL') {
+    console.log('🚨 handleAlertUpdate called with:', data);
+    
+    if (data.alert) {
+      // Update alerts count for all severities
       alertsCount.value++;
+      console.log('🚨 Alert detected, count:', alertsCount.value);
       
-      // Show critical alert notification
-      if ('Notification' in window && Notification.permission === 'granted') {
+      // Show browser notification for critical alerts
+      if (data.alert.severity === 'CRITICAL' && 'Notification' in window && Notification.permission === 'granted') {
         new Notification('🚨 CRITICAL Radiation Alert', {
-          body: `Alert: ${data.alert.message}`,
+          body: `Alert: ${data.alert.message || data.alert.details?.message || 'Critical alert triggered'}`,
           icon: '/favicon.ico',
           tag: `alert-${data.alert.id}`,
           requireInteraction: true
         });
       }
+      
+      // Emit alert event for dashboard components
+      window.dispatchEvent(new CustomEvent('realtime-alert', {
+        detail: {
+          alert: data.alert,
+          timestamp: new Date().toISOString()
+        }
+      }));
     }
   };
 
   const handleReadingUpdate = (data) => {
-    if (data.reading && data.reading.isAnomalous) {
-      console.log('⚠️ Anomalous reading detected:', data.reading);
+    console.log('📊 handleReadingUpdate called with:', data);
+    
+    if (data.reading) {
+      if (data.reading.isAnomalous) {
+        console.log('⚠️ Anomalous reading detected:', data.reading);
+      }
+      
+      // Emit reading event for dashboard components
+      window.dispatchEvent(new CustomEvent('realtime-reading', {
+        detail: {
+          reading: data.reading,
+          timestamp: new Date().toISOString()
+        }
+      }));
     }
   };
 
