@@ -1,0 +1,535 @@
+openapi: 3.0.3
+info:
+  title: BetBound API
+  description: Sports betting legality API for U.S. states
+  version: 1.0.0
+  contact:
+    name: BetBound API Support
+    email: api-support@betbound.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.betbound.com/v1
+    description: Production server
+  - url: https://staging-api.betbound.com/v1
+    description: Staging server
+  - url: http://localhost:3000/v1
+    description: Local development server
+
+paths:
+  /states:
+    get:
+      summary: Get all states
+      description: Retrieve summary information for all U.S. states
+      operationId: getStates
+      tags:
+        - States
+      responses:
+        '200':
+          description: List of all states
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StateSummary'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /state/{code}:
+    get:
+      summary: Get state by code
+      description: Retrieve detailed information for a specific state
+      operationId: getStateByCode
+      tags:
+        - States
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Two-letter state code
+          schema:
+            type: string
+            pattern: '^[A-Z]{2}$'
+            example: 'CA'
+      responses:
+        '200':
+          description: State details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /state/by-geo:
+    get:
+      summary: Get state by coordinates
+      description: Determine state based on latitude and longitude coordinates
+      operationId: getStateByGeo
+      tags:
+        - States
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          description: Latitude coordinate
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+            example: 37.7749
+        - name: lng
+          in: query
+          required: true
+          description: Longitude coordinate
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+            example: -122.4194
+        - name: state
+          in: query
+          required: false
+          description: Mock parameter for testing
+          schema:
+            type: string
+            pattern: '^[A-Z]{2}$'
+            example: 'CA'
+      responses:
+        '200':
+          description: State details for the given coordinates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /retail/nearby:
+    get:
+      summary: Get nearby retail locations
+      description: Find retail betting locations near given coordinates
+      operationId: getNearbyRetail
+      tags:
+        - Retail
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          description: Latitude coordinate
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+            example: 37.7749
+        - name: lng
+          in: query
+          required: true
+          description: Longitude coordinate
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+            example: -122.4194
+        - name: radius_km
+          in: query
+          required: false
+          description: Search radius in kilometers
+          schema:
+            type: number
+            minimum: 1
+            maximum: 500
+            default: 50
+            example: 25
+        - name: state
+          in: query
+          required: false
+          description: Mock parameter for testing
+          schema:
+            type: string
+            pattern: '^[A-Z]{2}$'
+            example: 'CA'
+      responses:
+        '200':
+          description: List of nearby retail locations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RetailLocation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /legal/nearest:
+    get:
+      summary: Get nearest legal location
+      description: Find the nearest location where online sports betting is legal
+      operationId: getNearestLegal
+      tags:
+        - Legal
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          description: Latitude coordinate
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+            example: 37.7749
+        - name: lng
+          in: query
+          required: true
+          description: Longitude coordinate
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+            example: -122.4194
+        - name: state
+          in: query
+          required: false
+          description: Mock parameter for testing
+          schema:
+            type: string
+            pattern: '^[A-Z]{2}$'
+            example: 'CA'
+      responses:
+        '200':
+          description: Nearest legal location details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearestLegal'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /operators:
+    get:
+      summary: Get operator catalog
+      description: Retrieve the complete operator catalog with deep link information
+      operationId: getOperators
+      tags:
+        - Operators
+      responses:
+        '200':
+          description: Operator catalog
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperatorCatalog'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    StateSummary:
+      type: object
+      required:
+        - state_code
+        - display_name
+        - status
+        - age_minimum
+        - last_updated_utc
+      properties:
+        state_code:
+          type: string
+          pattern: '^[A-Z]{2}$'
+          example: 'CA'
+        display_name:
+          type: string
+          example: 'California'
+        status:
+          $ref: '#/components/schemas/LegalStatus'
+        age_minimum:
+          type: integer
+          minimum: 18
+          maximum: 25
+          example: 21
+        last_updated_utc:
+          type: string
+          format: date-time
+          example: '2024-01-15T10:30:00Z'
+
+    State:
+      type: object
+      required:
+        - state_code
+        - display_name
+        - status
+        - age_minimum
+        - operators
+        - regulator
+        - last_updated_utc
+      properties:
+        state_code:
+          type: string
+          pattern: '^[A-Z]{2}$'
+          example: 'CA'
+        display_name:
+          type: string
+          example: 'California'
+        status:
+          $ref: '#/components/schemas/LegalStatus'
+        age_minimum:
+          type: integer
+          minimum: 18
+          maximum: 25
+          example: 21
+        notes:
+          type: array
+          items:
+            type: string
+          example: ['Online sportsbooks not available', 'DFS and horse wagering legal']
+        regulator:
+          $ref: '#/components/schemas/Regulator'
+        operators:
+          $ref: '#/components/schemas/StateOperators'
+        retail_locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RetailLocation'
+        last_updated_utc:
+          type: string
+          format: date-time
+          example: '2024-01-15T10:30:00Z'
+
+    LegalStatus:
+      type: object
+      required:
+        - online_sportsbook
+        - retail
+        - dfs
+        - horse
+      properties:
+        online_sportsbook:
+          type: boolean
+          example: false
+        retail:
+          type: boolean
+          example: true
+        dfs:
+          type: boolean
+          example: true
+        horse:
+          type: boolean
+          example: true
+
+    Regulator:
+      type: object
+      required:
+        - name
+        - url
+      properties:
+        name:
+          type: string
+          example: 'California Gambling Control Commission'
+        url:
+          type: string
+          format: uri
+          example: 'https://www.cgcc.ca.gov/'
+
+    StateOperators:
+      type: object
+      required:
+        - sportsbooks
+        - dfs
+        - horse
+      properties:
+        sportsbooks:
+          type: array
+          items:
+            type: string
+          example: []
+        dfs:
+          type: array
+          items:
+            type: string
+          example: ['DraftKings', 'FanDuel']
+        horse:
+          type: array
+          items:
+            type: string
+          example: ['TVG', 'TwinSpires']
+
+    RetailLocation:
+      type: object
+      required:
+        - name
+        - lat
+        - lng
+      properties:
+        name:
+          type: string
+          example: 'Golden Gate Fields'
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+          example: 37.7749
+        lng:
+          type: number
+          minimum: -180
+          maximum: 180
+          example: -122.4194
+        hours:
+          type: string
+          example: 'Mon-Sun: 9:00 AM - 10:00 PM'
+        phone:
+          type: string
+          example: '(510) 559-7300'
+        url:
+          type: string
+          format: uri
+          example: 'https://www.goldengatefields.com/'
+        distance_km:
+          type: number
+          minimum: 0
+          example: 15.2
+
+    NearestLegal:
+      type: object
+      required:
+        - target_state_code
+        - distance_km
+        - nearest_point_lat
+        - nearest_point_lng
+      properties:
+        target_state_code:
+          type: string
+          pattern: '^[A-Z]{2}$'
+          example: 'NV'
+        distance_km:
+          type: number
+          minimum: 0
+          example: 45.3
+        nearest_point_lat:
+          type: number
+          minimum: -90
+          maximum: 90
+          example: 39.1638
+        nearest_point_lng:
+          type: number
+          minimum: -180
+          maximum: 180
+          example: -119.7674
+
+    OperatorCatalog:
+      type: object
+      required:
+        - operators
+        - dfs
+        - horse
+      properties:
+        operators:
+          type: array
+          items:
+            $ref: '#/components/schemas/Operator'
+        dfs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Operator'
+        horse:
+          type: array
+          items:
+            $ref: '#/components/schemas/Operator'
+
+    Operator:
+      type: object
+      required:
+        - name
+        - android_uri
+        - web_fallback
+      properties:
+        name:
+          type: string
+          example: 'FanDuel Sportsbook'
+        android_uri:
+          type: string
+          example: 'fanduel://sportsbook'
+        android_package:
+          type: string
+          example: 'com.fanduel.sportsbook'
+        web_fallback:
+          type: string
+          format: uri
+          example: 'https://sportsbook.fanduel.com/'
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          example: 'VALIDATION_ERROR'
+        message:
+          type: string
+          example: 'Invalid state code format'
+        details:
+          type: object
+          additionalProperties: true
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: 'VALIDATION_ERROR'
+            message: 'Invalid coordinates provided'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: 'NOT_FOUND'
+            message: 'State not found'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: 'INTERNAL_ERROR'
+            message: 'An unexpected error occurred'
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication (optional for MVP)
+
+security:
+  - ApiKeyAuth: []
+
+tags:
+  - name: States
+    description: State legality information
+  - name: Retail
+    description: Retail location finder
+  - name: Legal
+    description: Legal location services
+  - name: Operators
+    description: Operator catalog and deep links

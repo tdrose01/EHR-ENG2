@@ -1,0 +1,197 @@
+{
+  "$id": "https://api.betbound.com/schema/state.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "State Schema",
+  "description": "Complete state information including legality status and operators",
+  "required": [
+    "state_code",
+    "display_name", 
+    "status",
+    "age_minimum",
+    "operators",
+    "regulator",
+    "last_updated_utc"
+  ],
+  "properties": {
+    "state_code": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "Two-letter state code (ISO 3166-2:US)",
+      "examples": ["CA", "NY", "TX"]
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable state name",
+      "examples": ["California", "New York", "Texas"]
+    },
+    "status": {
+      "type": "object",
+      "description": "Legal status for different betting types",
+      "required": ["online_sportsbook", "retail", "dfs", "horse"],
+      "properties": {
+        "online_sportsbook": {
+          "type": "boolean",
+          "description": "Whether online sports betting is legal"
+        },
+        "retail": {
+          "type": "boolean", 
+          "description": "Whether retail sports betting is legal"
+        },
+        "dfs": {
+          "type": "boolean",
+          "description": "Whether daily fantasy sports is legal"
+        },
+        "horse": {
+          "type": "boolean",
+          "description": "Whether horse race wagering is legal"
+        }
+      },
+      "additionalProperties": false
+    },
+    "age_minimum": {
+      "type": "integer",
+      "minimum": 18,
+      "maximum": 25,
+      "description": "Minimum age for legal betting in this state",
+      "examples": [18, 21]
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional notes about betting legality in this state",
+      "examples": [
+        "Online sportsbooks not available",
+        "DFS and horse wagering legal",
+        "Retail locations only in specific counties"
+      ]
+    },
+    "regulator": {
+      "type": "object",
+      "description": "State gambling regulator information",
+      "required": ["name", "url"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the state gambling regulator",
+          "examples": [
+            "California Gambling Control Commission",
+            "New York State Gaming Commission"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Official website of the regulator",
+          "examples": [
+            "https://www.cgcc.ca.gov/",
+            "https://gaming.ny.gov/"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "operators": {
+      "type": "object",
+      "description": "Available operators by category",
+      "required": ["sportsbooks", "dfs", "horse"],
+      "properties": {
+        "sportsbooks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of legal online sportsbook operators",
+          "examples": [
+            ["FanDuel", "DraftKings", "BetMGM"],
+            []
+          ]
+        },
+        "dfs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of legal daily fantasy sports operators",
+          "examples": [
+            ["DraftKings", "FanDuel", "Yahoo Fantasy"],
+            []
+          ]
+        },
+        "horse": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of legal horse race wagering operators",
+          "examples": [
+            ["TVG", "TwinSpires", "Xpressbet"],
+            []
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "retail_locations": {
+      "type": "array",
+      "description": "Retail betting locations in this state",
+      "items": {
+        "type": "object",
+        "required": ["name", "lat", "lng"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the retail location",
+            "examples": ["Golden Gate Fields", "Santa Anita Park"]
+          },
+          "lat": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90,
+            "description": "Latitude coordinate"
+          },
+          "lng": {
+            "type": "number", 
+            "minimum": -180,
+            "maximum": 180,
+            "description": "Longitude coordinate"
+          },
+          "hours": {
+            "type": "string",
+            "description": "Operating hours",
+            "examples": ["Mon-Sun: 9:00 AM - 10:00 PM", "Daily: 6:00 AM - 2:00 AM"]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Contact phone number",
+            "examples": ["(510) 559-7300", "(626) 574-7223"]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Official website",
+            "examples": [
+              "https://www.goldengatefields.com/",
+              "https://www.santaanita.com/"
+            ]
+          },
+          "distance_km": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Distance from search point in kilometers (populated by API)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "last_updated_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this state data was last updated (ISO 8601 UTC)",
+      "examples": ["2024-01-15T10:30:00Z", "2024-01-20T14:45:30.123Z"]
+    }
+  },
+  "additionalProperties": false
+}

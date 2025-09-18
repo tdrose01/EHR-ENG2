@@ -29,17 +29,29 @@ npm run start:server # Backend (Express) - Port 3005
 
 ## 🏥 System Modules
 
-### Electronic Health (EH) Module
-- **Patient Management**: Comprehensive patient records and demographics
-- **Medical History**: Detailed medical history tracking
-- **Treatment Plans**: Structured treatment and care planning
-- **Environmental Dashboard**: Advanced environmental data visualization and exposure tracking
-- **System Monitoring**: Real-time system health and performance metrics
-- **Database Backup & Restore**: Admin-only secure backup system
-- **User Management**: Admin-only user and role management system
+### Main Dashboard Navigation
+The system features a streamlined card-based navigation interface with the following modules:
 
-### Radiation Health (RH) Module  
-- **Radiation Monitoring**: Personnel exposure tracking
+#### **Core Modules**
+- **🏥 RH Module**: Resource and Hospital Management - Primary module for hospital operations
+- **👥 Patient Management**: Comprehensive patient records and demographics  
+- **📊 System Monitoring**: Real-time system health and performance metrics
+- **⚡ System Status**: System health and operational status monitoring
+
+#### **Administrative Modules** (Admin Only)
+- **👤 User Management**: Complete user and role management system
+- **💾 Backup & Restore**: Secure encrypted backup and restore operations
+- **⚙️ Settings**: System configuration and preferences
+
+### Hidden/Legacy Modules
+- **Electronic Health (EH) Module**: Hidden from main dashboard (available at `/eh-module`)
+- **Environmental Dashboard**: Hidden from main navigation
+- **Radiation Health Module**: Hidden from main navigation (available at `/radiation-dashboard`)
+- **Agent Dashboard**: Hidden from main navigation (available at `/agent-dashboard`)
+
+### Resource and Hospital (RH) Module
+- **Hospital Resource Management**: Complete hospital resource tracking and management
+- **Radiation Monitoring**: Personnel exposure tracking (legacy component)
 - **Device Management**: Complete radiation device inventory and calibration system
   - **Device CRUD Operations**: Full create, read, update, and delete functionality for devices
   - **Device Editing**: Comprehensive device editing with model selection, serial numbers, BLE MAC addresses, firmware versions, calibration due dates, and RF policy settings
@@ -207,6 +219,37 @@ NODE_ENV=development
 - **[User Guides](docs/user/)**: End-user documentation and tutorials
 - **[Security Documentation](docs/security/)**: Security features and compliance
 
+## 🎨 User Interface & Navigation
+
+### **Streamlined Navigation System** 🆕
+The system has been redesigned with a focus on simplicity and usability:
+
+#### **Card-Based Interface**
+- **Visual Module Cards**: Each module is represented by an intuitive card with emoji icons
+- **Clean Design**: Removed redundant navigation bars in favor of direct card-based access
+- **Responsive Layout**: 3-column grid on desktop, adaptive on mobile devices
+- **Color-Coded Modules**: Each module has distinct color theming for easy identification
+
+#### **Navigation Structure**
+- **Simplified Header**: Clean header with system title, user info, and logout functionality
+- **Direct Access**: Click any module card to navigate directly to that section
+- **Role-Based Display**: Admin-only modules automatically show/hide based on user permissions
+- **No Duplicate Navigation**: Eliminated redundant navigation since cards serve the same purpose
+
+#### **Hidden Module Management**
+- **Strategic Hiding**: EH Module, Environmental Dashboard, Radiation Health, and Agent Dashboard hidden from main interface
+- **Direct URL Access**: Hidden modules still accessible via direct URLs for power users
+- **Administrative Override**: System administrators can still access all modules as needed
+
+#### **Visual Enhancements**
+- **🏥 Hospital Icon**: RH Module with hospital emoji
+- **👥 People Icons**: Patient Management with user group emoji  
+- **📊 Chart Icons**: System Monitoring with analytics emoji
+- **⚡ Lightning Icons**: System Status with alert emoji
+- **👤 User Icons**: User Management with person emoji
+- **💾 Disk Icons**: Backup & Restore with storage emoji
+- **⚙️ Gear Icons**: Settings with configuration emoji
+
 ## 🧠 Memory Optimization
 
 The system includes comprehensive memory management for optimal performance:
@@ -297,6 +340,6 @@ For technical support or questions:
 
 ---
 
-**Last Updated**: August 26, 2025  
-**Version**: 2.1.0  
-**Status**: ✅ **PRODUCTION READY** - All systems operational with comprehensive fixes and enhancements
+**Last Updated**: September 12, 2025  
+**Version**: 2.2.0  
+**Status**: ✅ **PRODUCTION READY** - All systems operational with streamlined UI/UX and enhanced navigation

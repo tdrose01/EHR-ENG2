@@ -1,0 +1,184 @@
+{
+  "$id": "https://api.betbound.com/schema/operators.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Operator Catalog Schema",
+  "description": "Complete operator catalog with deep link information",
+  "required": ["operators", "dfs", "horse"],
+  "properties": {
+    "operators": {
+      "type": "array",
+      "description": "Online sportsbook operators",
+      "items": {
+        "type": "object",
+        "required": ["name", "android_uri", "web_fallback"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name of the operator",
+            "examples": ["FanDuel Sportsbook", "DraftKings Sportsbook", "BetMGM"]
+          },
+          "android_uri": {
+            "type": "string",
+            "description": "Deep link URI for Android app",
+            "examples": [
+              "fanduel://sportsbook",
+              "draftkings://sportsbook", 
+              "betmgm://sportsbook"
+            ]
+          },
+          "android_package": {
+            "type": "string",
+            "description": "Android package name for Play Store fallback",
+            "examples": [
+              "com.fanduel.sportsbook",
+              "com.draftkings.sportsbook",
+              "com.betmgm.sportsbook"
+            ]
+          },
+          "web_fallback": {
+            "type": "string",
+            "format": "uri",
+            "description": "Web URL fallback when app is not installed",
+            "examples": [
+              "https://sportsbook.fanduel.com/",
+              "https://sportsbook.draftkings.com/",
+              "https://sports.betmgm.com/"
+            ]
+          },
+          "icon_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to operator icon/logo",
+            "examples": [
+              "https://cdn.betbound.com/icons/fanduel.png",
+              "https://cdn.betbound.com/icons/draftkings.png"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the operator",
+            "examples": [
+              "FanDuel Sportsbook - America's #1 Sportsbook",
+              "DraftKings Sportsbook - The King of Sports Betting"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "dfs": {
+      "type": "array",
+      "description": "Daily fantasy sports operators",
+      "items": {
+        "type": "object",
+        "required": ["name", "android_uri", "web_fallback"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name of the DFS operator",
+            "examples": ["DraftKings DFS", "FanDuel DFS", "Yahoo Fantasy"]
+          },
+          "android_uri": {
+            "type": "string",
+            "description": "Deep link URI for Android app",
+            "examples": [
+              "draftkings://dfs",
+              "fanduel://dfs",
+              "yahoo://fantasy"
+            ]
+          },
+          "android_package": {
+            "type": "string",
+            "description": "Android package name for Play Store fallback",
+            "examples": [
+              "com.draftkings.dfs",
+              "com.fanduel.dfs",
+              "com.yahoo.mobile.client.android.fantasy"
+            ]
+          },
+          "web_fallback": {
+            "type": "string",
+            "format": "uri",
+            "description": "Web URL fallback when app is not installed",
+            "examples": [
+              "https://www.draftkings.com/",
+              "https://www.fanduel.com/",
+              "https://sports.yahoo.com/fantasy/"
+            ]
+          },
+          "icon_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to operator icon/logo"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the DFS operator"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "horse": {
+      "type": "array",
+      "description": "Horse race wagering operators",
+      "items": {
+        "type": "object",
+        "required": ["name", "android_uri", "web_fallback"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name of the horse wagering operator",
+            "examples": ["TVG", "TwinSpires", "Xpressbet"]
+          },
+          "android_uri": {
+            "type": "string",
+            "description": "Deep link URI for Android app",
+            "examples": [
+              "tvg://horse",
+              "twinspires://horse",
+              "xpressbet://horse"
+            ]
+          },
+          "android_package": {
+            "type": "string",
+            "description": "Android package name for Play Store fallback",
+            "examples": [
+              "com.tvg.horse",
+              "com.twinspires.horse",
+              "com.xpressbet.horse"
+            ]
+          },
+          "web_fallback": {
+            "type": "string",
+            "format": "uri",
+            "description": "Web URL fallback when app is not installed",
+            "examples": [
+              "https://www.tvg.com/",
+              "https://www.twinspires.com/",
+              "https://www.xpressbet.com/"
+            ]
+          },
+          "icon_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to operator icon/logo"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the horse wagering operator"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "last_updated_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this operator catalog was last updated (ISO 8601 UTC)",
+      "examples": ["2024-01-15T10:30:00Z", "2024-01-20T14:45:30.123Z"]
+    }
+  },
+  "additionalProperties": false
+}

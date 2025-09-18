@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../components/Login.vue'
+import ModuleSelection from '../components/ModuleSelection.vue'
 import EHModulesScreen from '../components/EHModulesScreen.vue'
+import RHModule from '../components/RHModule.vue'
+import AgentDashboard from '../components/AgentDashboard.vue'
 import PatientManagement from '../components/PatientManagement.vue'
 import EnvironmentalDashboard from '../components/EnvironmentalDashboard.vue'
 import RadiationDashboard from '../views/RadiationDashboard.vue'
@@ -22,8 +25,26 @@ const routes = [
   },
   {
     path: '/select-module',
+    name: 'ModuleSelection',
+    component: ModuleSelection,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/eh-module',
     name: 'EHModulesScreen',
     component: EHModulesScreen,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/rh-module',
+    name: 'RHModule',
+    component: RHModule,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/agent-dashboard',
+    name: 'AgentDashboard',
+    component: AgentDashboard,
     meta: { requiresAuth: true }
   },
   {

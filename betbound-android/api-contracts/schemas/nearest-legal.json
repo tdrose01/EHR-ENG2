@@ -1,0 +1,73 @@
+{
+  "$id": "https://api.betbound.com/schema/nearest-legal.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Nearest Legal Location Schema",
+  "description": "Information about the nearest location where online sports betting is legal",
+  "required": [
+    "target_state_code",
+    "distance_km",
+    "nearest_point_lat",
+    "nearest_point_lng"
+  ],
+  "properties": {
+    "target_state_code": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "Two-letter code of the nearest state where online sports betting is legal",
+      "examples": ["NV", "NJ", "PA", "CO"]
+    },
+    "distance_km": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Distance to the nearest legal location in kilometers",
+      "examples": [15.2, 45.3, 120.7]
+    },
+    "nearest_point_lat": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90,
+      "description": "Latitude coordinate of the nearest legal point",
+      "examples": [39.1638, 40.7128, 39.9526]
+    },
+    "nearest_point_lng": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180,
+      "description": "Longitude coordinate of the nearest legal point",
+      "examples": [-119.7674, -74.0060, -75.1652]
+    },
+    "target_state_name": {
+      "type": "string",
+      "description": "Human-readable name of the target state",
+      "examples": ["Nevada", "New Jersey", "Pennsylvania", "Colorado"]
+    },
+    "nearest_city": {
+      "type": "string",
+      "description": "Name of the nearest city to the legal point",
+      "examples": ["Reno", "Atlantic City", "Philadelphia", "Denver"]
+    },
+    "estimated_drive_time_minutes": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Estimated driving time to the nearest legal location in minutes",
+      "examples": [25, 45, 90]
+    },
+    "route_summary": {
+      "type": "string",
+      "description": "Brief description of the route to the nearest legal location",
+      "examples": [
+        "Take I-80 East to Reno",
+        "Take Garden State Parkway to Atlantic City",
+        "Take I-95 North to Philadelphia"
+      ]
+    },
+    "last_updated_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this nearest legal data was last calculated (ISO 8601 UTC)",
+      "examples": ["2024-01-15T10:30:00Z", "2024-01-20T14:45:30.123Z"]
+    }
+  },
+  "additionalProperties": false
+}
