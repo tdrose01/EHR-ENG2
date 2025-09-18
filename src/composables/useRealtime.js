@@ -94,8 +94,8 @@ export function useRealtime() {
     // Start heartbeat
     startHeartbeat();
     
-    // Subscribe to default channels
-    subscribe(['alerts', 'readings', 'notifications']);
+    // Authenticate first, then subscribe
+    authenticate();
   };
 
   const handleMessage = (event) => {
@@ -177,6 +177,12 @@ export function useRealtime() {
 
       case 'ROOM_BROADCAST':
         handleRoomBroadcast(message);
+        break;
+
+      case 'AUTHENTICATED':
+        console.log('✅ Authentication successful:', message);
+        // Automatically subscribe to default channels after authentication
+        subscribe(['alerts', 'readings', 'notifications']);
         break;
 
       case 'SUBSCRIPTION_CONFIRMED':
@@ -396,7 +402,8 @@ export function useRealtime() {
     });
   };
 
-  const authenticate = (token, userId, role = 'user') => {
+  const authenticate = (token = 'test-token', userId = 'test-user', role = 'admin') => {
+    console.log('🔐 Authenticating WebSocket connection...');
     return send({
       type: 'AUTHENTICATE',
       token,
