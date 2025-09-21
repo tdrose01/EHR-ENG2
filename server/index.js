@@ -100,32 +100,6 @@ app.get('/api/debug/routes', (req, res) => {
 // Use JWT-based login
 app.post('/api/login', login)
 
-// Endpoint to fetch a user's profile
-app.get('/api/users/:id', async (req, res) => {
-  const { id } = req.params
-  try {
-    const result = await pool.query(
-      'SELECT id, email, role, last_login FROM users WHERE id = $1',
-      [id]
-    )
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' })
-    }
-
-    const user = result.rows[0]
-    res.json({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      lastLogin: user.last_login
-    })
-  } catch (err) {
-    console.error('User profile error:', err)
-    res.status(500).json({ error: 'Internal server error' })
-  }
-})
-
 // Health status endpoint
 app.get('/api/v1/health/status', async (req, res) => {
   const status = { api: 'online', database: 'online' }

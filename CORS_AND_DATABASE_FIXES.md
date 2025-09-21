@@ -50,7 +50,7 @@ app.use(cors({
 
 ---
 
-### 2. **Database Column Mismatch Errors**
+### 2. **User Last Login Contract Errors**
 
 #### **Problem**
 ```
@@ -59,44 +59,55 @@ hint: Perhaps you meant to reference the column "users.last_login".
 ```
 
 #### **Root Cause**
-The code was referencing database columns that didn't exist:
-- **Code Expected**: `last_login_at`, `created_at`
-- **Database Actual**: `last_login` (no `created_at` column)
+The `users` table stores the timestamp in the `last_login` column, but profile and admin handlers either queried the non-existent `last_login_at` column or returned a top-level `lastLogin` field. A duplicate inline `/api/users/:id` route in `server/index.js` bypassed the shared router, so the UI never received the documented `user.last_login_at` property and kept showing fallback copy.
 
 #### **Database Schema Analysis**
 ```sql
--- Actual users table structure
+-- Canonical users table structure
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
   role TEXT NOT NULL DEFAULT 'user',
-  last_login TIMESTAMP,  -- NOT last_login_at
-  -- NO created_at column
+  last_login TIMESTAMP
 );
 ```
 
 #### **Solution**
-Updated all database queries to use correct column names:
+Standardized every reader to alias the stored column and return the nested payload the UI expects.
 
 **Before:**
 ```javascript
-// ❌ Incorrect column names
-'SELECT id, email, role, last_login_at FROM users'
-'UPDATE users SET last_login_at = NOW() WHERE id = $1'
+// ❌ Returned raw lastLogin outside the shared envelope
+const result = await pool.query('SELECT id, email, role, last_login FROM users WHERE id = $1', [id])
+res.json({ success: true, lastLogin: result.rows[0].last_login })
 ```
 
 **After:**
 ```javascript
-// ✅ Correct column names
-'SELECT id, email, role, last_login FROM users'
-'UPDATE users SET last_login = NOW() WHERE id = $1'
+// ✅ Alias the column and return { success, user }
+const result = await pool.query(
+  'SELECT id, email, role, last_login AS last_login_at FROM users WHERE id = $1',
+  [id]
+)
+
+const user = result.rows[0]
+
+res.json({
+  success: true,
+  user: {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    last_login_at: user.last_login_at
+  }
+})
 ```
 
 #### **Files Modified**
-- `server/models/userModel.js` - Line 16: Fixed `findAll()` query
-- `server/index.js` - Lines 138, 145, 177: Fixed login and profile queries
-- `server/routes/users.js` - Lines 12, 47: Fixed user listing queries
+- `server/index.js` - Removed the inline `/api/users/:id` route so requests flow through the router.
+- `server/routes/users.js` - Selected `last_login AS last_login_at` and wrapped responses consistently.
+- `server/models/userModel.js` - Exposed `last_login_at` from the admin helpers.
 
 #### **Verification**
 ✅ **Database Queries Working**:
@@ -107,7 +118,7 @@ Updated all database queries to use correct column names:
     "id": 1,
     "email": "admin@example.com",
     "role": "admin",
-    "last_login": "2025-08-20T18:29:39.894Z"
+    "last_login_at": "2025-08-20T18:29:39.894Z"
   }
 }
 ```
@@ -150,10 +161,10 @@ The CORS middleware now properly handles requests from multiple origins:
 - Credentials enabled for authenticated requests
 
 ### **Database Schema Alignment**
-All database queries now use the correct column names:
-- ✅ `last_login` (not `last_login_at`)
-- ✅ Removed references to non-existent `created_at` column
-- ✅ Proper error handling for missing columns
+All database queries now surface the documented field while keeping storage unchanged:
+- ✅ `last_login` remains the canonical column in PostgreSQL.
+- ✅ Every reader aliases `last_login AS last_login_at` before returning data.
+- ✅ Responses include `{ success, user: { ... last_login_at } }`, matching the UI and docs.
 
 ### **UI/UX Consistency**
 Login screen now matches the application's design system:

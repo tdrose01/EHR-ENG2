@@ -124,6 +124,8 @@ CREATE TABLE users (
 );
 ```
 
+> **Note:** The production schema stores the timestamp in a `last_login` column, and the API aliases it to `last_login_at` so the contract documented here matches every response.
+
 ## Usage Examples
 
 ### Creating a New Manager
