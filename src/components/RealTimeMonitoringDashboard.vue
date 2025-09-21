@@ -49,97 +49,127 @@
       <!-- Enhanced Real-time Status Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <!-- Connection Status Card -->
-        <div class="bg-gradient-to-br from-slate-800/80 to-blue-800/80 rounded-xl p-4 sm:p-6 border border-blue-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between">
+        <div class="group bg-gradient-to-br from-slate-800/80 to-blue-800/80 rounded-xl p-4 sm:p-6 border border-blue-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:scale-105 hover:border-blue-400/50 cursor-pointer">
           <div class="flex items-center justify-between">
             <div class="flex-1">
-              <p class="text-blue-200 text-sm font-medium">Connection</p>
-              <p class="text-xl sm:text-2xl font-bold text-cyan-400">{{ connectionStatus }}</p>
+              <p class="text-blue-200 text-sm font-medium transition-colors duration-200 group-hover:text-blue-100">Connection</p>
+              <div v-if="isLoading" class="skeleton h-8 w-24 rounded"></div>
+              <p v-else class="text-xl sm:text-2xl font-bold text-cyan-400 transition-all duration-200 group-hover:text-cyan-300 group-hover:scale-105">{{ connectionStatus }}</p>
             </div>
-            <div class="text-3xl sm:text-4xl ml-2">🔌</div>
+            <div class="text-3xl sm:text-4xl ml-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">🔌</div>
           </div>
-          <div class="mt-3 text-xs text-blue-300">
+          <div class="mt-3 text-xs text-blue-300 transition-colors duration-200 group-hover:text-blue-200">
             Reconnects: {{ reconnectAttempts }}
+          </div>
+          <!-- Animated status indicator -->
+          <div class="absolute top-2 right-2 w-3 h-3 rounded-full transition-all duration-300"
+               :class="[
+                 connectionStatus === 'connected' ? 'bg-green-400 animate-pulse' : 
+                 connectionStatus === 'connecting' ? 'bg-yellow-400 animate-ping' : 'bg-red-400'
+               ]">
           </div>
         </div>
 
         <!-- Active Alerts Card -->
-        <div class="bg-gradient-to-br from-red-900/80 to-orange-800/80 rounded-xl p-4 sm:p-6 border border-red-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between">
+        <div class="group bg-gradient-to-br from-red-900/80 to-orange-800/80 rounded-xl p-4 sm:p-6 border border-red-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-red-500/20 hover:scale-105 hover:border-red-400/50 cursor-pointer relative overflow-hidden">
           <div class="flex items-center justify-between">
             <div class="flex-1">
-              <p class="text-red-200 text-sm font-medium">Active Alerts</p>
-              <p class="text-xl sm:text-2xl font-bold text-red-400">{{ alertsCount }}</p>
+              <p class="text-red-200 text-sm font-medium transition-colors duration-200 group-hover:text-red-100">Active Alerts</p>
+              <div v-if="isLoading" class="skeleton h-8 w-16 rounded"></div>
+              <p v-else class="text-xl sm:text-2xl font-bold text-red-400 transition-all duration-200 group-hover:text-red-300 group-hover:scale-105">{{ alertsCount }}</p>
             </div>
-            <div class="text-3xl sm:text-4xl ml-2">🚨</div>
+            <div class="text-3xl sm:text-4xl ml-2 transition-transform duration-300 group-hover:scale-110 group-hover:animate-bounce">🚨</div>
           </div>
-          <div class="mt-3 text-xs text-red-300">
+          <div class="mt-3 text-xs text-red-300 transition-colors duration-200 group-hover:text-red-200">
             Critical: {{ criticalAlertsCount }}
           </div>
+          <!-- Animated alert indicator -->
+          <div v-if="alertsCount > 0" class="absolute top-2 right-2 w-3 h-3 bg-red-400 rounded-full animate-ping"></div>
+          <!-- Subtle background animation -->
+          <div class="absolute inset-0 bg-gradient-to-r from-red-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
 
         <!-- Notifications Card -->
-        <div class="bg-gradient-to-br from-blue-900/80 to-cyan-800/80 rounded-xl p-4 sm:p-6 border border-cyan-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between">
+        <div class="group bg-gradient-to-br from-blue-900/80 to-cyan-800/80 rounded-xl p-4 sm:p-6 border border-cyan-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/20 hover:scale-105 hover:border-cyan-400/50 cursor-pointer relative overflow-hidden">
           <div class="flex items-center justify-between">
             <div class="flex-1">
-              <p class="text-cyan-200 text-sm font-medium">Notifications</p>
-              <p class="text-xl sm:text-2xl font-bold text-cyan-400">{{ unreadNotifications }}</p>
+              <p class="text-cyan-200 text-sm font-medium transition-colors duration-200 group-hover:text-cyan-100">Notifications</p>
+              <div v-if="isLoading" class="skeleton h-8 w-16 rounded"></div>
+              <p v-else class="text-xl sm:text-2xl font-bold text-cyan-400 transition-all duration-200 group-hover:text-cyan-300 group-hover:scale-105">{{ unreadNotifications }}</p>
             </div>
-            <div class="text-3xl sm:text-4xl ml-2">📱</div>
+            <div class="text-3xl sm:text-4xl ml-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">📱</div>
           </div>
-          <div class="mt-3 text-xs text-cyan-300">
+          <div class="mt-3 text-xs text-cyan-300 transition-colors duration-200 group-hover:text-cyan-200">
             Total: {{ notifications.length }}
           </div>
+          <!-- Animated notification indicator -->
+          <div v-if="unreadNotifications > 0" class="absolute top-2 right-2 w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
+          <!-- Subtle background animation -->
+          <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
 
         <!-- Recent Updates Card -->
-        <div class="bg-gradient-to-br from-purple-900/80 to-pink-800/80 rounded-xl p-4 sm:p-6 border border-purple-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between">
+        <div class="group bg-gradient-to-br from-purple-900/80 to-pink-800/80 rounded-xl p-4 sm:p-6 border border-purple-500/30 shadow-xl backdrop-blur-sm min-h-[120px] flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 hover:scale-105 hover:border-purple-400/50 cursor-pointer relative overflow-hidden">
           <div class="flex items-center justify-between">
             <div class="flex-1">
-              <p class="text-purple-200 text-sm font-medium">Recent Updates</p>
-              <p class="text-xl sm:text-2xl font-bold text-purple-400">{{ recentUpdates.length }}</p>
+              <p class="text-purple-200 text-sm font-medium transition-colors duration-200 group-hover:text-purple-100">Recent Updates</p>
+              <div v-if="isLoading" class="skeleton h-8 w-16 rounded"></div>
+              <p v-else class="text-xl sm:text-2xl font-bold text-purple-400 transition-all duration-200 group-hover:text-purple-300 group-hover:scale-105">{{ recentUpdates.length }}</p>
             </div>
-            <div class="text-3xl sm:text-4xl ml-2">📊</div>
+            <div class="text-3xl sm:text-4xl ml-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">📊</div>
           </div>
-          <div class="mt-3 text-xs text-purple-300">
+          <div class="mt-3 text-xs text-purple-300 transition-colors duration-200 group-hover:text-purple-200">
             Last: {{ lastUpdateTime }}
           </div>
+          <!-- Animated update indicator -->
+          <div v-if="recentUpdates.length > 0" class="absolute top-2 right-2 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+          <!-- Subtle background animation -->
+          <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
       </div>
 
       <!-- Real-time Data Streams with Enhanced Layout -->
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <!-- Enhanced Live Alerts Stream -->
-        <div class="bg-gradient-to-br from-slate-800/80 to-red-900/80 rounded-xl p-4 sm:p-6 border border-red-500/30 shadow-xl backdrop-blur-sm min-h-[400px] flex flex-col">
+        <div class="group bg-gradient-to-br from-slate-800/80 to-red-900/80 rounded-xl p-4 sm:p-6 border border-red-500/30 shadow-xl backdrop-blur-sm min-h-[400px] flex flex-col transition-all duration-300 hover:shadow-2xl hover:shadow-red-500/20 hover:border-red-400/50">
           <div class="flex items-center justify-between mb-4 sm:mb-6">
-            <h3 class="text-lg sm:text-xl font-semibold text-red-400 flex items-center">
-              🚨 Live Alerts
-              <span class="ml-2 text-xs sm:text-sm bg-red-500/20 px-2 py-1 rounded-full">{{ recentAlerts.length }}</span>
+            <h3 class="text-lg sm:text-xl font-semibold text-red-400 flex items-center transition-colors duration-200 group-hover:text-red-300">
+              <span class="mr-2 transition-transform duration-300 group-hover:scale-110 group-hover:animate-bounce">🚨</span>
+              Live Alerts
+              <span class="ml-2 text-xs sm:text-sm bg-red-500/20 px-2 py-1 rounded-full transition-all duration-200 group-hover:bg-red-500/30 group-hover:scale-105">{{ recentAlerts.length }}</span>
             </h3>
             <button 
               @click="clearAlerts"
-              class="text-xs bg-red-600/30 hover:bg-red-600/50 px-2 sm:px-3 py-1 rounded-lg transition-colors border border-red-500/30"
+              class="text-xs bg-red-600/30 hover:bg-red-600/50 px-2 sm:px-3 py-1 rounded-lg transition-all duration-200 border border-red-500/30 hover:border-red-400/50 hover:scale-105 active:scale-95"
             >
               Clear
             </button>
           </div>
           <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar flex-1">
             <div 
-              v-for="alert in recentAlerts" 
+              v-for="(alert, index) in recentAlerts" 
               :key="alert.id"
-              class="bg-gradient-to-r from-red-900/50 to-orange-900/50 rounded-lg p-4 border-l-4 backdrop-blur-sm transition-all duration-200 hover:scale-105"
+              class="bg-gradient-to-r from-red-900/50 to-orange-900/50 rounded-lg p-4 border-l-4 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-red-500/20 cursor-pointer group"
               :class="{
                 'border-red-500': alert.severity === 'CRITICAL',
                 'border-orange-500': alert.severity === 'HIGH',
                 'border-yellow-500': alert.severity === 'MEDIUM',
                 'border-blue-500': alert.severity === 'LOW'
               }"
+              :style="{ 'animation-delay': `${index * 0.1}s` }"
             >
               <div class="flex justify-between items-start">
-                <div>
-                  <p class="font-medium text-white">{{ alert.severity }}</p>
-                  <p class="text-sm text-red-200">{{ alert.message || 'Alert triggered' }}</p>
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2 mb-1">
+                    <p class="font-medium text-white transition-colors duration-200 group-hover:text-red-100">{{ alert.severity }}</p>
+                    <div v-if="alert.severity === 'CRITICAL'" class="w-2 h-2 bg-red-400 rounded-full animate-ping"></div>
+                  </div>
+                  <p class="text-sm text-red-200 transition-colors duration-200 group-hover:text-red-100">{{ alert.message || 'Alert triggered' }}</p>
                 </div>
-                <span class="text-xs text-red-300">{{ formatTime(alert.timestamp) }}</span>
+                <span class="text-xs text-red-300 transition-colors duration-200 group-hover:text-red-200">{{ formatTime(alert.timestamp) }}</span>
               </div>
+              <!-- Subtle hover effect -->
+              <div class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
             </div>
             <div v-if="recentAlerts.length === 0" class="text-red-300 text-center py-8">
               <div class="text-4xl mb-2">🔇</div>
@@ -149,43 +179,51 @@
         </div>
 
         <!-- Enhanced Live Dose Readings Stream -->
-        <div class="bg-gradient-to-br from-slate-800/80 to-blue-900/80 rounded-xl p-4 sm:p-6 border border-blue-500/30 shadow-xl backdrop-blur-sm min-h-[400px] flex flex-col">
+        <div class="group bg-gradient-to-br from-slate-800/80 to-blue-900/80 rounded-xl p-4 sm:p-6 border border-blue-500/30 shadow-xl backdrop-blur-sm min-h-[400px] flex flex-col transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:border-blue-400/50">
           <div class="flex items-center justify-between mb-4 sm:mb-6">
-            <h3 class="text-lg sm:text-xl font-semibold text-blue-400 flex items-center">
-              📊 Live Dose Readings
-              <span class="ml-2 text-xs sm:text-sm bg-blue-500/20 px-2 py-1 rounded-full">{{ recentReadings.length }}</span>
+            <h3 class="text-lg sm:text-xl font-semibold text-blue-400 flex items-center transition-colors duration-200 group-hover:text-blue-300">
+              <span class="mr-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">📊</span>
+              Live Dose Readings
+              <span class="ml-2 text-xs sm:text-sm bg-blue-500/20 px-2 py-1 rounded-full transition-all duration-200 group-hover:bg-blue-500/30 group-hover:scale-105">{{ recentReadings.length }}</span>
             </h3>
             <button 
               @click="clearReadings"
-              class="text-xs bg-blue-600/30 hover:bg-blue-600/50 px-2 sm:px-3 py-1 rounded-lg transition-colors border border-blue-500/30"
+              class="text-xs bg-blue-600/30 hover:bg-blue-600/50 px-2 sm:px-3 py-1 rounded-lg transition-all duration-200 border border-blue-500/30 hover:border-blue-400/50 hover:scale-105 active:scale-95"
             >
               Clear
             </button>
           </div>
           <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar flex-1">
             <div 
-              v-for="reading in recentReadings" 
+              v-for="(reading, index) in recentReadings" 
               :key="reading.id"
-              class="bg-gradient-to-r from-blue-900/50 to-cyan-900/50 rounded-lg p-4 border-l-4 backdrop-blur-sm transition-all duration-200 hover:scale-105"
+              class="bg-gradient-to-r from-blue-900/50 to-cyan-900/50 rounded-lg p-4 border-l-4 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 cursor-pointer group relative"
               :class="{
                 'border-red-500': reading.isHigh,
                 'border-green-500': !reading.isHigh
               }"
+              :style="{ 'animation-delay': `${index * 0.1}s` }"
             >
               <div class="flex justify-between items-start">
-                <div>
-                  <p class="font-medium text-white">
-                    {{ reading.hp10_msv }} mSv (HP10)
-                  </p>
-                  <p class="text-sm text-blue-200">
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2 mb-1">
+                    <p class="font-medium text-white transition-colors duration-200 group-hover:text-blue-100">
+                      {{ reading.hp10_msv }} mSv (HP10)
+                    </p>
+                    <div v-if="reading.isHigh" class="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                    <div v-else class="w-2 h-2 bg-green-400 rounded-full"></div>
+                  </div>
+                  <p class="text-sm text-blue-200 transition-colors duration-200 group-hover:text-blue-100">
                     {{ reading.hp007_msv }} mSv (HP07) • {{ reading.rate_usv_h }} µSv/h
                   </p>
-                  <p v-if="reading.personnel" class="text-xs text-blue-300">
+                  <p v-if="reading.personnel" class="text-xs text-blue-300 transition-colors duration-200 group-hover:text-blue-200">
                     {{ reading.personnel.rank_rate }} {{ reading.personnel.lname }}
                   </p>
                 </div>
-                <span class="text-xs text-blue-300">{{ formatTime(reading.timestamp) }}</span>
+                <span class="text-xs text-blue-300 transition-colors duration-200 group-hover:text-blue-200">{{ formatTime(reading.timestamp) }}</span>
               </div>
+              <!-- Subtle hover effect -->
+              <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
             </div>
             <div v-if="recentReadings.length === 0" class="text-blue-300 text-center py-8">
               <div class="text-4xl mb-2">📊</div>
@@ -355,6 +393,7 @@ export default {
     const recentAlerts = ref([])
     const recentReadings = ref([])
     const criticalAlertsCount = ref(0)
+    const isLoading = ref(false)
     
     // Computed properties
     const wsStatusClass = computed(() => 
@@ -539,6 +578,7 @@ export default {
       recentAlerts,
       recentReadings,
       criticalAlertsCount,
+      isLoading,
       wsStatusClass,
       dbStatusClass,
       notifStatusClass,
@@ -601,9 +641,59 @@ export default {
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+  }
+}
+
 .recent-alerts > div:first-child,
 .recent-readings > div:first-child {
   animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Staggered animation for list items */
+.space-y-3 > div {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Loading skeleton animation */
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200px 100%;
+  animation: skeleton-loading 1.5s infinite;
 }
 
 /* Enhanced pulse animation for connection status */

@@ -117,3 +117,5 @@ console.log('✅ Password logging secured');
 
 console.log('\n🚀 Your EHR system is now significantly more secure!');
 console.log('⚠️  Remember to update JWT_SECRET in production environment');
+
+

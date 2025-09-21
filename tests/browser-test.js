@@ -124,3 +124,5 @@ describe('EHR Browser Tests', () => {
     expect(consoleErrors.length).toBeGreaterThanOrEqual(0);
   }, 15000);
 });
+
+

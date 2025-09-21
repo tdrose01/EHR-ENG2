@@ -63,113 +63,131 @@
               <!-- Patient Management Card -->
               <div
                 @click="navigateTo('/patients')"
-                class="bg-gray-900 rounded-lg shadow-lg p-4 sm:p-6 cursor-pointer transform transition-transform hover:scale-105 border border-gray-700 min-h-[180px] flex flex-col justify-between"
+                class="group bg-gradient-to-br from-gray-900 to-blue-900/20 rounded-xl shadow-xl p-4 sm:p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 border border-gray-700 hover:border-blue-500/50 min-h-[180px] flex flex-col justify-between relative overflow-hidden"
               >
+                <div class="flex items-center justify-between mb-4">
+                  <div class="text-4xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">👥</div>
+                  <div class="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                </div>
                 <div>
-                  <h2 class="text-xl sm:text-2xl font-semibold text-blue-400 mb-3">Patient Management</h2>
-                  <p class="text-gray-300 text-sm sm:text-base">Access and manage patient records.</p>
+                  <h2 class="text-xl sm:text-2xl font-semibold text-blue-400 mb-3 transition-colors duration-200 group-hover:text-blue-300">Patient Management</h2>
+                  <p class="text-gray-300 text-sm sm:text-base transition-colors duration-200 group-hover:text-gray-200">Access and manage patient records.</p>
                 </div>
                 <div class="mt-4 flex justify-end">
-                  <button class="bg-blue-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-blue-600 transition-colors text-sm sm:text-base">
+                  <button class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg text-sm sm:text-base">
                     Go to Patients
                   </button>
                 </div>
+                <!-- Subtle background animation -->
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               <!-- Environmental Dashboard Card -->
               <div
                 @click="navigateTo('/environmental-dashboard')"
-                class="bg-gray-900 rounded-lg shadow-lg p-4 sm:p-6 cursor-pointer transform transition-transform hover:scale-105 border border-gray-700 min-h-[180px] flex flex-col justify-between"
+                class="group bg-gradient-to-br from-gray-900 to-green-900/20 rounded-xl shadow-xl p-4 sm:p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20 border border-gray-700 hover:border-green-500/50 min-h-[180px] flex flex-col justify-between relative overflow-hidden"
               >
+                <div class="flex items-center justify-between mb-4">
+                  <div class="text-4xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">🌍</div>
+                  <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                </div>
                 <div>
-                  <h2 class="text-xl sm:text-2xl font-semibold text-blue-400 mb-3">Environmental Dashboard</h2>
-                  <p class="text-gray-300 text-sm sm:text-base">Monitor and analyze environmental data and trends.</p>
+                  <h2 class="text-xl sm:text-2xl font-semibold text-green-400 mb-3 transition-colors duration-200 group-hover:text-green-300">Environmental Dashboard</h2>
+                  <p class="text-gray-300 text-sm sm:text-base transition-colors duration-200 group-hover:text-gray-200">Monitor and analyze environmental data and trends.</p>
                 </div>
                 <div class="mt-4 flex justify-end">
-                  <button class="bg-blue-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-blue-600 transition-colors text-sm sm:text-base">
+                  <button class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg text-sm sm:text-base">
                     Go to Dashboard
                   </button>
                 </div>
+                <!-- Subtle background animation -->
+                <div class="absolute inset-0 bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               <!-- Radiation Health Module Card -->
               <div
                 @click="navigateTo('/radiation-dashboard')"
-                class="bg-gray-900 rounded-lg shadow-lg p-4 sm:p-6 cursor-pointer transform transition-transform hover:scale-105 border border-gray-700 min-h-[180px] flex flex-col justify-between"
+                class="group bg-gradient-to-br from-gray-900 to-purple-900/20 rounded-xl shadow-xl p-4 sm:p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20 border border-gray-700 hover:border-purple-500/50 min-h-[180px] flex flex-col justify-between relative overflow-hidden"
               >
+                <div class="flex items-center justify-between mb-4">
+                  <div class="text-4xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">☢️</div>
+                  <div class="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+                </div>
                 <div>
-                  <h2 class="text-xl sm:text-2xl font-semibold text-purple-400 mb-3">Radiation Health</h2>
-                  <p class="text-gray-300 text-sm sm:text-base">Personal dosimeter monitoring & dose reconciliation.</p>
+                  <h2 class="text-xl sm:text-2xl font-semibold text-purple-400 mb-3 transition-colors duration-200 group-hover:text-purple-300">Radiation Health</h2>
+                  <p class="text-gray-300 text-sm sm:text-base transition-colors duration-200 group-hover:text-gray-200">Personal dosimeter monitoring & dose reconciliation.</p>
                 </div>
                 <div class="mt-4 flex justify-end">
-                  <button class="bg-purple-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-purple-600 transition-colors text-sm sm:text-base">
+                  <button class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg text-sm sm:text-base">
                     Go to Radiation Dashboard
                   </button>
                 </div>
+                <!-- Subtle background animation -->
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
 
               <!-- System Monitoring Card -->
               <div
                 @click="navigateTo('/monitoring-dashboard')"
-                class="bg-gray-900 rounded-lg shadow-lg p-4 sm:p-6 cursor-pointer transform transition-transform hover:scale-105 border border-gray-700 min-h-[180px] flex flex-col justify-between"
+                class="group bg-gradient-to-br from-gray-900 to-emerald-900/20 rounded-xl shadow-xl p-4 sm:p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20 border border-gray-700 hover:border-emerald-500/50 min-h-[180px] flex flex-col justify-between relative overflow-hidden"
               >
+                <div class="flex items-center justify-between mb-4">
+                  <div class="text-4xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">📊</div>
+                  <div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+                </div>
                 <div>
-                  <h2 class="text-xl sm:text-2xl font-semibold text-green-400 mb-3">System Monitoring</h2>
-                  <p class="text-gray-300 text-sm sm:text-base">Real-time system health, performance metrics, and alerting.</p>
+                  <h2 class="text-xl sm:text-2xl font-semibold text-emerald-400 mb-3 transition-colors duration-200 group-hover:text-emerald-300">System Monitoring</h2>
+                  <p class="text-gray-300 text-sm sm:text-base transition-colors duration-200 group-hover:text-gray-200">Real-time system health, performance metrics, and alerting.</p>
                 </div>
                 <div class="mt-4 flex justify-end">
-                  <button class="bg-green-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-green-600 transition-colors text-sm sm:text-base">
+                  <button class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg text-sm sm:text-base">
                     Go to Monitoring
                   </button>
                 </div>
+                <!-- Subtle background animation -->
+                <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
 
               <!-- Admin Backup & Restore Module -->
-              <div v-if="isAdmin" class="bg-gray-900 rounded-lg shadow-lg p-4 sm:p-6 cursor-pointer transform transition-transform hover:scale-105 border border-gray-700 min-h-[180px] flex flex-col justify-between">
-                <div class="flex items-start">
-                  <div class="flex-shrink-0">
-                    <div class="w-8 h-8 bg-purple-600 rounded-md flex items-center justify-center">
-                      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="ml-4 flex-1">
-                    <h3 class="text-lg font-medium text-purple-400">Database Backup & Restore</h3>
-                    <p class="text-sm text-gray-300">Create encrypted backups and restore database</p>
-                  </div>
+              <div v-if="isAdmin" class="group bg-gradient-to-br from-gray-900 to-amber-900/20 rounded-xl shadow-xl p-4 sm:p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-amber-500/20 border border-gray-700 hover:border-amber-500/50 min-h-[180px] flex flex-col justify-between relative overflow-hidden">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="text-4xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">💾</div>
+                  <div class="w-3 h-3 bg-amber-400 rounded-full animate-pulse"></div>
+                </div>
+                <div>
+                  <h3 class="text-lg font-medium text-amber-400 mb-3 transition-colors duration-200 group-hover:text-amber-300">Database Backup & Restore</h3>
+                  <p class="text-sm text-gray-300 transition-colors duration-200 group-hover:text-gray-200">Create encrypted backups and restore database</p>
                 </div>
                 <div class="mt-4 flex justify-end">
                   <button
                     @click="navigateTo('/admin/backup-restore')"
-                    class="bg-purple-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-purple-600 transition-colors text-sm sm:text-base"
+                    class="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:from-amber-600 hover:to-amber-700 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg text-sm sm:text-base"
                   >
                     Access Backup System
                   </button>
                 </div>
+                <!-- Subtle background animation -->
+                <div class="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
 
               <!-- User Management Module -->
-              <div v-if="isAdmin" class="bg-gray-900 rounded-lg shadow-lg p-4 sm:p-6 cursor-pointer transform transition-transform hover:scale-105 border border-gray-700 min-h-[180px] flex flex-col justify-between">
-                <div class="flex items-start">
-                  <div class="flex-shrink-0">
-                    <div class="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
-                      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="ml-4 flex-1">
-                    <h3 class="text-lg font-medium text-blue-400">User Management</h3>
-                    <p class="text-sm text-gray-300">Create, edit, and manage system users and roles</p>
-                  </div>
+              <div v-if="isAdmin" class="group bg-gradient-to-br from-gray-900 to-indigo-900/20 rounded-xl shadow-xl p-4 sm:p-6 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-indigo-500/20 border border-gray-700 hover:border-indigo-500/50 min-h-[180px] flex flex-col justify-between relative overflow-hidden">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="text-4xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">👤</div>
+                  <div class="w-3 h-3 bg-indigo-400 rounded-full animate-pulse"></div>
+                </div>
+                <div>
+                  <h3 class="text-lg font-medium text-indigo-400 mb-3 transition-colors duration-200 group-hover:text-indigo-300">User Management</h3>
+                  <p class="text-sm text-gray-300 transition-colors duration-200 group-hover:text-gray-200">Create, edit, and manage system users and roles</p>
                 </div>
                 <div class="mt-4 flex justify-end">
                   <button
                     @click="navigateTo('/admin/users')"
-                    class="bg-blue-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-blue-600 transition-colors text-sm sm:text-base"
+                    class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg text-sm sm:text-base"
                   >
                     Manage Users
                   </button>
                 </div>
+                <!-- Subtle background animation -->
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
 
             </div>
@@ -208,4 +226,129 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+/* Enhanced card animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Staggered animation for cards */
+.grid > div {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.grid > div:nth-child(1) { animation-delay: 0.1s; }
+.grid > div:nth-child(2) { animation-delay: 0.2s; }
+.grid > div:nth-child(3) { animation-delay: 0.3s; }
+.grid > div:nth-child(4) { animation-delay: 0.4s; }
+.grid > div:nth-child(5) { animation-delay: 0.5s; }
+.grid > div:nth-child(6) { animation-delay: 0.6s; }
+
+/* Enhanced hover effects */
+.group:hover {
+  transform: translateY(-2px);
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced shadows */
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+.group:hover .shadow-xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Glassmorphism effects */
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}
+
+/* Button animations */
+button {
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+/* Pulse animation for status indicators */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Enhanced scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3b82f6, #06b6d4);
+  border-radius: 4px;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #2563eb, #0891b2);
+}
+</style>
