@@ -13,12 +13,22 @@ const User = {
   },
 
   async findAll() {
-    const { rows } = await db.query('SELECT id, email, role, last_login FROM users ORDER BY id DESC');
-    return rows;
+    const { rows } = await db.query(
+      'SELECT id, email, role, last_login AS last_login_at FROM users ORDER BY id DESC'
+    );
+    return rows.map(user => ({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      last_login_at: user.last_login_at
+    }));
   },
 
   async findById(id) {
-    const { rows } = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+    const { rows } = await db.query(
+      'SELECT id, email, role, last_login AS last_login_at FROM users WHERE id = $1',
+      [id]
+    );
     return rows[0];
   },
 

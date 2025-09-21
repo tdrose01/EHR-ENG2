@@ -9,7 +9,7 @@ router.get('/:id', async (req, res) => {
     
     // Query the users table
     const result = await pool.query(
-      'SELECT id, email, role, last_login FROM users WHERE id = $1',
+      'SELECT id, email, role, last_login AS last_login_at FROM users WHERE id = $1',
       [id]
     );
     
@@ -21,13 +21,15 @@ router.get('/:id', async (req, res) => {
     }
     
     const user = result.rows[0];
-    
-    // Remove sensitive information
-    delete user.password_hash;
-    
+
     res.json({
       success: true,
-      user: user
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        last_login_at: user.last_login_at
+      }
     });
     
   } catch (error) {
@@ -44,14 +46,15 @@ router.get('/:id', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, email, role, last_login FROM users ORDER BY id DESC'
+      'SELECT id, email, role, last_login AS last_login_at FROM users ORDER BY id DESC'
     );
-    
-    const users = result.rows.map(user => {
-      // Remove sensitive information
-      delete user.password_hash;
-      return user;
-    });
+
+    const users = result.rows.map(user => ({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      last_login_at: user.last_login_at
+    }));
     
     res.json({
       success: true,
