@@ -53,15 +53,15 @@ This document provides a comprehensive summary of all documentation updates made
   - `server/config/monitoring.config.js` - Updated monitoring CORS config
 - **Status**: ✅ **RESOLVED** - All frontend requests now working
 
-### **Database Column Mismatch Fix** ✅ NEW
-- **Issue**: Database queries failing with "column does not exist" errors
-- **Root Cause**: Code referenced `last_login_at` and `created_at` columns that don't exist
-- **Solution**: Updated all queries to use correct column names (`last_login`)
+### **User Last Login Contract Alignment** ✅ UPDATED
+- **Issue**: Profile and admin responses exposed a `lastLogin` field that didn't match the documented `last_login_at` contract, so the UI continued to show fallback text.
+- **Root Cause**: A duplicate inline `/api/users/:id` route skipped the shared router and selected the `last_login` column without aliasing, and downstream helpers surfaced the raw `last_login` field.
+- **Solution**: Centralized reads through the users router and aliased `last_login AS last_login_at` so every consumer receives the normalized field name expected by the frontend and documentation.
 - **Files Modified**:
-  - `server/models/userModel.js` - Fixed column references
-  - `server/index.js` - Updated login and profile queries
-  - `server/routes/users.js` - Fixed user listing queries
-- **Status**: ✅ **RESOLVED** - All database queries working correctly
+  - `server/index.js` - Removed the inline profile handler so the router provides the unified `{ success, user }` payload.
+  - `server/routes/users.js` - Selected `last_login AS last_login_at` and wrapped responses consistently.
+  - `server/models/userModel.js` - Returned `last_login_at` from admin listing helpers.
+- **Status**: ✅ **RESOLVED** - The API, UI, and docs now agree on the `last_login_at` field.
 
 ### **Login Screen UI/UX Enhancement** ✅ NEW
 - **Issue**: Login screen used light theme inconsistent with application

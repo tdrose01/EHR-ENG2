@@ -174,32 +174,32 @@ For support, email `support@example.com` or join our Slack channel.
 
 ## Last Login Timestamp Logic
 
-  - The backend updates both the `last_login_at` and `last_login` columns in the `users` table on every successful login.
-  - On login, the backend sets `last_login` to the previous value of `last_login_at`, then updates `last_login_at` to the current timestamp.
-  - The previous value (now in `last_login`) is returned as `lastLogin` in the login API response and persisted as `lastLogin` for profile requests.
-  - The frontend displays this value as the user's last login time in the header card. If no timestamp is present, it shows "First login".
-  - Use `GET /api/users/:id` to fetch a user's profile with the `lastLogin` timestamp.
+  - The canonical timestamp is stored in the `users.last_login` column.
+  - Every profile and admin query now selects `last_login AS last_login_at`, so API responses surface the documented `user.last_login_at` property.
+  - `User.updateLastLogin(id)` writes `NOW()` into `last_login` immediately after a successful login.
+  - The frontend reads `user.last_login_at`, caches it in `localStorage`, and formats it in the Last Login card. If the value is missing, the UI falls back to "First login".
+  - Use `GET /api/users/:id` to verify the normalized `{ success, user: { ... last_login_at } }` payload once authenticated.
 
-> **Note:** This logic is now fixed in the backend as of 2025-06-25.
+> **Note:** This aliasing fix shipped with the September 2025 backend update.
 
 ### Troubleshooting Last Login Timestamp
 
 If the last login timestamp is not displaying:
 1. **Check the Database Schema:**
-   - Ensure the `last_login_at` and `last_login` columns exist in the `users` table and are of type `timestamp`.
+   - Ensure the `last_login` column exists in the `users` table and is being updated with recent timestamps.
    - Confirm you are connected to the correct database (see `server/db.js`).
 2. **Check Backend Logs:**
-   - Look for messages like `last_login_at column missing, skipping update`. This means the backend cannot see the column.
-   - Add debug logs to print the value fetched from the database.
+   - Watch for errors mentioning `last_login_at` not existing; they indicate a handler that still selects the wrong column.
+   - Add debug logs to print the value aliased to `last_login_at` before responding.
 3. **Restart the Backend:**
    - After making schema changes, always restart the backend server.
 4. **Check API Response:**
-   - Use browser DevTools to inspect the `/api/login` response and verify the `lastLoginAt` field.
+   - Use browser DevTools to inspect the `/api/users/:id` response and verify the nested `user.last_login_at` field.
 
 ### Common Pitfalls
 - Backend and manual SQL client must connect to the same database instance.
 - Schema changes must be applied to the correct database.
-- The backend uses camelCase (`lastLoginAt`) in JSON, but the database uses snake_case (`last_login_at`).
+- The database stores the timestamp in `last_login`, but the API always returns it as `last_login_at`.
 - Improperly closed HTML tags can cause Vite build errors like `[vue/compiler-sfc] Unexpected token`. Ensure component templates are well-formed.
 
 ## Environmental Dashboard
