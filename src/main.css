@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global theme: black background, green text */
+@layer base {
+  html, body, #app {
+    @apply bg-black text-green-400;
+  }
+  /* Ensure headings and paragraphs inherit default green */
+  h1, h2, h3, h4, h5, h6, p, span, div, label, input, textarea, button, a {
+    color: inherit;
+  }
+}
