@@ -70,9 +70,6 @@ console.log('Admin routes loaded successfully');
 app.use('/api/admin', adminRoutes);
 console.log('Admin routes registered at /api/admin');
 
-app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from the new endpoint!' });
-});
 
 // Debug endpoint to list all registered routes
 app.get('/api/debug/routes', (req, res) => {
