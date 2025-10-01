@@ -214,7 +214,7 @@ NODE_ENV=development
 
 - **[Backup & Restore System](docs/backup-restore-system.md)** - Complete backup system documentation
 - **[Monitoring & Alerting System](docs/monitoring-system.md)** - Comprehensive system monitoring and alerting
-- **[UI/UX Improvements](docs/UI_UX_IMPROVEMENTS.md)** - Design system standards and UI consistency updates
+- **[RH Dashboard Workflow](docs/RH_WORKFLOW.md)** - End-to-end workflow from onboarding through NAVMED reporting
 - **[API Documentation](docs/api/)**: Backend API endpoints and usage
 - **[User Guides](docs/user/)**: End-user documentation and tutorials
 - **[Security Documentation](docs/security/)**: Security features and compliance
