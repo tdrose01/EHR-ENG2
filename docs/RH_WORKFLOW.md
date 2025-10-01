@@ -68,10 +68,11 @@ Maintaining this order--personnel -> assignment -> readings -> reporting--ensure
   - In the Readings tab, click `Manual Entry`.
   - Select the assigned device, fill in dose details, and submit. Verify the reading shows with the Manual badge.
 5. Generate NAVMED 6470/1:
-  - Navigate to `/navmed-test`.
+  - Click the `NAVMED 6470/1` button in the dashboard header (or browse directly to `/navmed-test`).
   - Load the newly created person in the personnel picker, complete the reporting form, and submit.
 6. Review results:
-  - Use the dashboard tabs (Assignments, Readings, Alerts, Reconciliation) to confirm the new records.\r\n\r\n## Automation
-Run `npm run workflow:rh` after the API server is listening on port 3005. The script walks through unit creation, personnel onboarding, device assignment, manual dose entry, and NAVMED reporting so you can verify the end-to-end flow programmatically.
+  - Use the dashboard tabs (Assignments, Readings, Alerts, Reconciliation) to confirm the new records.
 
+## Automation
+Run `npm run workflow:rh` after the API server is listening on port 3005. The script walks through unit creation, personnel onboarding, device assignment, manual dose entry, and NAVMED reporting so you can verify the end-to-end flow programmatically.
 
