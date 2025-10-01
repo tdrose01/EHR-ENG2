@@ -29,7 +29,8 @@
     "test:dose-alerts": "node scripts/test-dose-alerts.js",
     "setup:test-data": "node scripts/setup-test-data.js",
     "generate:test-data": "node scripts/generate-test-data.js",
-    "test:data-structure": "node scripts/test-data-structure.js"
+    "test:data-structure": "node scripts/test-data-structure.js",
+    "workflow:rh": "node scripts/run-rh-workflow.js"
   },
   "dependencies": {
     "async-queue": "^0.1.0",

@@ -56,3 +56,22 @@ The Radiation Health (RH) dashboard guides radiation program staff through onboa
 4. NAVMED reports draw on personnel metadata and dose history to satisfy Navy reporting requirements.
 
 Maintaining this order--personnel -> assignment -> readings -> reporting--ensures data integrity, accurate exposure tracking, and compliant reporting within the RH dashboard.
+## Browser Procedure
+1. Sign in through the EHR login, choose the Radiation Health module, and open `/radiation-dashboard`.
+2. Onboard a person:
+  - Go to the Personnel tab and click `Add Personnel`.
+  - Complete the required fields (rank/rate, EDIPI, unit, category, monitoring frequency) and submit. Confirm the new row appears.
+3. Assign a device:
+  - Switch to the Devices tab and ensure the target device is Active, updating details if needed via `Edit`.
+  - From either the Devices or Assignments tab, choose `Assign` and pair the device to the newly onboarded person with a start timestamp.
+4. Capture a reading:
+  - In the Readings tab, click `Manual Entry`.
+  - Select the assigned device, fill in dose details, and submit. Verify the reading shows with the Manual badge.
+5. Generate NAVMED 6470/1:
+  - Navigate to `/navmed-test`.
+  - Load the newly created person in the personnel picker, complete the reporting form, and submit.
+6. Review results:
+  - Use the dashboard tabs (Assignments, Readings, Alerts, Reconciliation) to confirm the new records.\r\n\r\n## Automation
+Run `npm run workflow:rh` after the API server is listening on port 3005. The script walks through unit creation, personnel onboarding, device assignment, manual dose entry, and NAVMED reporting so you can verify the end-to-end flow programmatically.
+
+
