@@ -39,7 +39,7 @@ The system features a streamlined card-based navigation interface with the follo
 - **⚡ System Status**: System health and operational status monitoring
 
 #### **Administrative Modules** (Admin Only)
-- **👤 User Management**: Complete user and role management system
+- **👤 User Management**: Complete user, role, and password management system
 - **💾 Backup & Restore**: Secure encrypted backup and restore operations
 - **⚙️ Settings**: System configuration and preferences
 
@@ -97,7 +97,7 @@ The system features a streamlined card-based navigation interface with the follo
 - **Multi-Channel Support**: Alerts, readings, personnel, and device updates
 
 ### Administrative Features
-- **User Management**: Role-based access control with admin interface
+- **User Management**: Role-based access control and password management with admin interface
 - **Audit Logging**: Comprehensive system activity tracking
 - **Data Export**: Secure data export capabilities
 - **System Monitoring**: Performance and health monitoring

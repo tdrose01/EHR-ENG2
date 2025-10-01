@@ -1,6 +1,6 @@
 # User Management System
 
-The EHR-ENG2 system now includes a comprehensive user management system that allows administrators to create, manage, and assign roles to system users.
+The EHR-ENG2 system now includes a comprehensive user management system that allows administrators to create, manage, assign roles, and update passwords for system users.
 
 ## Features
 
@@ -19,6 +19,7 @@ The EHR-ENG2 system now includes a comprehensive user management system that all
 ### User Operations
 - View all system users
 - Edit user roles
+- Update user passwords directly from the edit modal
 - Delete users (with protection for last admin)
 - Track user creation and last login dates
 
@@ -35,6 +36,8 @@ Direct access: `/admin/users`
 
 ## API Endpoints
 
+> All requests require a valid admin JWT in the `Authorization: Bearer <token>` header.
+
 ### Create User
 ```
 POST /api/admin/users
@@ -42,8 +45,6 @@ POST /api/admin/users
 **Body:**
 ```json
 {
-  "adminEmail": "admin@example.com",
-  "adminPassword": "admin_password",
   "email": "newuser@example.com",
   "password": "user_password",
   "role": "user"
@@ -55,12 +56,7 @@ POST /api/admin/users
 POST /api/admin/users/list
 ```
 **Body:**
-```json
-{
-  "adminEmail": "admin@example.com",
-  "adminPassword": "admin_password"
-}
-```
+_Body not required when using the admin token._
 
 ### Update User Role
 ```
@@ -69,9 +65,18 @@ PUT /api/admin/users/:id/role
 **Body:**
 ```json
 {
-  "adminEmail": "admin@example.com",
-  "adminPassword": "admin_password",
   "newRole": "manager"
+}
+```
+
+### Update User Password
+```
+PUT /api/admin/users/:id/password
+```
+**Body:**
+```json
+{
+  "newPassword": "stronger_password_here"
 }
 ```
 
@@ -80,12 +85,7 @@ PUT /api/admin/users/:id/role
 DELETE /api/admin/users/:id
 ```
 **Body:**
-```json
-{
-  "adminEmail": "admin@example.com",
-  "adminPassword": "admin_password"
-}
-```
+_Body not required when using the admin token._
 
 ### Get Available Roles
 ```
@@ -96,7 +96,7 @@ GET /api/admin/roles
 
 ### Authentication Required
 - All user management operations require admin authentication
-- Admin credentials must be provided for each operation
+- Operations use the admin JWT stored in localStorage
 - Session-based authentication with localStorage
 
 ### Role Validation
@@ -142,6 +142,12 @@ CREATE TABLE users (
 2. Select the new role from the dropdown
 3. Click "Update"
 
+### Updating a User Password
+1. Click "Edit" next to the user
+2. Enter the new password in the optional field
+3. Leave the field blank to keep the current password
+4. Click "Update"
+
 ### Deleting a User
 1. In the users table, click "Delete" next to the user
 2. Confirm the deletion in the popup dialog
@@ -149,7 +155,7 @@ CREATE TABLE users (
 ## Error Handling
 
 ### Common Errors
-- **Admin credentials required**: Ensure you're logged in as admin
+- **Admin authentication required**: Ensure you're logged in as admin
 - **User already exists**: Email address is already in use
 - **Invalid role**: Role must be one of the predefined options
 - **Cannot delete last admin**: System prevents deletion of the last admin user

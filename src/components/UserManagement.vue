@@ -163,6 +163,17 @@
                 <option value="viewer">Viewer</option>
               </select>
             </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-300 mb-1">New Password</label>
+              <input 
+                v-model="newPassword" 
+                type="password" 
+                autocomplete="new-password"
+                placeholder="Leave blank to keep current password"
+                class="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p class="mt-1 text-xs text-gray-500">Leave blank to keep current password.</p>
+            </div>
             <div class="flex justify-end space-x-3">
               <button 
                 type="button" 
@@ -198,6 +209,7 @@ const isCreating = ref(false)
 const isUpdating = ref(false)
 const showEditModal = ref(false)
 const editingUser = ref({})
+const newPassword = ref('')
 
 const newUser = ref({
   email: '',
@@ -337,7 +349,8 @@ const createUser = async () => {
 }
 
 const editUser = (user) => {
-  editingUser.value = { ...user }
+  editingUser.value = { ...user, originalRole: user.role }
+  newPassword.value = ''
   showEditModal.value = true
 }
 
@@ -352,34 +365,77 @@ const updateUser = async () => {
       return
     }
     
-    const response = await fetch(`/api/admin/users/${editingUser.value.id}/role`, {
-      method: 'PUT',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        newRole: editingUser.value.role
-      })
-    })
+    let hasChanges = false
     
-    if (response.ok) {
-      showMessage('User updated successfully')
-      showEditModal.value = false
-      await fetchUsers()
-    } else {
-      const data = await response.json()
-      if (response.status === 401 || response.status === 403) {
-        showMessage('Authentication failed. Please log in again.', 'error')
-        // Clear invalid token
-        localStorage.removeItem('authToken')
-        localStorage.removeItem('isAuthenticated')
-        localStorage.removeItem('userRole')
-        localStorage.removeItem('userEmail')
-      } else {
-        showMessage(data.error || 'Failed to update user', 'error')
+    if (editingUser.value.role !== editingUser.value.originalRole) {
+      const roleResponse = await fetch(`/api/admin/users/${editingUser.value.id}/role`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          newRole: editingUser.value.role
+        })
+      })
+      
+      if (!roleResponse.ok) {
+        const data = await roleResponse.json()
+        if (roleResponse.status === 401 || roleResponse.status === 403) {
+          showMessage('Authentication failed. Please log in again.', 'error')
+          // Clear invalid token
+          localStorage.removeItem('authToken')
+          localStorage.removeItem('isAuthenticated')
+          localStorage.removeItem('userRole')
+          localStorage.removeItem('userEmail')
+        } else {
+          showMessage(data.error || 'Failed to update user', 'error')
+        }
+        return
       }
+      
+      hasChanges = true
     }
+    
+    if (newPassword.value.trim()) {
+      const passwordResponse = await fetch(`/api/admin/users/${editingUser.value.id}/password`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          newPassword: newPassword.value
+        })
+      })
+      
+      if (!passwordResponse.ok) {
+        const data = await passwordResponse.json()
+        if (passwordResponse.status === 401 || passwordResponse.status === 403) {
+          showMessage('Authentication failed. Please log in again.', 'error')
+          // Clear invalid token
+          localStorage.removeItem('authToken')
+          localStorage.removeItem('isAuthenticated')
+          localStorage.removeItem('userRole')
+          localStorage.removeItem('userEmail')
+        } else {
+          showMessage(data.error || 'Failed to update password', 'error')
+        }
+        return
+      }
+      
+      hasChanges = true
+    }
+    
+    if (!hasChanges) {
+      showMessage('No changes to update', 'error')
+      return
+    }
+    
+    showMessage('User updated successfully')
+    newPassword.value = ''
+    showEditModal.value = false
+    await fetchUsers()
   } catch (err) {
     showMessage('Network error while updating user', 'error')
     console.error('Error updating user:', err)
