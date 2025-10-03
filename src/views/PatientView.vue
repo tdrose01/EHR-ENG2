@@ -14,6 +14,7 @@
       <p class="mb-2"><span class="font-bold">RH Factor:</span> {{ patient.rh_factor }}</p>
       <p class="mb-2"><span class="font-bold">Duty Status:</span> {{ patient.duty_status }}</p>
       <p class="mb-2"><span class="font-bold">Paygrade:</span> {{ patient.paygrade }}</p>
+      <p class="mb-2"><span class="font-bold">OCC Code:</span> {{ patient.occ_code }}</p>
       <p class="mb-2"><span class="font-bold">Branch:</span> {{ patient.branch_of_service }}</p>
       <p class="mb-2"><span class="font-bold">Ethnicity:</span> {{ patient.ethnicity }}</p>
       <p class="mb-2"><span class="font-bold">Religion:</span> {{ patient.religion }}</p>

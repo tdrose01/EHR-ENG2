@@ -42,25 +42,39 @@ router.post('/', async (req, res) => {
   try {
     const {
       first_name, last_name, gender, blood_type, rh_factor, duty_status, pid,
-      paygrade, branch_of_service, ethnicity, religion, dod_id, date_of_birth, phone_number, is_active
+      paygrade, branch_of_service, ethnicity, religion, dod_id, date_of_birth, phone_number, is_active, occ_code
     } = req.body
 
     if (!first_name || !last_name || !date_of_birth) {
-      return res.status(400).json({ error: 'First name, last name, and date of birth are required.' });
+      return res.status(400).json({ error: 'First name, last name, and date of birth are required.' })
     }
 
     if (dod_id && isNaN(parseInt(dod_id, 10))) {
-      return res.status(400).json({ error: 'DoD ID must be a number.' });
+      return res.status(400).json({ error: 'DoD ID must be a number.' })
+    }
+
+    const parsedOccCode = parseInt(occ_code, 10)
+    if (Number.isNaN(parsedOccCode)) {
+      return res.status(400).json({ error: 'OCC code must be a valid number.' })
+    }
+
+    const occLookup = await pool.query(
+      'SELECT occ_code FROM medical_personnel_summary WHERE occ_code = $1',
+      [parsedOccCode]
+    )
+
+    if (occLookup.rows.length === 0) {
+      return res.status(400).json({ error: 'OCC code is not recognized.' })
     }
 
     const result = await pool.query(
       `INSERT INTO patients (
         first_name, last_name, gender, blood_type, rh_factor, duty_status, pid,
-        paygrade, branch_of_service, ethnicity, religion, dod_id, date_of_birth, phone_number, is_active
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *`,
+        paygrade, branch_of_service, ethnicity, religion, dod_id, date_of_birth, phone_number, is_active, occ_code
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING *`,
       [
         first_name, last_name, gender, blood_type, rh_factor, duty_status, pid,
-        paygrade, branch_of_service, ethnicity, religion, dod_id, date_of_birth, phone_number, is_active
+        paygrade, branch_of_service, ethnicity, religion, dod_id, date_of_birth, phone_number, is_active, parsedOccCode
       ]
     )
 
@@ -74,14 +88,32 @@ router.post('/', async (req, res) => {
 // Update patient
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { dod_id } = req.body;
+  const { dod_id, occ_code } = req.body;
 
   if (dod_id && isNaN(parseInt(dod_id, 10))) {
     return res.status(400).json({ error: 'DoD ID must be a number.' });
   }
 
+  if (occ_code === undefined || occ_code === null || occ_code === '') {
+    return res.status(400).json({ error: 'OCC code is required.' });
+  }
+
+  const parsedOccCode = parseInt(occ_code, 10)
+  if (Number.isNaN(parsedOccCode)) {
+    return res.status(400).json({ error: 'OCC code must be a valid number.' })
+  }
+
   try {
-    const updated = await updatePatient(id, req.body);
+    const occLookup = await pool.query(
+      'SELECT occ_code FROM medical_personnel_summary WHERE occ_code = $1',
+      [parsedOccCode]
+    )
+
+    if (occLookup.rows.length === 0) {
+      return res.status(400).json({ error: 'OCC code is not recognized.' })
+    }
+
+    const updated = await updatePatient(id, { ...req.body, occ_code: parsedOccCode });
     if (!updated) {
       return res.status(404).json({ error: 'Patient not found' });
     }

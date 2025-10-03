@@ -15,7 +15,8 @@ async function updatePatient(id, {
   dod_id,
   date_of_birth,
   phone_number,
-  is_active
+  is_active,
+  occ_code
 }) {
   const result = await pool.query(
     `UPDATE patients SET
@@ -33,8 +34,9 @@ async function updatePatient(id, {
       dod_id = $12,
       date_of_birth = $13,
       phone_number = $14,
-      is_active = $15
-    WHERE id = $16 RETURNING *`,
+      is_active = $15,
+      occ_code = $16
+    WHERE id = $17 RETURNING *`,
     [
       first_name,
       last_name,
@@ -51,6 +53,7 @@ async function updatePatient(id, {
       date_of_birth,
       phone_number,
       is_active,
+      occ_code,
       id
     ]
   )

@@ -11,7 +11,8 @@ describe('AddPatientForm.vue', () => {
   it('submits the form with the correct date of birth', async () => {
     const wrapper = mount(AddPatientForm)
     await wrapper.find('input[type="date"]').setValue('1990-01-01')
-    
+    await wrapper.find('[data-test="occ-code-select"]').setValue('21')
+
     // Mock the fetch call
     global.fetch = jest.fn(() =>
       Promise.resolve({
@@ -25,7 +26,8 @@ describe('AddPatientForm.vue', () => {
     expect(global.fetch).toHaveBeenCalledWith(
       '/api/patients',
       expect.objectContaining({
-        body: expect.stringContaining('"date_of_birth":"1990-01-01"')
+        body: expect.stringContaining('"date_of_birth":"1990-01-01"'),
+        body: expect.stringContaining('"occ_code":21')
       })
     )
   })
