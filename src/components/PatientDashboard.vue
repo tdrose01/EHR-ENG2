@@ -20,6 +20,7 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Name</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Gender</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Paygrade</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">OCC Code</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Branch</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">DOB</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Phone</th>
@@ -31,6 +32,7 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.first_name }} {{ patient.last_name }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.gender }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.paygrade }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ patient.occ_code }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ patient.branch_of_service }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ formatDate(patient.date_of_birth) }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ displayPhone(patient.phone_number) }}</td>
@@ -124,6 +126,23 @@
               </select>
             </div>
             <div class="mb-4">
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">OCC Code</label>
+              <select
+                v-model="patientForm.occ_code"
+                required
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              >
+                <option disabled value="">Select</option>
+                <option
+                  v-for="option in occCodeOptions"
+                  :key="option.value"
+                  :value="String(option.value)"
+                >
+                  {{ option.value }} - {{ option.label }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-4">
               <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Branch of Service</label>
               <select
                 v-model="patientForm.branch_of_service"
@@ -199,6 +218,7 @@
         <p class="text-sm mb-1"><span class="font-semibold">Name:</span> {{ viewPatientData.first_name }} {{ viewPatientData.last_name }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Gender:</span> {{ viewPatientData.gender }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Paygrade:</span> {{ viewPatientData.paygrade }}</p>
+        <p class="text-sm mb-1"><span class="font-semibold">OCC Code:</span> {{ viewPatientData.occ_code }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Branch:</span> {{ viewPatientData.branch_of_service }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Marital Status:</span> {{ viewPatientData.marital_status }}</p>
         <p class="text-sm mb-1"><span class="font-semibold">Blood Type:</span> {{ viewPatientData.blood_type }}</p>
@@ -253,7 +273,16 @@ export default {
       editingPatient: null,
       deletingPatient: null,
       viewPatientData: {},
-      patientForm: {}
+      patientForm: {},
+      occCodeOptions: [
+        { value: 10, label: 'Medical Service, General' },
+        { value: 11, label: 'Medical Service, Specialists' },
+        { value: 20, label: 'Dental Service' },
+        { value: 21, label: 'Preventive Medicine / Environmental Health' },
+        { value: 30, label: 'Veterinary Service' },
+        { value: 40, label: 'Medical Administration' },
+        { value: 50, label: 'Allied Sciences' }
+      ]
     }
   },
   methods: {
@@ -265,6 +294,7 @@ export default {
         marital_status: '',
         blood_type: '',
         paygrade: '',
+        occ_code: '',
         branch_of_service: '',
         date_of_birth: '',
         phone_number: ''
@@ -299,6 +329,8 @@ export default {
       this.patientForm = { ...patient }
       this.patientForm.date_of_birth =
         new Date(patient.date_of_birth).toISOString().split('T')[0]
+      this.patientForm.occ_code =
+        patient.occ_code != null ? String(patient.occ_code) : ''
       this.showModal = true
     },
     async savePatient() {
@@ -307,10 +339,18 @@ export default {
           ? `/api/patients/${this.editingPatient.id}`
           : '/api/patients'
         const method = this.editingPatient ? 'PUT' : 'POST'
+        const payload = {
+          ...this.patientForm,
+          occ_code: parseInt(this.patientForm.occ_code, 10)
+        }
+        if (Number.isNaN(payload.occ_code)) {
+          console.error('Invalid OCC code selected')
+          return
+        }
         const res = await fetch(url, {
           method,
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.patientForm)
+          body: JSON.stringify(payload)
         })
         if (res.ok) {
           this.closeModal()

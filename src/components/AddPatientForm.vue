@@ -96,6 +96,24 @@
       </select>
     </div>
     <div>
+      <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">OCC Code</label>
+      <select
+        v-model="form.occ_code"
+        required
+        data-test="occ-code-select"
+        class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:border-gray-700"
+      >
+        <option disabled value="">Select</option>
+        <option
+          v-for="option in occCodeOptions"
+          :key="option.value"
+          :value="String(option.value)"
+        >
+          {{ option.value }} - {{ option.label }}
+        </option>
+      </select>
+    </div>
+    <div>
       <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1">Branch of Service</label>
       <select
         v-model="form.branch_of_service"
@@ -180,25 +198,37 @@ export default {
     }
   },
   data() {
+    const defaultForm = {
+      first_name: '',
+      last_name: '',
+      gender: '',
+      marital_status: '',
+      blood_type: '',
+      rh_factor: '',
+      duty_status: '',
+      pid: '',
+      paygrade: '',
+      occ_code: '',
+      branch_of_service: '',
+      ethnicity: '',
+      religion: '',
+      dod_id: null,
+      date_of_birth: '',
+      phone_number: '',
+      is_active: true
+    }
     return {
-      form: {
-        first_name: '',
-        last_name: '',
-        gender: '',
-        marital_status: '',
-        blood_type: '',
-        rh_factor: '',
-        duty_status: '',
-        pid: '',
-        paygrade: '',
-        branch_of_service: '',
-        ethnicity: '',
-        religion: '',
-        dod_id: null,
-        date_of_birth: '',
-        phone_number: '',
-        is_active: true
-      }
+      form: { ...defaultForm },
+      defaultForm,
+      occCodeOptions: [
+        { value: 10, label: 'Medical Service, General' },
+        { value: 11, label: 'Medical Service, Specialists' },
+        { value: 20, label: 'Dental Service' },
+        { value: 21, label: 'Preventive Medicine / Environmental Health' },
+        { value: 30, label: 'Veterinary Service' },
+        { value: 40, label: 'Medical Administration' },
+        { value: 50, label: 'Allied Sciences' }
+      ]
     }
   },
   watch: {
@@ -206,7 +236,13 @@ export default {
       immediate: true,
       handler(value) {
         if (value) {
-          this.form = { ...value }
+          this.form = {
+            ...this.defaultForm,
+            ...value,
+            occ_code: value.occ_code != null ? String(value.occ_code) : ''
+          }
+        } else {
+          this.form = { ...this.defaultForm }
         }
       }
     }
@@ -218,10 +254,18 @@ export default {
           ? `/api/patients/${this.patient.id}`
           : '/api/patients'
         const method = this.patient && this.patient.id ? 'PUT' : 'POST'
+        const payload = {
+          ...this.form,
+          occ_code: parseInt(this.form.occ_code, 10)
+        }
+        if (Number.isNaN(payload.occ_code)) {
+          console.error('Invalid OCC code selected')
+          return
+        }
         const res = await fetch(url, {
           method,
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.form)
+          body: JSON.stringify(payload)
         })
         if (res.ok) {
           this.$emit('saved')

@@ -33,9 +33,27 @@ CREATE TABLE login_audit (
 
 
 
--- Enumerated types for patients
 CREATE TYPE marital_status_enum AS ENUM ('Single', 'Married', 'Divorced', 'Widowed');
 CREATE TYPE blood_type_enum AS ENUM ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-');
+
+-- Medical personnel summary table (OCC code reference data)
+CREATE TABLE IF NOT EXISTS medical_personnel_summary (
+  occ_code INTEGER PRIMARY KEY,
+  category TEXT NOT NULL,
+  example_personnel_type TEXT NOT NULL
+);
+
+INSERT INTO medical_personnel_summary (occ_code, category, example_personnel_type) VALUES
+  (10, 'Medical Service, General', 'General HM, generic medical billets'),
+  (11, 'Medical Service, Specialists', 'HM-L05A Radiation Health Technician (enlisted)'),
+  (20, 'Dental Service', 'Dental Corps personnel'),
+  (21, 'Preventive Medicine / Environmental Health', 'MSC 230X Radiation Health Officer (officer)'),
+  (30, 'Veterinary Service', 'Veterinary officer billets'),
+  (40, 'Medical Administration', 'Medical admin staff'),
+  (50, 'Allied Sciences', 'Laboratory, radiography, biomedical science')
+ON CONFLICT (occ_code) DO UPDATE SET
+  category = EXCLUDED.category,
+  example_personnel_type = EXCLUDED.example_personnel_type;
 
 -- Create patients table
 CREATE TABLE IF NOT EXISTS patients (
@@ -50,6 +68,7 @@ CREATE TABLE IF NOT EXISTS patients (
     duty_status VARCHAR,
     pid VARCHAR UNIQUE,
     paygrade VARCHAR,
+    occ_code INTEGER NOT NULL REFERENCES medical_personnel_summary(occ_code),
     branch_of_service VARCHAR(255),
     ethnicity VARCHAR,
     religion VARCHAR,
@@ -93,6 +112,7 @@ INSERT INTO patients (
   duty_status,
   pid,
   paygrade,
+  occ_code,
   branch_of_service,
   ethnicity,
   religion,
@@ -102,8 +122,8 @@ INSERT INTO patients (
   is_active
 )
 VALUES
-  ('John', 'Doe', 'Male', 'Married', 'O+', 'Positive', 'Active', 'JD123', 'E3', 'Army', 'Caucasian', 'None', 123456789, '1980-01-15', '555-0123', true),
-  ('Jane', 'Smith', 'Female', 'Single', 'A+', 'Negative', 'Reserve', 'JS456', 'O2', 'Navy', 'Asian', 'Christian', 987654321, '1992-05-22', '555-0124', true)
+  ('John', 'Doe', 'Male', 'Married', 'O+', 'Positive', 'Active', 'JD123', 'E3', 10, 'Army', 'Caucasian', 'None', 123456789, '1980-01-15', '555-0123', true),
+  ('Jane', 'Smith', 'Female', 'Single', 'A+', 'Negative', 'Reserve', 'JS456', 'O2', 21, 'Navy', 'Asian', 'Christian', 987654321, '1992-05-22', '555-0124', true)
 ON CONFLICT DO NOTHING;
 
 -- Add to existing schema.sql
@@ -113,21 +133,3 @@ CREATE TABLE pop3 (
     dodid INTEGER NOT NULL
 );
 
--- Medical personnel summary table
-CREATE TABLE IF NOT EXISTS medical_personnel_summary (
-  occ_code INTEGER PRIMARY KEY,
-  category TEXT NOT NULL,
-  example_personnel_type TEXT NOT NULL
-);
-
-INSERT INTO medical_personnel_summary (occ_code, category, example_personnel_type) VALUES
-  (10, 'Medical Service, General', 'General HM, generic medical billets'),
-  (11, 'Medical Service, Specialists', 'HM-L05A Radiation Health Technician (enlisted)'),
-  (20, 'Dental Service', 'Dental Corps personnel'),
-  (21, 'Preventive Medicine / Environmental Health', 'MSC 230X Radiation Health Officer (officer)'),
-  (30, 'Veterinary Service', 'Veterinary officer billets'),
-  (40, 'Medical Administration', 'Medical admin staff'),
-  (50, 'Allied Sciences', 'Laboratory, radiography, biomedical science')
-ON CONFLICT (occ_code) DO UPDATE SET
-  category = EXCLUDED.category,
-  example_personnel_type = EXCLUDED.example_personnel_type;

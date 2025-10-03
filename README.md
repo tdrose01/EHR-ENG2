@@ -34,7 +34,8 @@ The system features a streamlined card-based navigation interface with the follo
 
 #### **Core Modules**
 - **🏥 RH Module**: Resource and Hospital Management - Primary module for hospital operations
-- **👥 Patient Management**: Comprehensive patient records and demographics  
+- **👥 Patient Management**: Comprehensive patient records and demographics
+  - Patient onboarding now requires selecting an OCC code mapped to the medical personnel summary reference list to keep billets aligned with staffing categories.
 - **📊 System Monitoring**: Real-time system health and performance metrics
 - **⚡ System Status**: System health and operational status monitoring
 

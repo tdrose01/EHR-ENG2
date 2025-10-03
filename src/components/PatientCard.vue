@@ -6,6 +6,7 @@
       <h3 class="text-xl font-semibold text-blue-300 mb-2">⚕️ {{ patient.first_name }} {{ patient.last_name }}</h3>
       <p class="mb-1"><span class="font-semibold">Gender:</span> {{ patient.gender }}</p>
       <p class="mb-1"><span class="font-semibold">Paygrade:</span> {{ patient.paygrade }}</p>
+      <p class="mb-1"><span class="font-semibold">OCC Code:</span> {{ patient.occ_code }}</p>
       <p class="mb-1"><span class="font-semibold">Branch:</span> {{ patient.branch_of_service }}</p>
       <p class="mb-1"><span class="font-semibold">DoD ID:</span> {{ patient.dod_id }}</p>
     </div>
